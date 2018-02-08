@@ -7,7 +7,7 @@ module "vpc_mgmt" {
   enable_dns_hostnames = true
   enable_dns_support = true
   enable_nat_gateway = true
-  name = "devsecops-networking-test"
+  name = "MGMT-devsecops-networking-test"
   public_subnets = ["10.0.1.0/24", "10.0.2.0/24"]
   private_subnets = ["10.0.3.0/24", "10.0.4.0/24"]
   

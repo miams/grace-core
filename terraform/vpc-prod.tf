@@ -7,7 +7,7 @@ module "vpc_prod" {
   enable_dns_hostnames = true
   enable_dns_support = true
   enable_nat_gateway = true
-  name = "devsecops-networking-test"
+  name = "PROD-devsecops-networking-test"
   public_subnets = ["11.0.1.0/24", "11.0.2.0/24"]
   private_subnets = ["11.0.3.0/24", "11.0.4.0/24"]
   
@@ -23,7 +23,7 @@ resource "aws_vpn_gateway" "prod_vpn_gateway" {
 
 resource "aws_customer_gateway" "prod_customer_gateway" {
   bgp_asn    = 65000
-  ip_address = "172.0.0.1"
+  ip_address = "172.0.0.2"
   type       = "ipsec.1"
 }
 

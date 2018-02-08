@@ -7,7 +7,7 @@ module "vpc_dev" {
   enable_dns_hostnames = true
   enable_dns_support = true
   enable_nat_gateway = true
-  name = "devsecops-networking-test"
+  name = "DEV-devsecops-networking-test"
   public_subnets = ["12.0.1.0/24", "12.0.2.0/24"]
   private_subnets = ["12.0.3.0/24", "12.0.4.0/24"]
   
@@ -23,7 +23,7 @@ resource "aws_vpn_gateway" "dev_vpn_gateway" {
 
 resource "aws_customer_gateway" "dev_customer_gateway" {
   bgp_asn    = 65000
-  ip_address = "172.0.0.1"
+  ip_address = "172.0.0.4"
   type       = "ipsec.1"
 }
 
