@@ -1,7 +1,7 @@
 module "vpc_mgmt" {
   # source = "../../terraform-aws-vpc"
   source = "terraform-aws-modules/vpc/aws"
-  version = "= 1.11.0"
+  version = "= 1.17.0"
 
   azs = ["us-east-2b", "us-east-2c"]
   cidr = "10.0.0.0/16"
@@ -24,7 +24,7 @@ resource "aws_vpn_gateway" "mgmt_vpn_gateway" {
 
 resource "aws_customer_gateway" "mgmt_customer_gateway" {
   bgp_asn    = 65000
-  ip_address = "172.0.0.1"
+  ip_address = "${var.mgmt_customer_gateway_ip}"
   type       = "ipsec.1"
 }
 
@@ -35,8 +35,9 @@ resource "aws_vpn_connection" "mgmt_vpn_connection" {
   static_routes_only  = false
 }
 
+# The accepter resources below are commented out because currently, these VPCs are all in the same account. If the VPC's are in separate accounts, then enable these resources and look at the peer connections in the other files to make sure they are set to auto_accept = false.
+#
 resource "aws_vpc_peering_connection_accepter" "peer_vpc_dev" {
-  provider                  = "aws.east1"
   vpc_peering_connection_id = "${aws_vpc_peering_connection.peer_vpc_dev.id}"
   auto_accept               = true
 
@@ -45,22 +46,20 @@ resource "aws_vpc_peering_connection_accepter" "peer_vpc_dev" {
   }
 }
 
-resource "aws_vpc_peering_connection_accepter" "peer_vpc_staging" {
-  provider                  = "aws.west2"
-  vpc_peering_connection_id = "${aws_vpc_peering_connection.peer_vpc_staging.id}"
-  auto_accept               = true
-
-  tags {
-    Side = "Accepter for staging"
-  }
-}
-
 resource "aws_vpc_peering_connection_accepter" "peer_vpc_prod" {
-  provider                  = "aws.west1"
   vpc_peering_connection_id = "${aws_vpc_peering_connection.peer_vpc_prod.id}"
   auto_accept               = true
 
   tags {
     Side = "Accepter for prod"
+  }
+}
+
+resource "aws_vpc_peering_connection_accepter" "peer_vpc_staging" {
+  vpc_peering_connection_id = "${aws_vpc_peering_connection.peer_vpc_staging.id}"
+  auto_accept               = true
+
+  tags {
+    Side = "Accepter for staging"
   }
 }
