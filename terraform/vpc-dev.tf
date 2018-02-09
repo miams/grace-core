@@ -6,13 +6,13 @@ module "vpc_dev" {
   }
 
   azs = ["us-east-1b", "us-east-1c"]
-  cidr = "12.0.0.0/16"
+  cidr = "10.2.0.0/16"
   enable_dns_hostnames = true
   enable_dns_support = true
   enable_nat_gateway = false
   name = "DEV-devsecops-networking-test"
-  public_subnets = ["12.0.1.0/24", "12.0.2.0/24"]
-  private_subnets = ["12.0.3.0/24", "12.0.4.0/24"]
+  public_subnets = ["10.2.1.0/24", "10.2.2.0/24"]
+  private_subnets = ["10.2.3.0/24", "10.2.4.0/24"]
   
   tags = {
       Terraform = "true"

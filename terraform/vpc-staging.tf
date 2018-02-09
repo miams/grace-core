@@ -6,13 +6,13 @@ module "vpc_staging" {
   }
 
   azs = ["us-west-2a", "us-west-2b"]
-  cidr = "13.0.0.0/16"
+  cidr = "10.3.0.0/16"
   enable_dns_hostnames = true
   enable_dns_support = true
   enable_nat_gateway = false
   name = "STAGING-devsecops-networking-test"
-  public_subnets = ["13.0.1.0/24", "13.0.2.0/24"]
-  private_subnets = ["13.0.3.0/24", "13.0.4.0/24"]
+  public_subnets = ["10.3.1.0/24", "10.3.2.0/24"]
+  private_subnets = ["10.3.3.0/24", "10.3.4.0/24"]
   
   tags = {
       Terraform = "true"
