@@ -66,7 +66,7 @@ accounts = get_tenant_accounts()
 failed = []
 for account in accounts:
     account_id = account['Id']
-    print("---------\nRunning for account {}.".format(account_id))
+    print("Running for account {}.".format(account_id))
 
     # manage each subaccount in its own Terraform workspace, so the states are independent
     use_workspace(account_id)
@@ -75,13 +75,18 @@ for account in accounts:
     role_arn = "arn:aws:iam::{}:role/{}".format(account_id, ROLE_NAME)
 
     result = set_up_networking(role_arn)
-    if result.returncode != 0:
-        print("\nFAILED\n")
+    if result.returncode == 0:
+        print("\nSuccessfully set up networking for account {}.".format(account_id))
+    else:
+        print("\nFailed to set up networking for account {}.".format(account_id))
         failed.append(account_id)
+
+    print("---------")
 
 # fail if any failed
 if failed:
-    print("---------\nFailed to set up networking for the following accounts:")
+    print("Failed to set up networking for the following accounts:")
     for account_id in failed:
         print(account_id)
     sys.exit(1)
+print("Networking set up for all accounts successfully.")
