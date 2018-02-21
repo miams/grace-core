@@ -1,4 +1,5 @@
 import boto3
+import os
 import subprocess
 import sys
 
@@ -27,9 +28,14 @@ def get_tenant_accounts():
             yield account
 
 def set_up_networking(role_arn):
+    my_env = os.environ.copy()
+    my_env['AWS_DEFAULT_REGION'] = 'us-east-1'
+    my_env['TF_VAR_role_arn'] = role_arn
+
     return subprocess.run(
-        ['terraform', 'apply', '-var', "role_arn={}".format(role_arn)],
+        ['terraform', 'apply', '-input=false', '-auto-approve'],
         cwd='terraform',
+        env=my_env,
         stderr=sys.stderr,
         stdout=sys.stdout
     )
