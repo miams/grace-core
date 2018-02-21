@@ -19,7 +19,7 @@ def set_up_networking(role_arn):
     return subprocess.run(
         ['terraform', 'apply', '-var', "role_arn={}".format(role_arn)],
         cwd='terraform',
-        stderr=subprocess.PIPE,
+        stderr=subprocess.STDOUT,
         stdout=subprocess.PIPE
     )
 
@@ -27,11 +27,12 @@ def set_up_networking(role_arn):
 accounts = get_tenant_accounts()
 failed = False
 for account in accounts:
+    account_id = account['Id']
     # generate AssumeRole ARN
-    role_arn = "arn:aws:iam::{}:role/{}".format(account['Id'], ROLE_NAME)
+    role_arn = "arn:aws:iam::{}:role/{}".format(account_id, ROLE_NAME)
     result = set_up_networking(role_arn)
-    if result.returncode not 0:
-        # TODO print error
+    if result.returncode is not 0:
+        print("---------\nError for account {}:\n".format(account_id), result.stdout.decode('utf-8'), file=sys.stderr)
         failed = True
 
 # fail if any failed
