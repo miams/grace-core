@@ -3,7 +3,8 @@ import subprocess
 import sys
 
 
-ROLE_NAME = "TODO"
+# https://docs.aws.amazon.com/organizations/latest/userguide/orgs_manage_accounts_access.html#orgs_manage_accounts_access-cross-account-role
+ROLE_NAME = 'OrganizationAccountAccessRole'
 
 
 def get_tenant_accounts():
