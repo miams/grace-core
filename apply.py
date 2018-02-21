@@ -29,6 +29,8 @@ def get_tenant_accounts():
             yield account
 
 def run_terraform(args, check=True, capture_output=False, env=None):
+    if not capture_output:
+        print('+', ' '.join(args))
     return subprocess.run(
         args,
         check=check,
@@ -61,10 +63,10 @@ def set_up_networking(role_arn):
 
 
 accounts = get_tenant_accounts()
-failed = False
+failed = []
 for account in accounts:
     account_id = account['Id']
-    print("---------\nRunning for account {}:\n".format(account_id))
+    print("---------\nRunning for account {}.".format(account_id))
 
     # manage each subaccount in its own Terraform workspace, so the states are independent
     use_workspace(account_id)
@@ -74,8 +76,12 @@ for account in accounts:
 
     result = set_up_networking(role_arn)
     if result.returncode != 0:
-        failed = True
+        print("\nFAILED\n")
+        failed.append(account_id)
 
 # fail if any failed
 if failed:
+    print("---------\nFailed to set up networking for the following accounts:")
+    for account_id in failed:
+        print(account_id)
     sys.exit(1)
