@@ -7,13 +7,23 @@ import sys
 ROLE_NAME = 'OrganizationAccountAccessRole'
 
 
+def get_current_account_id():
+    client = boto3.client('sts')
+    identity = client.get_caller_identity()
+    return identity.get('Account')
+
 def get_tenant_accounts():
     client = boto3.client('organizations')
     paginator = client.get_paginator('list_accounts')
     page_iterator = paginator.paginate()
-    # TODO filter out non-tenant accounts
+
+    master_account_id = get_current_account_id()
+
     for page in page_iterator:
         for account in page['Accounts']:
+            # skip the master account, which is the one we're calling from
+            if account['Id'] == master_account_id:
+                continue
             yield account
 
 def set_up_networking(role_arn):
