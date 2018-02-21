@@ -9,9 +9,11 @@ ROLE_NAME = "TODO"
 def get_tenant_accounts():
     client = boto3.client('organizations')
     paginator = client.get_paginator('list_accounts')
-    accounts = paginator.paginate()['Accounts']
+    page_iterator = paginator.paginate()
     # TODO filter out non-tenant accounts
-    return accounts
+    for page in page_iterator:
+        for account in page['Accounts']:
+            yield account
 
 def set_up_networking(role_arn):
     return subprocess.run(
