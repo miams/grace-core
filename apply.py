@@ -4,9 +4,9 @@ import subprocess
 import sys
 
 
-MODULE = 'test'
+MODULE = os.getenv('MODULE', 'terraform')
 # https://docs.aws.amazon.com/organizations/latest/userguide/orgs_manage_accounts_access.html#orgs_manage_accounts_access-cross-account-role
-ROLE_NAME = 'OrganizationAccountAccessRole'
+ROLE_NAME = os.getenv('ROLE_NAME', 'OrganizationAccountAccessRole')
 
 
 def get_current_account_id():
