@@ -24,7 +24,7 @@ def get_tenant_accounts():
     for page in page_iterator:
         for account in page['Accounts']:
             # skip the master account, which is the one we're calling from
-            if account['Id'] == master_account_id:
+            if account['Id'] == master_account_id or account['Status'] == 'SUSPENDED':
                 continue
             yield account
 
