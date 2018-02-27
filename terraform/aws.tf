@@ -1,35 +1,55 @@
 provider "aws" {
-  # version = "~> 1.0.0"
-  region  = "us-east-2"
+  region = "${var.default_region}"
 }
 
 provider "aws" {
-  alias = "east1"
-  region = "us-east-1"
+  alias = "prod"
+  region = "${var.prod_region}"
+  assume_role {
+    role_arn = "arn:aws:iam::${var.prod_account_id}:role/${var.iam_role_name}"
+  }
 }
 
 provider "aws" {
-  alias = "west1"
-  region = "us-west-1"
+  alias = "dev"
+  region = "${var.dev_region}"
+  assume_role {
+    role_arn = "arn:aws:iam::${var.dev_account_id}:role/${var.iam_role_name}"
+  }
 }
 
 provider "aws" {
-  alias = "west2"
-  region = "us-west-2"
+  alias = "staging"
+  region = "${var.staging_region}"
+  assume_role {
+    role_arn = "arn:aws:iam::${var.staging_account_id}:role/${var.iam_role_name}"
+  }
+}
+
+provider "aws" {
+  alias = "mgmt"
+  region = "${var.mgmt_region}"
+  # assume_role {
+  #   role_arn = "arn:aws:iam::${var.mgmt_account_id}:role/${var.iam_role_name}"
+  # }
 }
 
 data "aws_caller_identity" "default" {
   provider = "aws"
 }
 
-data "aws_caller_identity" "east1" {
-  provider = "aws.east1"
+data "aws_caller_identity" "prod" {
+  provider = "aws.prod"
 }
 
-data "aws_caller_identity" "west1" {
-  provider = "aws.west1"
+data "aws_caller_identity" "dev" {
+  provider = "aws.dev"
 }
 
-data "aws_caller_identity" "west2" {
-  provider = "aws.west2"
+data "aws_caller_identity" "staging" {
+  provider = "aws.staging"
+}
+
+data "aws_caller_identity" "mgmt" {
+  provider = "aws.mgmt"
 }

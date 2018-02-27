@@ -1,9 +1,11 @@
 module "vpc_mgmt" {
-  # source = "../../terraform-aws-vpc"
   source = "terraform-aws-modules/vpc/aws"
   version = "= 1.17.0"
+  providers = {
+    aws = "aws.mgmt"
+  }
 
-  azs = ["us-east-2b", "us-east-2c"]
+  azs = ["${var.mgmt_az_1}", "${var.mgmt_az_2}"]
   cidr = "10.0.0.0/16"
   enable_dns_hostnames = true
   enable_dns_support = true
@@ -40,7 +42,6 @@ resource "aws_vpn_connection" "mgmt_vpn_connection" {
 resource "aws_vpc_peering_connection_accepter" "peer_vpc_dev" {
   vpc_peering_connection_id = "${aws_vpc_peering_connection.peer_vpc_dev.id}"
   auto_accept               = true
-
   tags {
     Side = "Accepter for dev"
   }
@@ -49,7 +50,6 @@ resource "aws_vpc_peering_connection_accepter" "peer_vpc_dev" {
 resource "aws_vpc_peering_connection_accepter" "peer_vpc_prod" {
   vpc_peering_connection_id = "${aws_vpc_peering_connection.peer_vpc_prod.id}"
   auto_accept               = true
-
   tags {
     Side = "Accepter for prod"
   }
@@ -58,7 +58,6 @@ resource "aws_vpc_peering_connection_accepter" "peer_vpc_prod" {
 resource "aws_vpc_peering_connection_accepter" "peer_vpc_staging" {
   vpc_peering_connection_id = "${aws_vpc_peering_connection.peer_vpc_staging.id}"
   auto_accept               = true
-
   tags {
     Side = "Accepter for staging"
   }
