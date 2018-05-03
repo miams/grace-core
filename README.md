@@ -19,6 +19,20 @@ Note that this repo does not set up a remote backend. If you wish to use a remot
 
 ## Organizations
 
+### Cross-account configuration
+
+Terraform can be used to configure resources across multiple AWS accounts - see [`terraform/master/`](terraform/master) for an example. [Configure AWS](https://www.terraform.io/docs/providers/aws/#authentication) with credentials for your root AWS account, then run:
+
+```sh
+cd terraform/master
+terraform init
+terraform apply
+```
+
+This will configure the root account to be an Organization (if it isn't already), then create and configure child accounts.
+
+### Script
+
 [A script](apply.py) is included for managing AWS accounts across an [AWS Organization](https://aws.amazon.com/organizations/).
 
 1. Install Python 3.
