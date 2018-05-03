@@ -13,7 +13,5 @@ provider "aws" {
   }
 }
 
-# just an arbitrary resource to create in the subaccount
-resource "aws_eip" "ip" {
-  provider = "aws.child"
-}
+# additional child account configuration goes here, using `provider = "aws.child"`
+
