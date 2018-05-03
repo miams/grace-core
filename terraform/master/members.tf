@@ -1,9 +1,3 @@
-### master account ###
-
-resource "aws_organizations_organization" "org" {}
-
-### subaccounts ###
-
 module "scp_test" {
   source = "../member_account"
 
