@@ -19,8 +19,6 @@ Note that this repo does not set up a remote backend. If you wish to use a remot
 
 ## Organizations
 
-### Cross-account configuration
-
 Terraform can be used to configure resources across multiple AWS accounts - see [`terraform/master/`](terraform/master) for an example. [Configure AWS](https://www.terraform.io/docs/providers/aws/#authentication) with credentials for your root AWS account, then run:
 
 ```sh
@@ -30,58 +28,3 @@ terraform apply
 ```
 
 This will configure the root account to be an Organization (if it isn't already), then create and configure child accounts.
-
-### Script
-
-[A script](apply.py) is included for managing AWS accounts across an [AWS Organization](https://aws.amazon.com/organizations/).
-
-1. Install Python 3.
-1. [Set up AWS access key for the master account.](https://boto3.readthedocs.io/en/latest/guide/configuration.html)
-1. Run the script.
-
-    ```sh
-    python3 apply.py
-    ```
-
-The code loops through all non-master member in the Organization and `apply`s the Terraform configuration to each (after assuming the corresponding role). The separate states are kept in Terraform [workspaces](https://www.terraform.io/docs/state/workspaces.html) corresponding to each account. It treats each account independently; if one account fails to update for some reason, it logs that, but then continues on to the next one.
-
-Example output:
-
-```console
-$ python3 apply.py
-Running for account 11111.
-Workspace '11111' exists.
-+ terraform workspace select 11111
-Switched to workspace "11111".
-+ terraform apply -input=false -auto-approve
-data.aws_caller_identity.current: Refreshing state...
-
-Apply complete! Resources: 0 added, 0 changed, 0 destroyed.
-
-Outputs:
-
-account_id = 11111
-caller_arn = arn:aws:sts::11111:assumed-role/OrganizationAccountAccessRole/22222
-caller_user = SOMEUSER:22222
-
-Successfully set up networking for account 11111.
----------
-Running for account 33333.
-Workspace '33333' exists.
-+ terraform workspace select 33333
-Switched to workspace "33333".
-+ terraform apply -input=false -auto-approve
-data.aws_caller_identity.current: Refreshing state...
-
-Apply complete! Resources: 0 added, 0 changed, 0 destroyed.
-
-Outputs:
-
-account_id = 33333
-caller_arn = arn:aws:sts::33333:assumed-role/OrganizationAccountAccessRole/44444
-caller_user = OTHERUSER:44444
-
-Successfully set up networking for account 33333.
----------
-Networking set up for all accounts successfully.
-```
