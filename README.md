@@ -9,9 +9,7 @@ Note that the patterns in this repository are usable in other contexts, but this
 [Configure AWS](https://www.terraform.io/docs/providers/aws/#authentication) with credentials for the master AWS account, then run:
 
 ```sh
-cd terraform/master
-terraform init
-terraform apply
+make
 ```
 
 ---
