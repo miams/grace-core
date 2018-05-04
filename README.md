@@ -6,11 +6,18 @@ Note that the patterns in this repository are usable in other contexts, but this
 
 ## Usage
 
-[Configure AWS](https://www.terraform.io/docs/providers/aws/#authentication) with credentials for the master AWS account, then run:
+1. [Configure AWS](https://www.terraform.io/docs/providers/aws/#authentication) with credentials for the master AWS account.
+1. Bootstrap the account.
 
-```sh
-make
-```
+    ```sh
+    make bootstrap
+    ```
+
+1. Set up the master account.
+
+    ```sh
+    make
+    ```
 
 ---
 
