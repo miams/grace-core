@@ -1,4 +1,4 @@
-# GRACE platform configuration
+# GRACE platform configuration [![CircleCI](https://circleci.com/gh/GSA/grace-core.svg?style=svg)](https://circleci.com/gh/GSA/grace-core)
 
 This repository contains the core configuration for the [GRACE](https://github.com/gsa/devsecops#readme) platform. Terraform is used to configure resources across the AWS master and member accounts in the Organization - see [`terraform/master/`](terraform/master).
 

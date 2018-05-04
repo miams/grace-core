@@ -1,0 +1,63 @@
+version: 2
+jobs:
+  plan:
+    docker:
+      - image: hashicorp/terraform:light
+    steps:
+      - checkout
+      - run:
+          name: Set up Terraform
+          # https://discuss.circleci.com/t/create-separate-steps-jobs-for-pr-forks-versus-branches/13419/2
+          command: |
+            cd terraform/master
+            if [[ $(echo "$CIRCLE_BRANCH" | grep -c "pull") -gt 0 ]]; then
+              echo "This is from a fork."
+              terraform init -backend=false -input=false
+            else
+              terraform init -backend-config=backend.tfvars -input=false
+            fi
+      - run:
+          name: Validate Terraform config
+          command: |
+            cd terraform/master
+            if [[ $(echo "$CIRCLE_BRANCH" | grep -c "pull") -gt 0 ]]; then
+              echo "This is from a fork."
+              terraform validate -var-file=backend.tfvars
+            else
+              terraform plan -input=false -var-file=backend.tfvars
+            fi
+
+      - persist_to_workspace:
+          root: .
+          paths:
+            - ./*
+
+  apply:
+    docker:
+      - image: hashicorp/terraform:light
+    steps:
+      - attach_workspace:
+          at: .
+
+      - run:
+          name: Deploy the full environment
+          command: cd terraform/master && terraform apply -input=false -var-file=backend.tfvars -auto-approve
+
+workflows:
+  version: 2
+
+  validate_and_deploy:
+    jobs:
+      - plan
+      - apply:
+          filters:
+            branches:
+              only: master
+          requires:
+            - plan
+
+experimental:
+  notify:
+    branches:
+      only:
+        - master
