@@ -17,6 +17,12 @@ Having been done once for the account, the following steps shouldn't need to be 
 
 1. [Create an access key for `circle-deployer`.](https://console.aws.amazon.com/iam/home#/users/circle-deployer?section=security_credentials)
 1. [Save those credentials in CircleCI](https://circleci.com/gh/GSA/grace-core/edit#env-vars) using [AWS environment variables](https://www.terraform.io/docs/providers/aws/#environment-variables).
+1. [Generate the Service Control Policy](https://github.com/GSA/security-benchmarks/tree/master/scp) and save to a file.
+1. Copy the policy to S3.
+
+    ```sh
+    aws s3 cp <path/to/scp.json> s3://grace-config/service_control_policy.json
+    ```
 
 CircleCI will deploy changes to the environment going forward.
 
