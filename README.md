@@ -1,8 +1,16 @@
 # GRACE platform configuration [![CircleCI](https://circleci.com/gh/GSA/grace-core.svg?style=svg)](https://circleci.com/gh/GSA/grace-core)
 
-This repository contains the core configuration for the [GRACE](https://github.com/gsa/devsecops#readme) platform. Terraform is used to configure resources across the AWS master and member accounts in the Organization - see [`terraform/master/`](terraform/master).
+This repository contains the core Terraform configuration for the [GRACE](https://github.com/gsa/devsecops#readme) platform. This includes:
+
+* Setting up an S3 bucket for storing sensitive configuration files (outside this repository)
+* Creating an IAM user and permissions for continuous deployment of this code
+* Configuring the master account as an Organization
+* Setting up the [Service Control Policy](https://github.com/GSA/security-benchmarks/tree/master/scp) for tenants
+* Creating member accounts
 
 Note that the patterns in this repository are usable in other contexts, but this code can't be used directly elsewhere without tweaks, due to things like AWS account emails needing to be unique.
+
+Also included: [an example of cross-VPC/account networking](terraform/networking).
 
 ## Initial setup
 
@@ -25,7 +33,3 @@ Having been done once for the account, the following steps shouldn't need to be 
     ```
 
 CircleCI will deploy changes to the environment going forward.
-
----
-
-See the [networking module](terraform/networking) module for a cross-VPC/account networking example.

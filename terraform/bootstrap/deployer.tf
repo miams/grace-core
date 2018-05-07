@@ -3,7 +3,9 @@ resource "aws_iam_user" "deployer" {
 }
 
 resource "aws_iam_user_policy_attachment" "deployer_attach" {
-  user       = "${aws_iam_user.deployer.name}"
+  user = "${aws_iam_user.deployer.name}"
+
+  # AWS-managed policy
   policy_arn = "arn:aws:iam::aws:policy/PowerUserAccess"
 }
 
