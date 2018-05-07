@@ -33,3 +33,17 @@ Having been done once for the account, the following steps shouldn't need to be 
     ```
 
 CircleCI will deploy changes to the environment going forward.
+
+## Adding a member account
+
+For new tenants, or tenants that want an additional AWS account, create one or more new AWS accounts by:
+
+1. **Tenant or DevSecOps team:** Add one or more new `member_account` module blocks to [`terraform/master/members.tf`](terraform/master/members.tf)
+    * You can see other existing accounts in that file to copy from.
+    * The `name` and `email` should be unique.
+    * For the `email`, use the tenant team's Google Group with a suffix: `<tenantgroup>+<env>@gsa.gov`. For example, `myteam+staging@gsa.gov`.
+1. **Tenant or DevSecOps team:** Submit the change as a pull request
+1. **DevSecOps team:** Merge the pull request
+1. **DevSecOps team:** Move the new account to the Tenants Organizational Unit
+    * This needs to be done manually, while waiting for [Terraform support](https://github.com/terraform-providers/terraform-provider-aws/pull/4405)
+    * Easiest to do so through [the Console](https://console.aws.amazon.com/organizations/home)
