@@ -47,3 +47,17 @@ For new tenants, or tenants that want an additional AWS account, create one or m
 1. **DevSecOps team:** Move the new account to the Tenants Organizational Unit
     * This needs to be done manually, while waiting for [Terraform support](https://github.com/terraform-providers/terraform-provider-aws/pull/4405)
     * Easiest to do so through [the Console](https://console.aws.amazon.com/organizations/home)
+
+## Security compliance
+
+**Component approval status:** in assessment
+
+**Relevant controls:**
+
+Control | CSP/AWS | HOST/OS | App/DB | How is it implemented?
+--- | --- | --- | --- | ---
+[AC-2(a)](https://nvd.nist.gov/800-53/Rev4/control/AC-2) | ╳ | | | AWS accounts are created for tenants of the platform as member accounts in the AWS Organization.
+[AC-2(e)](https://nvd.nist.gov/800-53/Rev4/control/AC-2) | ╳ | | | AWS accounts are created through pull requests to this repository, which are reviewed and merged by members of the DevSecOps team after the appropriate paperwork is in place.
+[AC-2(f)](https://nvd.nist.gov/800-53/Rev4/control/AC-2) | ╳ | | | [Terraform code in this repository](terraform/master/members.tf) creates, modifies, and removes AWS accounts for tenants of the platform.
+
+The [Service Control Policy controls](https://github.com/GSA/security-benchmarks/tree/master/scp#compliance-information) are also inherited.
