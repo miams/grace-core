@@ -25,3 +25,19 @@ module "tenant_1_mgmt" {
   name  = "tenant-1-mgmt"
   email = "jasong.miller+tenant1mgmt@gsa.gov"
 }
+
+module "tenant_1" {
+  source = "../tenant"
+
+  name = "tenant1"
+
+  # arbitrary value
+  budget_limit = "100"
+
+  account_ids = [
+    "${module.tenant_1_prod.account_id}",
+    "${module.tenant_1_staging.account_id}",
+    "${module.tenant_1_dev.account_id}",
+    "${module.tenant_1_mgmt.account_id}",
+  ]
+}
