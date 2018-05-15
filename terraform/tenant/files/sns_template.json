@@ -2,6 +2,10 @@
   "AWSTemplateFormatVersion": "2010-09-09",
   "Description": "Best Practice SNS Topic",
   "Parameters": {
+    "SNSTopic": {
+      "Type": "String",
+      "Description": "The ARN of the SNS topic"
+    },
     "SubscriptionEndPoint": {
       "Type": "String",
       "Description": "The endpoint that receives notifications from the Amazon SNS topic. The endpoint value depends on the protocol that you specify. This could be a URL or ARN"
@@ -22,48 +26,7 @@
       "Default": "email"
     }
   },
-  "Mappings": {},
-  "Conditions": {},
   "Resources": {
-    "SNSTopic": {
-      "Type": "AWS::SNS::Topic",
-      "Properties": {}
-    },
-    "SNSTopicPolicy": {
-      "Type": "AWS::SNS::TopicPolicy",
-      "Properties": {
-        "PolicyDocument": {
-          "Id": "MyBudgetPolicy",
-          "Version": "2012-10-17",
-          "Statement": [
-            {
-              "Sid": "Mystatementid",
-              "Effect": "Allow",
-              "Principal": {
-                "Service": "budgets.amazonaws.com"
-              },
-              "Action": [
-                "SNS:Publish",
-                "SNS:RemovePermission",
-                "SNS:SetTopicAttributes",
-                "SNS:DeleteTopic",
-                "SNS:ListSubscriptionsByTopic",
-                "SNS:GetTopicAttributes",
-                "SNS:Receive",
-                "SNS:AddPermission",
-                "SNS:Subscribe"
-              ],
-              "Resource": "*"
-            }
-          ]
-        },
-        "Topics": [
-          {
-            "Ref": "SNSTopic"
-          }
-        ]
-      }
-    },
     "SNSSubscription": {
       "Type": "AWS::SNS::Subscription",
       "Properties": {
@@ -76,23 +39,6 @@
         "TopicArn": {
           "Ref": "SNSTopic"
         }
-      }
-    }
-  },
-  "Outputs": {
-    "TopicARN": {
-      "Description": "ARN of newly created SNS Topic",
-      "Value": {
-        "Ref": "SNSTopic"
-      }
-    },
-    "QueueName": {
-      "Description": "Name of newly created SNS Topic",
-      "Value": {
-        "Fn::GetAtt": [
-          "SNSTopic",
-          "TopicName"
-        ]
       }
     }
   }
