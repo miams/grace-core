@@ -1,3 +1,16 @@
+data "aws_caller_identity" "current" {}
+
+# created on the master account, even though it corresponds to the member accounts
+
+resource "aws_cloudformation_stack" "sns" {
+  name          = "${var.name}-budget"
+  template_body = "${file("${path.module}/files/sns_template.json")}"
+
+  parameters {
+    SubscriptionEndPoint = "${var.budget_notification_email}"
+  }
+}
+
 resource "aws_budgets_budget" "budget" {
   name         = "budget-${var.name}-monthly"
   budget_type  = "COST"
@@ -11,5 +24,17 @@ resource "aws_budgets_budget" "budget" {
 
   cost_filters {
     LinkedAccount = "${join(",", var.account_ids)}"
+  }
+
+  # needed because, as of AWS provider v1.18.0, Terraform doesn't have a way to create the notification directly
+  provisioner "local-exec" {
+    # 80% usage
+    command = <<EOF
+aws budgets create-notification \
+  --account-id ${data.aws_caller_identity.current.account_id} \
+  --budget-name ${aws_budgets_budget.budget.name} \
+  --notification NotificationType=ACTUAL,ComparisonOperator=GREATER_THAN,Threshold=80,ThresholdType=ABSOLUTE_VALUE \
+  --subscribers SubscriptionType=SNS,Address=${aws_cloudformation_stack.sns.outputs.TopicARN}
+EOF
   }
 }
