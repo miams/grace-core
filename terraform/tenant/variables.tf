@@ -11,7 +11,6 @@ variable "budget_limit" {
   description = "Budget limit, as an integer"
 }
 
-variable "budget_notification_email" {
-  type        = "string"
-  description = "An email address for budget notifications"
+variable "budget_notification_topic_arn" {
+  type = "string"
 }

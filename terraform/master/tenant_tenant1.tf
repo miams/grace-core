@@ -29,8 +29,8 @@ module "tenant_1_mgmt" {
 module "tenant_1" {
   source = "../tenant"
 
-  name                         = "tenant1"
-  budget_notification_email = "aidan.feldman+tenant1alerts@gsa.gov"
+  name                          = "tenant1"
+  budget_notification_topic_arn = "${aws_sns_topic.budget.arn}"
 
   # arbitrary value
   budget_limit = "100"
