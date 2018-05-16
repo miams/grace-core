@@ -42,7 +42,7 @@ resource "null_resource" "budget_notifications" {
 
   # when actual bill exceeds certain fraction of budget
   provisioner "local-exec" {
-    command = "${local.notification_cmd_prefix} NotificationType=ACTUAL,ComparisonOperator=GREATER_THAN,Threshold=80,ThresholdType=PERCENTAGE"
+    command = "${local.notification_cmd_prefix} NotificationType=ACTUAL,ComparisonOperator=GREATER_THAN,Threshold=${var.warning_threshold_pct},ThresholdType=PERCENTAGE"
   }
 
   # when forecasted bill exceeds budget

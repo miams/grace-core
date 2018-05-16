@@ -14,3 +14,8 @@ variable "budget_limit" {
 variable "budget_notification_topic_arn" {
   type = "string"
 }
+
+variable "warning_threshold_pct" {
+  default     = "80"
+  description = "The percentage of budget used at which a warning is sent to the finance team"
+}
