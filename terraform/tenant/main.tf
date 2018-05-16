@@ -15,16 +15,38 @@ resource "aws_budgets_budget" "budget" {
   cost_filters {
     LinkedAccount = "${join(",", var.account_ids)}"
   }
+}
 
-  # needed because, as of AWS provider v1.18.0, Terraform doesn't have a way to create the notification directly
-  provisioner "local-exec" {
-    # 80% usage
-    command = <<EOF
+# needed because, as of AWS provider v1.18.0, Terraform doesn't have a way to create budget notifications directly
+
+locals {
+  notification_cmd_prefix = <<EOF
 aws budgets create-notification \
   --account-id ${data.aws_caller_identity.current.account_id} \
   --budget-name ${aws_budgets_budget.budget.name} \
-  --notification NotificationType=ACTUAL,ComparisonOperator=GREATER_THAN,Threshold=80,ThresholdType=ABSOLUTE_VALUE \
-  --subscribers SubscriptionType=SNS,Address=${var.budget_notification_topic_arn}
+  --subscribers SubscriptionType=SNS,Address=${var.budget_notification_topic_arn} \
+  --notification \
 EOF
+}
+
+resource "null_resource" "budget_notifications" {
+  triggers {
+    budget_id = "${aws_budgets_budget.budget.id}"
+    prefix    = "${local.notification_cmd_prefix}"
+  }
+
+  # when actual bill exceeds budget
+  provisioner "local-exec" {
+    command = "${local.notification_cmd_prefix} NotificationType=ACTUAL,ComparisonOperator=GREATER_THAN,Threshold=${var.budget_limit},ThresholdType=ABSOLUTE_VALUE"
+  }
+
+  # when actual bill exceeds certain fraction of budget
+  provisioner "local-exec" {
+    command = "${local.notification_cmd_prefix} NotificationType=ACTUAL,ComparisonOperator=GREATER_THAN,Threshold=80,ThresholdType=PERCENTAGE"
+  }
+
+  # when forecasted bill exceeds budget
+  provisioner "local-exec" {
+    command = "${local.notification_cmd_prefix} NotificationType=FORECASTED,ComparisonOperator=GREATER_THAN,Threshold=${var.budget_limit},ThresholdType=ABSOLUTE_VALUE"
   }
 }
