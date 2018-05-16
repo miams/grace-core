@@ -1,4 +1,15 @@
-# created on the master account, even though it corresponds to the member accounts
+locals {
+  # workaround for trying to do conditionals with maps, since LinkedAccount can't be specified with an empty list
+  # https://github.com/hashicorp/terraform/issues/12453#issuecomment-378033384
+  cost_filters = {
+    empty = {}
+
+    not_empty = {
+      LinkedAccount = "${join(",", var.account_ids)}"
+    }
+  }
+}
+
 resource "aws_budgets_budget" "budget" {
   name         = "${var.name}-monthly"
   budget_type  = "COST"
@@ -10,9 +21,7 @@ resource "aws_budgets_budget" "budget" {
   time_period_start = "2017-07-01_00:00"
   time_unit         = "MONTHLY"
 
-  cost_filters {
-    LinkedAccount = "${join(",", var.account_ids)}"
-  }
+  cost_filters = "${local.cost_filters[length(var.account_ids) > 0 ? "not_empty" : "empty"]}"
 }
 
 # workaround for https://github.com/terraform-providers/terraform-provider-aws/issues/4548

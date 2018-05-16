@@ -1,5 +1,6 @@
 variable "account_ids" {
-  type = "list"
+  default     = []
+  description = "If no account IDs are specified, applies to the master account"
 }
 
 variable "name" {
@@ -12,7 +13,7 @@ variable "budget_limit" {
 }
 
 variable "budget_notifications" {
-  type        = "list"
+  default     = []
   description = "A list of where to send notifications for budget alerts. Each list element should be a map with `protocol` and `endpoint` keys. More information about allowed values: https://docs.aws.amazon.com/sns/latest/api/API_Subscribe.html#API_Subscribe_RequestParameters"
 }
 
