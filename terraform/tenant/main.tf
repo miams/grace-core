@@ -17,7 +17,7 @@ resource "aws_budgets_budget" "budget" {
   }
 }
 
-# needed because, as of AWS provider v1.18.0, Terraform doesn't have a way to create budget notifications directly
+# workaround for https://github.com/terraform-providers/terraform-provider-aws/issues/4548
 
 locals {
   notification_cmd_prefix = <<EOF
