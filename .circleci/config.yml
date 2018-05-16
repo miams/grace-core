@@ -40,6 +40,12 @@ jobs:
           at: .
 
       - run:
+          name: Install Python
+          command: apk add --update python3
+      - run:
+          name: Install AWS CLI
+          command: pip3 install --upgrade awscli
+      - run:
           name: Deploy the full environment
           command: cd terraform/master && terraform apply -input=false -var-file=backend.tfvars -auto-approve
 
