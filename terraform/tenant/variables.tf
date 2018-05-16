@@ -11,8 +11,9 @@ variable "budget_limit" {
   description = "Budget limit, as an integer"
 }
 
-variable "budget_notification_topic_arn" {
-  type = "string"
+variable "budget_notifications" {
+  type        = "list"
+  description = "A list of where to send notifications for budget alerts. Each list element should be a map with `protocol` and `endpoint` keys. More information about allowed values: https://docs.aws.amazon.com/sns/latest/api/API_Subscribe.html#API_Subscribe_RequestParameters"
 }
 
 variable "warning_threshold_pct" {
