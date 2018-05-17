@@ -29,11 +29,17 @@ module "tenant_1_mgmt" {
 module "tenant_1" {
   source = "../tenant"
 
-  name                          = "tenant1"
-  budget_notification_topic_arn = "${aws_sns_topic.budget.arn}"
+  name = "tenant1"
 
   # arbitrary value
   budget_limit = "100"
+
+  budget_notifications = [
+    {
+      protocol = "email"
+      endpoint = "aidan.feldman+tenant1alerts@gsa.gov"
+    },
+  ]
 
   account_ids = [
     "${module.tenant_1_prod.account_id}",

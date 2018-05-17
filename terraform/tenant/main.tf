@@ -22,7 +22,7 @@ locals {
 aws budgets create-notification \
   --account-id ${aws_budgets_budget.budget.account_id} \
   --budget-name ${aws_budgets_budget.budget.name} \
-  --subscribers SubscriptionType=SNS,Address=${var.budget_notification_topic_arn} \
+  --subscribers SubscriptionType=SNS,Address=${aws_sns_topic.budget.arn} \
   --notification \
 EOF
 }
