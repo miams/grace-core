@@ -26,8 +26,8 @@ module "tenant_1_mgmt" {
   email = "jasong.miller+tenant1mgmt@gsa.gov"
 }
 
-module "tenant_1" {
-  source = "../tenant"
+module "tenant_1_budget" {
+  source = "../budget"
 
   name = "tenant1"
 

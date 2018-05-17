@@ -17,3 +17,10 @@ resource "aws_organizations_policy_attachment" "tenants" {
   # hard-coded while waiting for https://github.com/terraform-providers/terraform-provider-aws/pull/4207
   target_id = "ou-bgtv-tu73r6dm"
 }
+
+module "master_budget" {
+  source = "../budget"
+
+  name         = "master"
+  budget_limit = "3000"
+}
