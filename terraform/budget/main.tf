@@ -47,13 +47,22 @@ resource "null_resource" "budget_notifications" {
     command = "${local.notification_cmd_prefix} NotificationType=ACTUAL,ComparisonOperator=GREATER_THAN,Threshold=${var.budget_limit},ThresholdType=ABSOLUTE_VALUE"
   }
 
-  # when actual bill exceeds certain fraction of budget
-  provisioner "local-exec" {
-    command = "${local.notification_cmd_prefix} NotificationType=ACTUAL,ComparisonOperator=GREATER_THAN,Threshold=${var.warning_threshold_pct},ThresholdType=PERCENTAGE"
-  }
-
   # when forecasted bill exceeds budget
   provisioner "local-exec" {
     command = "${local.notification_cmd_prefix} NotificationType=FORECASTED,ComparisonOperator=GREATER_THAN,Threshold=${var.budget_limit},ThresholdType=ABSOLUTE_VALUE"
+  }
+}
+
+# when actual bill exceeds certain fractions of budget
+resource "null_resource" "budget_percents_notifications" {
+  count = "${length(var.warning_threshold_percents)}"
+
+  triggers {
+    budget_id = "${aws_budgets_budget.budget.id}"
+    prefix    = "${local.notification_cmd_prefix}"
+  }
+
+  provisioner "local-exec" {
+    command = "${local.notification_cmd_prefix} NotificationType=ACTUAL,ComparisonOperator=GREATER_THAN,Threshold=${var.warning_threshold_percents[count.index]},ThresholdType=PERCENTAGE"
   }
 }
