@@ -1,8 +1,6 @@
-data "aws_caller_identity" "current" {}
-
 # created on the master account, even though it corresponds to the member accounts
 resource "aws_budgets_budget" "budget" {
-  name         = "budget-${var.name}-monthly"
+  name         = "${var.name}-monthly"
   budget_type  = "COST"
   limit_amount = "${var.budget_limit}"
   limit_unit   = "USD"
@@ -22,7 +20,7 @@ resource "aws_budgets_budget" "budget" {
 locals {
   notification_cmd_prefix = <<EOF
 aws budgets create-notification \
-  --account-id ${data.aws_caller_identity.current.account_id} \
+  --account-id ${aws_budgets_budget.budget.account_id} \
   --budget-name ${aws_budgets_budget.budget.name} \
   --subscribers SubscriptionType=SNS,Address=${var.budget_notification_topic_arn} \
   --notification \
