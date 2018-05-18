@@ -31,9 +31,6 @@ module "tenant_1_budget" {
 
   name = "tenant1"
 
-  # arbitrary value
-  budget_limit = "100"
-
   budget_notifications = [
     {
       protocol = "email"

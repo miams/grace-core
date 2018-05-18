@@ -1,3 +1,7 @@
+data "aws_ssm_parameter" "budget" {
+  name = "${var.name}-budget"
+}
+
 locals {
   # workaround for trying to do conditionals with maps, since LinkedAccount can't be specified with an empty list
   # https://github.com/hashicorp/terraform/issues/12453#issuecomment-378033384
@@ -13,7 +17,7 @@ locals {
 resource "aws_budgets_budget" "budget" {
   name         = "${var.name}-monthly"
   budget_type  = "COST"
-  limit_amount = "${var.budget_limit}"
+  limit_amount = "${data.aws_ssm_parameter.budget.value}"
   limit_unit   = "USD"
 
   # far in the future
@@ -36,20 +40,15 @@ aws budgets create-notification \
 EOF
 }
 
-resource "null_resource" "budget_notifications" {
+# when forecasted bill exceeds budget
+resource "null_resource" "budget_forecast_notification" {
   triggers {
     budget_id = "${aws_budgets_budget.budget.id}"
     prefix    = "${local.notification_cmd_prefix}"
   }
 
-  # when actual bill exceeds budget
   provisioner "local-exec" {
-    command = "${local.notification_cmd_prefix} NotificationType=ACTUAL,ComparisonOperator=GREATER_THAN,Threshold=${var.budget_limit},ThresholdType=ABSOLUTE_VALUE"
-  }
-
-  # when forecasted bill exceeds budget
-  provisioner "local-exec" {
-    command = "${local.notification_cmd_prefix} NotificationType=FORECASTED,ComparisonOperator=GREATER_THAN,Threshold=${var.budget_limit},ThresholdType=ABSOLUTE_VALUE"
+    command = "${local.notification_cmd_prefix} NotificationType=FORECASTED,ComparisonOperator=GREATER_THAN,Threshold=100,ThresholdType=PERCENTAGE"
   }
 }
 

@@ -17,6 +17,9 @@ Also included: [an example of cross-VPC/account networking](terraform/networking
 
 Having been done once for the account, the following steps shouldn't need to be done again. Documenting here for reference.
 
+1. Install the dependencies.
+    * [AWS CLI](https://docs.aws.amazon.com/cli/latest/userguide/installing.html)
+    * [Terraform](https://www.terraform.io/)
 1. [Configure AWS](https://www.terraform.io/docs/providers/aws/#authentication) with credentials for the master AWS account locally.
 1. Bootstrap the account.
 
@@ -33,11 +36,23 @@ Having been done once for the account, the following steps shouldn't need to be 
     aws s3 cp <path/to/scp.json> s3://grace-config/service_control_policy.json
     ```
 
+1. Create a Parameter Store parameter for the master account budget.
+
+    ```sh
+    aws ssm put-parameter --type String --name master-budget --value <budget>
+    ```
+
 CircleCI will deploy changes to the environment going forward.
 
 ## Adding a member account
 
 For new tenants, or tenants that want an additional AWS account, create one or more new AWS accounts by:
+
+1. Create a Parameter Store parameter in the master account, either [through the Console](https://console.aws.amazon.com/systems-manager/parameters/?region=us-east-1), or by running:
+
+    ```sh
+    aws ssm put-parameter --type String --name <name>-budget --value <budget>
+    ```
 
 1. **Tenant or DevSecOps team:** Add a `tenant_<name>.tf` file to [`terraform/master/`](terraform/master).
     * See [`tenant_tenant1.tf`](terraform/master/tenant_tenant1.tf) for an example.
@@ -48,6 +63,13 @@ For new tenants, or tenants that want an additional AWS account, create one or m
 1. **DevSecOps team:** Move the new account to the Tenants Organizational Unit
     * This needs to be done manually, while waiting for [Terraform support](https://github.com/terraform-providers/terraform-provider-aws/pull/4405)
     * Easiest to do so through [the Console](https://console.aws.amazon.com/organizations/home)
+
+## Adjusting a budget
+
+After the paperwork is done:
+
+1. Change the value in [Parameter Store](https://console.aws.amazon.com/systems-manager/parameters/?region=us-east-1).
+1. [Rerun the latest `master` branch build in CircleCI.](https://circleci.com/gh/GSA/workflows/grace-core/tree/master)
 
 ## Security compliance
 
