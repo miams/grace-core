@@ -69,13 +69,6 @@ For new tenants, or tenants that want an additional AWS account, create one or m
 After the paperwork is done:
 
 1. Change the value in [Parameter Store](https://console.aws.amazon.com/systems-manager/parameters/?region=us-east-1).
-1. Recreate the budget. _This is needed because of some buggy behavior around the budgets / budget notifications._
-
-    ```sh
-    cd terraform/master
-    terraform taint -module=<name>_budget aws_budgets_budget.budget
-    ```
-
 1. [Rerun the latest `master` branch build in CircleCI.](https://circleci.com/gh/GSA/workflows/grace-core/tree/master)
 
 ## Security compliance

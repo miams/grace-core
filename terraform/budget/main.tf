@@ -40,20 +40,15 @@ aws budgets create-notification \
 EOF
 }
 
-resource "null_resource" "budget_notifications" {
+# when forecasted bill exceeds budget
+resource "null_resource" "budget_forecast_notification" {
   triggers {
     budget_id = "${aws_budgets_budget.budget.id}"
     prefix    = "${local.notification_cmd_prefix}"
   }
 
-  # when actual bill exceeds budget
   provisioner "local-exec" {
-    command = "${local.notification_cmd_prefix} NotificationType=ACTUAL,ComparisonOperator=GREATER_THAN,Threshold=${data.aws_ssm_parameter.budget.value},ThresholdType=ABSOLUTE_VALUE"
-  }
-
-  # when forecasted bill exceeds budget
-  provisioner "local-exec" {
-    command = "${local.notification_cmd_prefix} NotificationType=FORECASTED,ComparisonOperator=GREATER_THAN,Threshold=${data.aws_ssm_parameter.budget.value},ThresholdType=ABSOLUTE_VALUE"
+    command = "${local.notification_cmd_prefix} NotificationType=FORECASTED,ComparisonOperator=GREATER_THAN,Threshold=100,ThresholdType=PERCENTAGE"
   }
 }
 
