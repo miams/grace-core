@@ -39,6 +39,12 @@ CircleCI will deploy changes to the environment going forward.
 
 For new tenants, or tenants that want an additional AWS account, create one or more new AWS accounts by:
 
+1. Create a Parameter Store parameter in the master account, either [through the Console](https://console.aws.amazon.com/systems-manager/parameters/?region=us-east-1), or by running:
+
+    ```sh
+    aws ssm put-parameter --type String --name <name>-budget --value <budget>
+    ```
+
 1. **Tenant or DevSecOps team:** Add a `tenant_<name>.tf` file to [`terraform/master/`](terraform/master).
     * See [`tenant_tenant1.tf`](terraform/master/tenant_tenant1.tf) for an example.
     * The `name` and `email` for each `member_account` should be unique.

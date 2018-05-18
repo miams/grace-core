@@ -26,13 +26,15 @@ module "tenant_1_mgmt" {
   email = "jasong.miller+tenant1mgmt@gsa.gov"
 }
 
+data "aws_ssm_parameter" "tenant_1_budget" {
+  name = "tenant1-budget"
+}
+
 module "tenant_1_budget" {
   source = "../budget"
 
-  name = "tenant1"
-
-  # arbitrary value
-  budget_limit = "100"
+  name         = "tenant1"
+  budget_limit = "${data.aws_ssm_parameter.tenant_1_budget.value}"
 
   budget_notifications = [
     {
