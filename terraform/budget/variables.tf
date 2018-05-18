@@ -7,11 +7,6 @@ variable "name" {
   type = "string"
 }
 
-variable "budget_limit" {
-  type        = "string"
-  description = "Budget limit, as an integer"
-}
-
 variable "budget_notifications" {
   default     = []
   description = "A list of where to send notifications for budget alerts. Each list element should be a map with `protocol` and `endpoint` keys. More information about allowed values: https://docs.aws.amazon.com/sns/latest/api/API_Subscribe.html#API_Subscribe_RequestParameters"

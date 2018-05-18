@@ -17,6 +17,9 @@ Also included: [an example of cross-VPC/account networking](terraform/networking
 
 Having been done once for the account, the following steps shouldn't need to be done again. Documenting here for reference.
 
+1. Install the dependencies.
+    * [AWS CLI](https://docs.aws.amazon.com/cli/latest/userguide/installing.html)
+    * [Terraform](https://www.terraform.io/)
 1. [Configure AWS](https://www.terraform.io/docs/providers/aws/#authentication) with credentials for the master AWS account locally.
 1. Bootstrap the account.
 
@@ -31,6 +34,12 @@ Having been done once for the account, the following steps shouldn't need to be 
 
     ```sh
     aws s3 cp <path/to/scp.json> s3://grace-config/service_control_policy.json
+    ```
+
+1. Create a Parameter Store parameter for the master account budget.
+
+    ```sh
+    aws ssm put-parameter --type String --name master-budget --value <budget>
     ```
 
 CircleCI will deploy changes to the environment going forward.

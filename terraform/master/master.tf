@@ -21,6 +21,5 @@ resource "aws_organizations_policy_attachment" "tenants" {
 module "master_budget" {
   source = "../budget"
 
-  name         = "master"
-  budget_limit = "3000"
+  name = "master"
 }
