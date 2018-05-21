@@ -1,4 +1,4 @@
-variable "subnet_id" {
+variable "gateway_subnet_id" {
   type = "string"
 }
 
