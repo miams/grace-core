@@ -6,7 +6,7 @@ The repo deploys 4 VPCs: management, production, development and staging. Each V
 
 The Cloud Formation template for the AWS Web Application Firewall (WAF) was
 downloaded from [https://s3.amazonaws.com/solutions-reference/aws-waf-security-automations/latest/aws-waf-security-automations-alb.template](https://s3.amazonaws.com/solutions-reference/aws-waf-security-automations/latest/aws-waf-security-automations-alb.template).
-Full impletation guide for the AWS WAF Security Automations are available at [https://docs.aws.amazon.com/solutions/latest/aws-waf-security-automations](https://docs.aws.amazon.com/solutions/latest/aws-waf-security-automations).
+Impletation guide for the AWS WAF Security Automations is available at [https://docs.aws.amazon.com/solutions/latest/aws-waf-security-automations](https://docs.aws.amazon.com/solutions/latest/aws-waf-security-automations).
 
 The repo is deployable out of the box with the proper AWS programmatic credentials and a recent (0.11.3 as of this writing) version of [Terraform](https://www.terraform.io).
 
