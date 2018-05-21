@@ -1,9 +1,5 @@
-variable "default_region" {
-  default = "us-east-1"
-}
-
-variable "profile" {
-  description = "Enter AWS Profile youwant to use:::"
+variable "subnet_id" {
+  type = "string"
 }
 
 variable "TransitVpcBucketName" {
