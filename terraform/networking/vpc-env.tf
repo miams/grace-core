@@ -21,24 +21,14 @@ module "vpc_env" {
   }
 }
 
-resource "aws_vpn_gateway" "env_vpn_gateway" {
-  vpc_id   = "${module.vpc_env.vpc_id}"
-  provider = "aws.env"
-}
+module "env_spoke" {
+  source = "../spoke"
 
-resource "aws_customer_gateway" "env_customer_gateway" {
-  bgp_asn    = 65000
-  ip_address = "${var.env_customer_gateway_ip}"
-  type       = "ipsec.1"
-  provider   = "aws.env"
-}
+  providers = {
+    aws = "aws.env"
+  }
 
-resource "aws_vpn_connection" "env_vpn_connection" {
-  vpn_gateway_id      = "${aws_vpn_gateway.env_vpn_gateway.id}"
-  customer_gateway_id = "${aws_customer_gateway.env_customer_gateway.id}"
-  type                = "ipsec.1"
-  static_routes_only  = false
-  provider            = "aws.env"
+  gateway_subnet_id = "${module.vpc_env.private_subnets[0]}"
 }
 
 resource "aws_vpc_peering_connection" "peer_vpc_env" {
