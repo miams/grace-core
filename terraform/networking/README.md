@@ -19,4 +19,7 @@ terraform plan
 terraform apply
 ```
 
-Note that this repo does not set up a remote backend. If you wish to use a remote backend, you'll need to add the Terraform code to do so.
+Notes:
+
+* The VPN connections take a long time to be set up (6+ minutes).
+* This repo does not set up a remote backend. If you wish to use a remote backend, you'll need to add the Terraform code to do so.
