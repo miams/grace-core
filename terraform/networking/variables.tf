@@ -79,17 +79,17 @@ variable "dev_customer_gateway_ip" {
 }
 
 variable "mgmt_access_log_bucket" {
-  default = "mgmt_alb_access_log"
+  default = "mgmt-waf-access-log"
 }
 
 variable "dev_access_log_bucket" {
-  default = "dev_alb_access_log"
+  default = "dev-waf-access-log"
 }
 
 variable "prod_access_log_bucket" {
-  default = "prod_alb_access_log"
+  default = "prod-waf-access-log"
 }
 
 variable "staging_access_log_bucket" {
-  default = "staging_alb_access_log"
+  default = "staging-waf-access-log"
 }
