@@ -14,7 +14,7 @@ resource "aws_cloudformation_stack" "staging_waf" {
   provider = "aws.staging"
 
   parameters {
-    AccessLogBucket                        = "${aws_s3_bucket.dev_access_log_bucket.id}"
+    AccessLogBucket                        = "${aws_s3_bucket.staging_access_log_bucket.id}"
     SqlInjectionProtectionParam            = "yes"
     CrossSiteScriptingProtectionParam      = "yes"
     ActivateHttpFloodProtectionParam       = "yes"

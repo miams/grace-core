@@ -22,7 +22,7 @@ resource "aws_cloudformation_stack" "dev_waf" {
     ActivateReputationListsProtectionParam = "yes"
     ActivateBadBotProtectionParam          = "yes"
     SendAnonymousUsageData                 = "no"
-    RequestThreshold                       = 200
+    RequestThreshold                       = 2000
     ErrorThreshold                         = 50
     WAFBlockPeriod                         = 240
   }

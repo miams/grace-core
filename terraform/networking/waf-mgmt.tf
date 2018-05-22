@@ -14,7 +14,7 @@ resource "aws_cloudformation_stack" "mgmt_waf" {
   provider = "aws.mgmt"
 
   parameters {
-    AccessLogBucket                        = "${aws_s3_bucket.dev_access_log_bucket.id}"
+    AccessLogBucket                        = "${aws_s3_bucket.mgmt_access_log_bucket.id}"
     SqlInjectionProtectionParam            = "yes"
     CrossSiteScriptingProtectionParam      = "yes"
     ActivateHttpFloodProtectionParam       = "yes"
