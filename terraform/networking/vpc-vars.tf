@@ -30,14 +30,14 @@ variable "mgmt_az_2" {
   default = "us-east-1f"
 }
 
+variable "mgmt_cidr" {
+  default = "10.0.0.0/16"
+}
+
+variable "env_cidr" {
+  default = "10.1.0.0/16"
+}
+
 variable "iam_role_name" {
   default = "OrganizationAccountAccessRole"
-}
-
-variable "mgmt_customer_gateway_ip" {
-  default = "172.0.0.1"
-}
-
-variable "env_customer_gateway_ip" {
-  default = "172.0.0.2"
 }

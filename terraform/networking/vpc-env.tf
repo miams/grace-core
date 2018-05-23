@@ -7,38 +7,27 @@ module "vpc_env" {
   }
 
   azs                  = ["${var.env_az_1}", "${var.env_az_2}"]
-  cidr                 = "10.1.0.0/16"
+  cidr                 = "${var.env_cidr}"
   enable_dns_hostnames = true
   enable_dns_support   = true
   enable_nat_gateway   = false
-  name                 = "PROD-devsecops-networking-test"
-  public_subnets       = ["10.1.1.0/24", "10.1.2.0/24"]
-  private_subnets      = ["10.1.3.0/24", "10.1.4.0/24"]
+  name                 = "ENV-devsecops-networking-test"
+  public_subnets       = ["${cidrsubnet(var.env_cidr, 8, 1)}", "${cidrsubnet(var.env_cidr, 8, 2)}"]
+  private_subnets      = ["${cidrsubnet(var.env_cidr, 8, 3)}", "${cidrsubnet(var.env_cidr, 8, 4)}"]
 
   tags = {
-    Terraform   = "true"
-    Environment = "Prod"
+    Terraform = "true"
   }
 }
 
-resource "aws_vpn_gateway" "env_vpn_gateway" {
-  vpc_id   = "${module.vpc_env.vpc_id}"
-  provider = "aws.env"
-}
+module "env_spoke" {
+  source = "../spoke"
 
-resource "aws_customer_gateway" "env_customer_gateway" {
-  bgp_asn    = 65000
-  ip_address = "${var.env_customer_gateway_ip}"
-  type       = "ipsec.1"
-  provider   = "aws.env"
-}
+  providers = {
+    aws = "aws.env"
+  }
 
-resource "aws_vpn_connection" "env_vpn_connection" {
-  vpn_gateway_id      = "${aws_vpn_gateway.env_vpn_gateway.id}"
-  customer_gateway_id = "${aws_customer_gateway.env_customer_gateway.id}"
-  type                = "ipsec.1"
-  static_routes_only  = false
-  provider            = "aws.env"
+  gateway_subnet_id = "${module.vpc_env.private_subnets[0]}"
 }
 
 resource "aws_vpc_peering_connection" "peer_vpc_env" {
@@ -63,6 +52,6 @@ resource "aws_vpc_peering_connection" "peer_vpc_env" {
   # }
 
   tags {
-    Side = "Requester-Prod"
+    Side = "Requester"
   }
 }

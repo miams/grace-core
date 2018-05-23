@@ -5,8 +5,7 @@ resource "aws_s3_bucket" "env_access_log_bucket" {
   force_destroy = true
 
   tags {
-    Name        = "WAF ALB Access Logs"
-    Environment = "Prod"
+    Name = "WAF ALB Access Logs"
   }
 }
 
