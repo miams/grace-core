@@ -21,21 +21,14 @@ module "vpc_mgmt" {
   }
 }
 
-resource "aws_vpn_gateway" "mgmt_vpn_gateway" {
-  vpc_id = "${module.vpc_mgmt.vpc_id}"
-}
+module "mgmt_spoke" {
+  source = "../spoke"
 
-resource "aws_customer_gateway" "mgmt_customer_gateway" {
-  bgp_asn    = 65000
-  ip_address = "${var.mgmt_customer_gateway_ip}"
-  type       = "ipsec.1"
-}
+  providers = {
+    aws = "aws.mgmt"
+  }
 
-resource "aws_vpn_connection" "mgmt_vpn_connection" {
-  vpn_gateway_id      = "${aws_vpn_gateway.mgmt_vpn_gateway.id}"
-  customer_gateway_id = "${aws_customer_gateway.mgmt_customer_gateway.id}"
-  type                = "ipsec.1"
-  static_routes_only  = false
+  gateway_subnet_id = "${module.vpc_mgmt.private_subnets[0]}"
 }
 
 # The accepter resources below are commented out because currently, these VPCs are all in the same account. If the VPC's are in separate accounts, then enable these resources and look at the peer connections in the other files to make sure they are set to auto_accept = false.

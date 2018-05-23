@@ -34,14 +34,6 @@ variable "iam_role_name" {
   default = "OrganizationAccountAccessRole"
 }
 
-variable "mgmt_customer_gateway_ip" {
-  default = "172.0.0.1"
-}
-
-variable "env_customer_gateway_ip" {
-  default = "172.0.0.2"
-}
-
 variable "mgmt_access_log_bucket" {
   default = "mgmt-waf-access-log"
 }
