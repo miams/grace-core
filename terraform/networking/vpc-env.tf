@@ -7,13 +7,13 @@ module "vpc_env" {
   }
 
   azs                  = ["${var.env_az_1}", "${var.env_az_2}"]
-  cidr                 = "10.1.0.0/16"
+  cidr                 = "${var.env_cidr}"
   enable_dns_hostnames = true
   enable_dns_support   = true
   enable_nat_gateway   = false
   name                 = "ENV-devsecops-networking-test"
-  public_subnets       = ["10.1.1.0/24", "10.1.2.0/24"]
-  private_subnets      = ["10.1.3.0/24", "10.1.4.0/24"]
+  public_subnets       = ["${cidrsubnet(var.env_cidr, 8, 1)}", "${cidrsubnet(var.env_cidr, 8, 2)}"]
+  private_subnets      = ["${cidrsubnet(var.env_cidr, 8, 3)}", "${cidrsubnet(var.env_cidr, 8, 4)}"]
 
   tags = {
     Terraform = "true"

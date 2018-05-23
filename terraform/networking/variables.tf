@@ -30,6 +30,14 @@ variable "mgmt_az_2" {
   default = "us-east-1f"
 }
 
+variable "mgmt_cidr" {
+  default = "10.0.0.0/16"
+}
+
+variable "env_cidr" {
+  default = "10.1.0.0/16"
+}
+
 variable "iam_role_name" {
   default = "OrganizationAccountAccessRole"
 }
