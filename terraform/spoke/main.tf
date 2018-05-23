@@ -23,6 +23,19 @@ resource "aws_vpn_gateway" "Transit-Spoke-VGW" {
     Name               = "Transit-Spoke-VGW"
     "transitvpc:spoke" = "true"
   }
+
+  # changing the tag will cause the Poller to drop the VPN connection
+  # https://docs.aws.amazon.com/solutions/latest/cisco-based-transit-vpc/components.html
+  provisioner "local-exec" {
+    when = "destroy"
+
+    # create-tags won't fail if the resource isn't reachable, so try and retrieve the Gateway beforehand to ensure it is
+    # TODO assume role
+    command = <<EOF
+      aws ec2 describe-vpn-gateways --vpn-gateway-ids ${self.id} && \
+      aws ec2 create-tags --resources ${self.id} --tags Key=transitvpc:spoke,Value=to-delete
+    EOF
+  }
 }
 
 resource "aws_cloudformation_stack" "Transit-Spoke-Stack" {
