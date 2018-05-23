@@ -1,7 +1,8 @@
 resource "aws_s3_bucket" "mgmt_access_log_bucket" {
-  bucket   = "${var.mgmt_access_log_bucket}"
-  acl      = "private"
-  provider = "aws.mgmt"
+  bucket        = "${var.mgmt_access_log_bucket}"
+  acl           = "private"
+  provider      = "aws.mgmt"
+  force_destroy = true
 
   tags {
     Name        = "WAF ALB Access Logs"
@@ -11,7 +12,8 @@ resource "aws_s3_bucket" "mgmt_access_log_bucket" {
 
 # Policy to allow ALB in us-east-1 region to access ALB
 resource "aws_s3_bucket_policy" "mgmt_access_log_bucket_policy" {
-  bucket = "${aws_s3_bucket.mgmt_access_log_bucket.id}"
+  bucket   = "${aws_s3_bucket.mgmt_access_log_bucket.id}"
+  provider = "aws.mgmt"
 
   policy = <<POLICY
 {
@@ -22,7 +24,7 @@ resource "aws_s3_bucket_policy" "mgmt_access_log_bucket_policy" {
                 "s3:PutObject"
             ],
             "Effect": "Allow",
-            "Resource": "${aws_s3_bucket.mgmt_access_log_bucket.arn}/*",
+            "Resource": "arn:aws:s3:::${var.mgmt_access_log_bucket}/*",
             "Principal": {
                 "AWS": [
                     "127311923021"
