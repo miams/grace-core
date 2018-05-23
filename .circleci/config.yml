@@ -6,7 +6,7 @@ jobs:
     steps:
       - checkout
       - run:
-          name: Set up Terraform
+          name: Set up Terraform master
           # https://discuss.circleci.com/t/create-separate-steps-jobs-for-pr-forks-versus-branches/13419/2
           command: |
             cd terraform/master
@@ -17,7 +17,7 @@ jobs:
               terraform init -backend-config=backend.tfvars -input=false
             fi
       - run:
-          name: Validate Terraform config
+          name: Validate Terraform master config
           command: |
             cd terraform/master
             if [[ $(echo "$CIRCLE_BRANCH" | grep -c "pull") -gt 0 ]]; then
@@ -26,6 +26,17 @@ jobs:
             else
               terraform plan -input=false -var-file=backend.tfvars
             fi
+
+      - run:
+          name: Set up Terraform for networking example
+          command: |
+            cd terraform/networking
+            terraform init -backend=false -input=false
+      - run:
+          name: Validate Terraform networking config
+          command: |
+            cd terraform/networking
+            terraform validate -check-variables=false
 
       - persist_to_workspace:
           root: .
