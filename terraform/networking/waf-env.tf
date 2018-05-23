@@ -4,8 +4,7 @@ resource "aws_s3_bucket" "env_access_log_bucket" {
   provider = "aws.env"
 
   tags {
-    Name        = "WAF ALB Access Logs"
-    Environment = "Prod"
+    Name = "WAF ALB Access Logs"
   }
 }
 
