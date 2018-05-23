@@ -1,7 +1,7 @@
-resource "aws_s3_bucket" "prod_access_log_bucket" {
-  bucket   = "${var.prod_access_log_bucket}"
+resource "aws_s3_bucket" "env_access_log_bucket" {
+  bucket   = "${var.env_access_log_bucket}"
   acl      = "private"
-  provider = "aws.prod"
+  provider = "aws.env"
 
   tags {
     Name        = "WAF ALB Access Logs"
@@ -9,12 +9,12 @@ resource "aws_s3_bucket" "prod_access_log_bucket" {
   }
 }
 
-resource "aws_cloudformation_stack" "prod_waf" {
+resource "aws_cloudformation_stack" "env_waf" {
   name     = "waf-alb-stack"
-  provider = "aws.prod"
+  provider = "aws.env"
 
   parameters {
-    AccessLogBucket                        = "${aws_s3_bucket.prod_access_log_bucket.id}"
+    AccessLogBucket                        = "${aws_s3_bucket.env_access_log_bucket.id}"
     SqlInjectionProtectionParam            = "yes"
     CrossSiteScriptingProtectionParam      = "yes"
     ActivateHttpFloodProtectionParam       = "yes"

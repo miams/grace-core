@@ -3,11 +3,11 @@ provider "aws" {
 }
 
 provider "aws" {
-  alias  = "prod"
-  region = "${var.prod_region}"
+  alias  = "env"
+  region = "${var.env_region}"
 
   assume_role {
-    role_arn = "arn:aws:iam::${var.prod_account_id}:role/${var.iam_role_name}"
+    role_arn = "arn:aws:iam::${var.env_account_id}:role/${var.iam_role_name}"
   }
 }
 
@@ -24,8 +24,8 @@ data "aws_caller_identity" "default" {
   provider = "aws"
 }
 
-data "aws_caller_identity" "prod" {
-  provider = "aws.prod"
+data "aws_caller_identity" "env" {
+  provider = "aws.env"
 }
 
 data "aws_caller_identity" "mgmt" {

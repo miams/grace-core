@@ -41,11 +41,11 @@ resource "aws_vpn_connection" "mgmt_vpn_connection" {
 # The accepter resources below are commented out because currently, these VPCs are all in the same account. If the VPC's are in separate accounts, then enable these resources and look at the peer connections in the other files to make sure they are set to auto_accept = false.
 #
 
-resource "aws_vpc_peering_connection_accepter" "peer_vpc_prod" {
-  vpc_peering_connection_id = "${aws_vpc_peering_connection.peer_vpc_prod.id}"
+resource "aws_vpc_peering_connection_accepter" "peer_vpc_env" {
+  vpc_peering_connection_id = "${aws_vpc_peering_connection.peer_vpc_env.id}"
   auto_accept               = true
 
   tags {
-    Side = "Accepter for prod"
+    Side = "Accepter for the environment"
   }
 }
