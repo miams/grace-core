@@ -9,6 +9,31 @@ resource "aws_s3_bucket" "mgmt_access_log_bucket" {
   }
 }
 
+# Policy to allow ALB in us-east-1 region to access ALB
+resource "aws_s3_bucket_policy" "mgmt_access_log_bucket_policy" {
+  bucket = "${aws_s3_bucket.mgmt_access_log_bucket.id}"
+
+  policy = <<POLICY
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Action": [
+                "s3:PutObject"
+            ],
+            "Effect": "Allow",
+            "Resource": "${aws_s3_bucket.mgmt_access_log_bucket.arn}/*",
+            "Principal": {
+                "AWS": [
+                    "127311923021"
+                ]
+            }
+        }
+    ]
+}
+POLICY
+}
+
 resource "aws_cloudformation_stack" "mgmt_waf" {
   name     = "waf-alb-stack"
   provider = "aws.mgmt"
