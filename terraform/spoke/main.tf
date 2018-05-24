@@ -1,5 +1,5 @@
 data "aws_subnet" "selected" {
-  id = "${var.gateway_subnet_id}"
+  id = "${var.gateway_subnet_ids[0]}"
 }
 
 resource "aws_route_table" "Priv-Route" {
@@ -12,7 +12,9 @@ resource "aws_route_table" "Priv-Route" {
 }
 
 resource "aws_route_table_association" "route_asso" {
-  subnet_id      = "${var.gateway_subnet_id}"
+  count = "${length(var.gateway_subnet_ids)}"
+
+  subnet_id      = "${var.gateway_subnet_ids[count.index]}"
   route_table_id = "${aws_route_table.Priv-Route.id}"
 }
 
