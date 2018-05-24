@@ -1,19 +1,5 @@
 data "aws_subnet" "selected" {
-  id = "${var.gateway_subnet_id}"
-}
-
-resource "aws_route_table" "Priv-Route" {
-  vpc_id           = "${data.aws_subnet.selected.vpc_id}"
-  propagating_vgws = ["${aws_vpn_gateway.Transit-Spoke-VGW.id}"]
-
-  tags {
-    Name = "Priv-Route"
-  }
-}
-
-resource "aws_route_table_association" "route_asso" {
-  subnet_id      = "${var.gateway_subnet_id}"
-  route_table_id = "${aws_route_table.Priv-Route.id}"
+  id = "${var.gateway_subnet_ids[0]}"
 }
 
 resource "aws_vpn_gateway" "Transit-Spoke-VGW" {
