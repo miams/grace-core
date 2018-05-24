@@ -34,7 +34,7 @@ module "tenant_1_budget" {
   budget_notifications = [
     {
       protocol = "email"
-      endpoint = "aidan.feldman+tenant1alerts@gsa.gov"
+      endpoint = "jasong.miller+tenant1alerts@gsa.gov"
     },
   ]
 

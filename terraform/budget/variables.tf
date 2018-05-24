@@ -17,7 +17,7 @@ locals {
   default_budget_notifications = [
     {
       protocol = "email"
-      endpoint = "aidan.feldman+devsecops-finance@gsa.gov"
+      endpoint = "devsecops-core@gsa.gov"
     },
   ]
 
