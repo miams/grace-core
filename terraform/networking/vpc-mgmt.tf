@@ -28,7 +28,8 @@ module "mgmt_spoke" {
     aws = "aws.mgmt"
   }
 
-  gateway_subnet_ids = "${module.vpc_mgmt.private_subnets}"
+  num_gateway_subnets = "2"
+  gateway_subnet_ids  = "${module.vpc_mgmt.private_subnets}"
 }
 
 # The accepter resources below are commented out because currently, these VPCs are all in the same account. If the VPC's are in separate accounts, then enable these resources and look at the peer connections in the other files to make sure they are set to auto_accept = false.
