@@ -26,7 +26,7 @@ resource "aws_s3_bucket_policy" "env_access_log_bucket_policy" {
             "Resource": "arn:aws:s3:::${var.env_access_log_bucket}/*",
             "Principal": {
                 "AWS": [
-                    "127311923021"
+                    "${var.aws_alb_service_account}"
                 ]
             }
         }

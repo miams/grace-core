@@ -32,7 +32,7 @@ env_alb_key_file
 ```
 
 To deploy, check out a copy of the repo using your favorite git client. Set the
-above variables in a `terraform\netowrking\terraform.tfvars` file.  Then:
+above variables in a `terraform\networking\terraform.tfvars` file.  Then:
 
 ```sh
 cd terraform/networking

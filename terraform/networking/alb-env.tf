@@ -12,10 +12,16 @@ resource "aws_security_group" "env_alb_sg" {
   }
 
   egress {
-    from_port   = 0
-    to_port     = 0
-    protocol    = "-1"
-    cidr_blocks = ["${var.gsa_internal_cidr_block}"]
+    from_port = 0
+    to_port   = 0
+    protocol  = "-1"
+
+    cidr_blocks = ["${
+      concat(
+        module.vpc_env.private_subnets_cidr_blocks,
+        module.vpc_env.public_subnets_cidr_blocks
+      )
+    }"]
   }
 }
 
