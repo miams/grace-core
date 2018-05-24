@@ -10,8 +10,4 @@ variable "env_access_log_bucket" {
   description = "Name of S3 bucket for env account ALB access logs. Default: env-waf-access-log"
 }
 
-variable "aws_alb_service_account" {
-  type        = "string"
-  default     = "127311923021"
-  description = "AWS account ID for ALB access to access log S3 bucket. Default: 127311923021 (us-east-1)"
-}
+data "aws_elb_service_account" "main" {}
