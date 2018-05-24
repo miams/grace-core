@@ -1,6 +1,6 @@
 variable "num_gateway_subnets" {
   type        = "string"
-  description = "The number of gatway_subnet_ids. Workaround for https://github.com/hashicorp/terraform/issues/10857."
+  description = "The number of gaetway_subnet_ids. Workaround for https://github.com/hashicorp/terraform/issues/10857."
 }
 
 variable "gateway_subnet_ids" {
