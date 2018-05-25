@@ -1,6 +1,6 @@
 locals {
   spoke_account_arns = [
-    "arn:aws:iam::${data.aws_caller_identity.current.account_id}:root",
+    "arn:aws:iam::${data.aws_caller_identity.master.account_id}:root",
     "${module.devsecops_test_3.root_arn}",
     "${module.tenant_1_dev.root_arn}",
     "${module.tenant_1_mgmt.root_arn}",
