@@ -28,7 +28,7 @@ resource "aws_cloudformation_stack" "transit_vpc" {
   capabilities = ["CAPABILITY_IAM"]
 
   # https://docs.aws.amazon.com/solutions/latest/cisco-based-transit-vpc/templates.html
-  template_body = "${file("${path.module}/files/transit_vpc_template.json")}"
+  template_body = "${file("${path.module}/files/transit-vpc-primary-account.template.json")}"
 
   parameters {
     KeyName    = "${var.transit_vpc_key_name}"
