@@ -11,3 +11,10 @@ module "broker_test" {
   name  = "Service Broker account"
   email = "aidan.feldman+broker@gsa.gov"
 }
+
+module "devsecops_test_3" {
+  source = "../member_account"
+
+  name  = "gsa-devsecops-test3"
+  email = "gsa-devsecops-test3@saic.com"
+}
