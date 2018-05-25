@@ -23,7 +23,7 @@ resource "aws_cloudformation_stack" "transit_vpc" {
     # arbitrary, since it will be overwritten below
     AccountId = "${module.tenant_1_dev.account_id}"
 
-    KeyName    = "Cisco-CSR-Transit-VPC-Grace"
+    KeyName    = "${var.transit_vpc_key_name}"
     PubSubnet1 = "${var.transit_vpc_subnet_1_cidr}"
     PubSubnet2 = "${var.transit_vpc_subnet_2_cidr}"
     VpcCidr    = "${var.transit_vpc_cidr}"
@@ -51,7 +51,7 @@ locals {
 resource "aws_s3_bucket_policy" "transit_vpc" {
   provider = "aws.netops"
 
-  bucket = "${aws_cloudformation_stack.transit_vpc.outputs.ConfigS3Bucket}"
+  bucket = "${aws_cloudformation_stack.transit_vpc.outputs["ConfigS3Bucket"]}"
 
   policy = <<POLICY
 {
@@ -67,7 +67,7 @@ resource "aws_s3_bucket_policy" "transit_vpc" {
                 "s3:PutObject",
                 "s3:PutObjectAcl"
             ],
-            "Resource": "arn:aws:s3:::${aws_cloudformation_stack.transit_vpc.outputs.ConfigS3Bucket}/${aws_cloudformation_stack.transit_vpc.outputs.BucketPrefix}*"
+            "Resource": "arn:aws:s3:::${aws_cloudformation_stack.transit_vpc.outputs["ConfigS3Bucket"]}/${aws_cloudformation_stack.transit_vpc.outputs["BucketPrefix"]}*"
         }
     ]
 }

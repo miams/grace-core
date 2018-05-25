@@ -21,3 +21,8 @@ variable "transit_vpc_subnet_2_cidr" {
   default     = "100.64.127.240/28"
   description = "Default value provided by AWS"
 }
+
+variable "transit_vpc_key_name" {
+  default     = "Cisco-CSR-Transit-VPC-Grace"
+  description = "EC2 key pair name for logging in to the Cisco CSR instances"
+}
