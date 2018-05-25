@@ -1,3 +1,7 @@
+# corresponds to
+# https://docs.aws.amazon.com/solutions/latest/cisco-based-transit-vpc/step2.html
+
+# not using member_account module since the NetOps account isn't part of the SAIC AWS Organization
 provider "aws" {
   alias = "netops"
 
@@ -26,8 +30,20 @@ resource "aws_cloudformation_stack" "transit_vpc" {
   }
 
   lifecycle {
+    # since the CSR needs to be manually connected to the GSA network, be careful not to destroy it
     prevent_destroy = true
   }
+}
+
+locals {
+  spoke_account_arns = [
+    "arn:aws:iam::${data.aws_caller_identity.current.account_id}:root",
+    "${module.devsecops_test_3.root_arn}",
+    "${module.tenant_1_dev.root_arn}",
+    "${module.tenant_1_mgmt.root_arn}",
+    "${module.tenant_1_prod.root_arn}",
+    "${module.tenant_1_staging.root_arn}",
+  ]
 }
 
 # This will override the bucket policy created by the CloudFormation stack. Needed because only one account ID can be passed in as a parameter.
@@ -44,14 +60,7 @@ resource "aws_s3_bucket_policy" "transit_vpc" {
         {
             "Effect": "Allow",
             "Principal": {
-                "AWS": [
-                    "arn:aws:iam::${module.tenant_1_staging.account_id}:root",
-                    "arn:aws:iam::${module.devsecops_test_3.account_id}:root",
-                    "arn:aws:iam::${module.tenant_1_mgmt.account_id}:root",
-                    "arn:aws:iam::${module.tenant_1_prod.account_id}:root",
-                    "arn:aws:iam::${module.tenant_1_dev.account_id}:root",
-                    "arn:aws:iam::${data.aws_caller_identity.current.account_id}:root"
-                ]
+                "AWS": ${jsonencode(local.spoke_account_arns)}
             },
             "Action": [
                 "s3:GetObject",
