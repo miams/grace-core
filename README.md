@@ -19,6 +19,8 @@ Also included:
 
 ## Adding a member account
 
+[_Workflow diagram_](https://docs.google.com/drawings/d/1VA45f92EjzxGs0HCtqEdDhXOFROx3PPnD1fZ2-9d-AA/edit)
+
 For new tenants, or tenants that want an additional AWS account, create one or more new AWS accounts by:
 
 1. Create a Parameter Store parameter in the master account, either [through the Console](https://console.aws.amazon.com/systems-manager/parameters/?region=us-east-1), or by running:
@@ -41,6 +43,8 @@ For new tenants, or tenants that want an additional AWS account, create one or m
     * Easiest to do so through [the Console](https://console.aws.amazon.com/organizations/home)
 1. If the account should be connected to the GSA network:
     1. **DevSecOps team:** Follow [these instructions](https://docs.aws.amazon.com/solutions/latest/cisco-based-transit-vpc/appendix-c.html) to modify [the KMS Key Policy](https://console.aws.amazon.com/iam/home?region=us-east-1#/encryptionKeys/us-east-1) in the NetOps account, ensuring that all the `spoke_account_arns` output in CircleCI are in there.
+
+It's recommended that tenants start with (or borrow heavily from) [devsecops-example](https://github.com/GSA/devsecops-example) for their infrastructure as code.
 
 ## Adjusting a budget
 
