@@ -1,19 +1,3 @@
-variable "transit_vpc_account_id" {
-  type = "string"
-}
-
-variable "transit_vpc_cidr" {
-  default = "100.64.127.224/27"
-}
-
-variable "transit_vpc_subnet_1_cidr" {
-  default = "100.64.127.224/28"
-}
-
-variable "transit_vpc_subnet_2_cidr" {
-  default = "100.64.127.240/28"
-}
-
 provider "aws" {
   alias = "netops"
 
