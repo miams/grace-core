@@ -8,6 +8,7 @@ This repository contains the core Terraform configuration for the [GRACE](https:
 * Setting up the [Service Control Policy](https://github.com/GSA/security-benchmarks/tree/master/scp) for tenants
 * Creating member accounts
 * Creating groupings of member accounts ("tenants"), with a corresponding Budget and alerts
+* Setting up the [Transit VPC](https://docs.aws.amazon.com/solutions/latest/cisco-based-transit-vpc/welcome.html)
 
 Note that the patterns in this repository are usable in other contexts, but this code can't be used directly elsewhere without tweaks, due to things like AWS account emails needing to be unique.
 
