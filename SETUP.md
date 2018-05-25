@@ -29,4 +29,7 @@ Having been done once for the current master account, the following steps should
     aws ssm put-parameter --type String --name master-budget --value <budget>
     ```
 
+1. Run a build on the `master` branch of CircleCI.
+1. Connect the Cisco CSR to the GSA network.
+
 CircleCI will deploy changes to the environment going forward.

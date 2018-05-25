@@ -1,3 +1,14 @@
+locals {
+  spoke_account_arns = [
+    "arn:aws:iam::${data.aws_caller_identity.current.account_id}:root",
+    "${module.devsecops_test_3.root_arn}",
+    "${module.tenant_1_dev.root_arn}",
+    "${module.tenant_1_mgmt.root_arn}",
+    "${module.tenant_1_prod.root_arn}",
+    "${module.tenant_1_staging.root_arn}",
+  ]
+}
+
 # corresponds to
 # https://docs.aws.amazon.com/solutions/latest/cisco-based-transit-vpc/step2.html
 
@@ -30,17 +41,6 @@ resource "aws_cloudformation_stack" "transit_vpc" {
     # since the CSR needs to be manually connected to the GSA network, be careful not to destroy it
     prevent_destroy = true
   }
-}
-
-locals {
-  spoke_account_arns = [
-    "arn:aws:iam::${data.aws_caller_identity.current.account_id}:root",
-    "${module.devsecops_test_3.root_arn}",
-    "${module.tenant_1_dev.root_arn}",
-    "${module.tenant_1_mgmt.root_arn}",
-    "${module.tenant_1_prod.root_arn}",
-    "${module.tenant_1_staging.root_arn}",
-  ]
 }
 
 # This will override the bucket policy created by the CloudFormation stack. Needed because only one account ID can be passed in as a parameter.
