@@ -1,8 +1,8 @@
 # Tenant networking
 
-This repo is a test implementation of the GSA DevSecOps tenant networking model. The model is intended to be used across 4 different AWS accounts. However, while that is being worked out, this repo deploys into 1 AWS account but across 3 different regions.
+This repo is a test implementation of the GSA DevSecOps tenant networking model. The model is intended to be used across different AWS accounts. However, while that is being worked out, this repo deploys into 1 AWS account but across different regions.
 
-The repo deploys 2 VPCs: management, and an environment. Each VPC is in the same region because of a peering issue between us-west-1 and us-east-2. It will deploy the necessary VPN gateways and peering connections. The environment VPC will be peered with the Management VPC. Both VPCs will be set up with a VPN connection to the shared transit VPC.
+The repo deploys 2 VPCs: management, and an environment, with the necessary gateways. Both VPCs will be set up with a VPN connection to the shared transit VPC.
 
 The Cloud Formation template for the AWS Web Application Firewall (WAF) was
 downloaded from [here](https://s3.amazonaws.com/solutions-reference/aws-waf-security-automations/latest/aws-waf-security-automations-alb.template).

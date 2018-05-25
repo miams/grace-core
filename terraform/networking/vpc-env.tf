@@ -30,32 +30,6 @@ module "env_spoke" {
   vpc_id = "${module.vpc_env.vpc_id}"
 }
 
-resource "aws_vpc_peering_connection" "peer_vpc_env" {
-  vpc_id      = "${module.vpc_env.vpc_id}"
-  peer_vpc_id = "${module.vpc_mgmt.vpc_id}"
-  peer_region = "${var.mgmt_region}"
-
-  # Because the VPCs are currently in the same account, will set auto_accept to true. When VPC's are in separate accounts, uncomment the next two lines.
-  peer_owner_id = "${data.aws_caller_identity.mgmt.account_id}"
-  auto_accept   = false
-
-  # auto_accept   = true
-  provider = "aws.env"
-
-  # accepter {
-  #   allow_remote_vpc_dns_resolution = true
-  # }
-
-
-  # requester {
-  #   allow_remote_vpc_dns_resolution = true
-  # }
-
-  tags {
-    Side = "Requester"
-  }
-}
-
 # Optional Base Security Groups
 resource "aws_security_group" "env_ingress_https_sg" {
   # Conditionally create this resource if the value is true

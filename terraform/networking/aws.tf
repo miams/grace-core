@@ -19,15 +19,3 @@ provider "aws" {
   #   role_arn = "arn:aws:iam::${var.mgmt_account_id}:role/${var.iam_role_name}"
   # }
 }
-
-data "aws_caller_identity" "default" {
-  provider = "aws"
-}
-
-data "aws_caller_identity" "env" {
-  provider = "aws.env"
-}
-
-data "aws_caller_identity" "mgmt" {
-  provider = "aws.mgmt"
-}
