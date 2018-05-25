@@ -2,10 +2,6 @@ variable "transit_vpc_account_id" {
   type = "string"
 }
 
-variable "transit_vpc_additional_account_id" {
-  default = ""
-}
-
 variable "transit_vpc_cidr" {
   default = "100.64.127.224/27"
 }
@@ -36,7 +32,7 @@ resource "aws_cloudformation_stack" "transit_vpc" {
   template_body = "${file("${path.module}/files/transit_vpc_template.json")}"
 
   parameters {
-    AccountId  = "${var.transit_vpc_additional_account_id}"
+    AccountId  = "${module.tenant_1_dev.account_id}"
     KeyName    = "Cisco-CSR-Transit-VPC-Grace"
     PubSubnet1 = "${var.transit_vpc_subnet_1_cidr}"
     PubSubnet2 = "${var.transit_vpc_subnet_2_cidr}"
