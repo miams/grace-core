@@ -27,8 +27,7 @@ module "env_spoke" {
     aws = "aws.env"
   }
 
-  num_gateway_subnets = "2"
-  gateway_subnet_ids  = "${module.vpc_env.private_subnets}"
+  vpc_id = "${module.vpc_env.vpc_id}"
 }
 
 resource "aws_vpc_peering_connection" "peer_vpc_env" {
