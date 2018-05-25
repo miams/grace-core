@@ -27,4 +27,19 @@ Having been done once for the current master account, the following steps should
     aws ssm put-parameter --type String --name master-budget --value <budget>
     ```
 
+1. Create a Parameter Store parameter with the Transit VPC details.
+
+    ```sh
+    aws ssm put-parameter --type String --name transit_vpc_account_id --value <ID>
+    aws ssm put-parameter --type String --name transit_vpc_cidr --value <CIDR>
+    aws ssm put-parameter --type String --name transit_vpc_subnet_1_cidr --value <CIDR>
+    aws ssm put-parameter --type String --name transit_vpc_subnet_2_cidr --value <CIDR>
+    ```
+
+1. Run a build on the `master` branch of CircleCI.
+1. Connect the Cisco CSR to the GSA network.
+    1. Coordinate with Network Operations (NetOps) team to connect Verizon SCI (AWS virtual interface) to the VGW. NetOps will need AWS account number and VGW ID to create a ticket with Verizon, so they can create the SCI connection.
+    1. Verizon creates the SCI. A VNI will appear attached to the VGW in the Transit VPC account.
+    1. Follow [detached VGW connection steps](https://docs.aws.amazon.com/solutions/latest/cisco-based-transit-vpc/appendix-d.html).
+
 CircleCI will deploy changes to the environment going forward.
