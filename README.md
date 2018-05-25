@@ -40,7 +40,7 @@ For new tenants, or tenants that want an additional AWS account, create one or m
     * This needs to be done manually, while waiting for [Terraform support](https://github.com/terraform-providers/terraform-provider-aws/pull/4405)
     * Easiest to do so through [the Console](https://console.aws.amazon.com/organizations/home)
 1. If the account should be connected to the GSA network:
-    1. **DevSecOps team:** Follow [these instructions](https://docs.aws.amazon.com/solutions/latest/cisco-based-transit-vpc/appendix-c.html) to modify [the KMS Key Policy](https://console.aws.amazon.com/iam/home?region=us-east-1#/encryptionKeys/us-east-1), ensuring that all the `spoke_account_arns` output in CircleCI are in there.
+    1. **DevSecOps team:** Follow [these instructions](https://docs.aws.amazon.com/solutions/latest/cisco-based-transit-vpc/appendix-c.html) to modify [the KMS Key Policy](https://console.aws.amazon.com/iam/home?region=us-east-1#/encryptionKeys/us-east-1) in the NetOps account, ensuring that all the `spoke_account_arns` output in CircleCI are in there.
 
 ## Adjusting a budget
 
