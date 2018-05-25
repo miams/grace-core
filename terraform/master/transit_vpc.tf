@@ -12,12 +12,29 @@ locals {
 # corresponds to
 # https://docs.aws.amazon.com/solutions/latest/cisco-based-transit-vpc/step2.html
 
+# The account ID where the Transit VPC should live
+data "aws_ssm_parameter" "transit_vpc_account_id" {
+  name = "transit_vpc_account_id"
+}
+
+data "aws_ssm_parameter" "transit_vpc_cidr" {
+  name = "transit_vpc_cidr"
+}
+
+data "aws_ssm_parameter" "transit_vpc_subnet_1_cidr" {
+  name = "transit_vpc_subnet_1_cidr"
+}
+
+data "aws_ssm_parameter" "transit_vpc_subnet_2_cidr" {
+  name = "transit_vpc_subnet_2_cidr"
+}
+
 # not using member_account module since the NetOps account isn't part of the SAIC AWS Organization
 provider "aws" {
   alias = "netops"
 
   assume_role {
-    role_arn = "arn:aws:iam::${var.transit_vpc_account_id}:role/OrganizationAccountAccessRole"
+    role_arn = "arn:aws:iam::${data.aws_ssm_parameter.transit_vpc_account_id.value}:role/OrganizationAccountAccessRole"
   }
 }
 
@@ -32,9 +49,9 @@ resource "aws_cloudformation_stack" "transit_vpc" {
 
   parameters {
     KeyName    = "${var.transit_vpc_key_name}"
-    PubSubnet1 = "${var.transit_vpc_subnet_1_cidr}"
-    PubSubnet2 = "${var.transit_vpc_subnet_2_cidr}"
-    VpcCidr    = "${var.transit_vpc_cidr}"
+    PubSubnet1 = "${data.aws_ssm_parameter.transit_vpc_subnet_1_cidr.value}"
+    PubSubnet2 = "${data.aws_ssm_parameter.transit_vpc_subnet_2_cidr.value}"
+    VpcCidr    = "${data.aws_ssm_parameter.transit_vpc_cidr.value}"
   }
 
   lifecycle {

@@ -13,9 +13,7 @@ Having been done once for the current master account, the following steps should
     ```
 
 1. [Create an access key for `circle-deployer`.](https://console.aws.amazon.com/iam/home#/users/circle-deployer?section=security_credentials)
-1. [Set environment variables in CircleCI.](https://circleci.com/gh/GSA/grace-core/edit#env-vars)
-    * [AWS credentials](https://www.terraform.io/docs/providers/aws/#environment-variables)
-    * [Other required variables](terraform/master/veriables.tf)
+1. [Save those credentials in CircleCI](https://circleci.com/gh/GSA/grace-core/edit#env-vars) using [AWS environment variables](https://www.terraform.io/docs/providers/aws/#environment-variables).
 1. [Generate the Service Control Policy](https://github.com/GSA/security-benchmarks/tree/master/scp) and save to a file.
 1. Copy the policy to S3.
 
@@ -27,6 +25,15 @@ Having been done once for the current master account, the following steps should
 
     ```sh
     aws ssm put-parameter --type String --name master-budget --value <budget>
+    ```
+
+1. Create a Parameter Store parameter with the Transit VPC details.
+
+    ```sh
+    aws ssm put-parameter --type String --name transit_vpc_account_id --value <ID>
+    aws ssm put-parameter --type String --name transit_vpc_cidr --value <CIDR>
+    aws ssm put-parameter --type String --name transit_vpc_subnet_1_cidr --value <CIDR>
+    aws ssm put-parameter --type String --name transit_vpc_subnet_2_cidr --value <CIDR>
     ```
 
 1. Run a build on the `master` branch of CircleCI.
