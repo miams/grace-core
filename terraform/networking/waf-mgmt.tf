@@ -1,12 +1,39 @@
 resource "aws_s3_bucket" "mgmt_access_log_bucket" {
-  bucket   = "${var.mgmt_access_log_bucket}"
-  acl      = "private"
-  provider = "aws.mgmt"
+  bucket        = "${var.mgmt_access_log_bucket}"
+  acl           = "private"
+  provider      = "aws.mgmt"
+  force_destroy = true
 
   tags {
     Name        = "WAF ALB Access Logs"
     Environment = "Management"
   }
+}
+
+# Policy to allow ALB in us-east-1 region to access ALB
+resource "aws_s3_bucket_policy" "mgmt_access_log_bucket_policy" {
+  bucket   = "${aws_s3_bucket.mgmt_access_log_bucket.id}"
+  provider = "aws.mgmt"
+
+  policy = <<POLICY
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Action": [
+                "s3:PutObject"
+            ],
+            "Effect": "Allow",
+            "Resource": "arn:aws:s3:::${var.mgmt_access_log_bucket}/*",
+            "Principal": {
+                "AWS": [
+                    "${data.aws_elb_service_account.main.arn}"
+                ]
+            }
+        }
+    ]
+}
+POLICY
 }
 
 resource "aws_cloudformation_stack" "mgmt_waf" {

@@ -10,7 +10,29 @@ Impletation guide for the AWS WAF Security Automations is available [here](https
 
 The repo is deployable out of the box with the proper AWS programmatic credentials and a recent (0.11.3 as of this writing) version of [Terraform](https://www.terraform.io).
 
-To deploy, check out a copy of the repo using your favorite git client. Then:
+You will need to set the following variables:
+
+```
+env_account_id
+mgmt_account_id
+gsa_internal_cidr_block
+```
+
+You will also have to provide server certificates for the ALB listeners and set
+certificate names and path to the certificate and key files in the appropriate
+variables:
+
+```
+mgmt_alb_cert_name
+mgmt_alb_cert_file
+mgmt_alb_key_file
+env_alb_cert_name
+env_alb_cert_file
+env_alb_key_file
+```
+
+To deploy, check out a copy of the repo using your favorite git client. Set the
+above variables in a `terraform\networking\terraform.tfvars` file.  Then:
 
 ```sh
 cd terraform/networking

@@ -2,3 +2,4 @@
 *.tfvars
 !backend.tfvars
 *.tfstate*
+*.pem
