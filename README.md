@@ -38,6 +38,7 @@ For new tenants, or tenants that want an additional AWS account, create one or m
 1. **Tenant or DevSecOps team:** Submit the change as a pull request
 1. **DevSecOps team:** Merge the pull request
 1. Wait for the CircleCI `master` branch build to complete.
+1. New tenant accounts that have been added to SNS subscription notifications must confirm the new subscription (click the link in the email that is received).
 1. **DevSecOps team:** Move the new account to the Tenants Organizational Unit
     * This needs to be done manually, while waiting for [Terraform support](https://github.com/terraform-providers/terraform-provider-aws/pull/4405)
     * Easiest to do so through [the Console](https://console.aws.amazon.com/organizations/home)
