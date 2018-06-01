@@ -1,28 +1,28 @@
 module "tenant_gaptest_prod" {
   source = "../member_account"
 
-  name  = "tenant-1-prod"
+  name  = "tenant-gaptest-prod"
   email = "jasong.miller+tenantgaptestprod@gsa.gov"
 }
 
 module "tenant_gaptest_staging" {
   source = "../member_account"
 
-  name  = "tenant-1-staging"
+  name  = "tenant-gaptest-staging"
   email = "jasong.miller+tenantgapteststaging@gsa.gov"
 }
 
 module "tenant_gaptest_dev" {
   source = "../member_account"
 
-  name  = "tenant-1-dev"
+  name  = "tenant-gaptest-dev"
   email = "jasong.miller+tenantgaptestdev@gsa.gov"
 }
 
 module "tenant_gaptest_mgmt" {
   source = "../member_account"
 
-  name  = "tenant-1-mgmt"
+  name  = "tenant-gaptest-mgmt"
   email = "jasong.miller+tenantgaptestmgmt@gsa.gov"
 }
 
