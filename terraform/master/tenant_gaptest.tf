@@ -29,7 +29,7 @@ module "tenant_gaptest_mgmt" {
 module "tenant_gaptest_budget" {
   source = "../budget"
 
-  name = "tenantgaptest"
+  name = "gaptest"
 
   budget_notifications = [
     {
