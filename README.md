@@ -54,6 +54,20 @@ After the paperwork is done:
 1. Change the value in [Parameter Store](https://console.aws.amazon.com/systems-manager/parameters/?region=us-east-1).
 1. [Rerun the latest `master` branch build in CircleCI.](https://circleci.com/gh/GSA/workflows/grace-core/tree/master)
 
+## Changing tenant parameters
+
+Unfortunately, AWS Organizations does not allow adjusting the "name" or "email" properties of an account. You will receive errors about being unable to close the account because a credit card is required. At this time, grace-core is unable to allow changes to these properties once the accounts are created. [See issue #55](https://github.com/GSA/grace-core/issues/55).
+
+## Removing a tenant
+
+Presently, tenant accounts cannot be destroyed from an AWS Organizations setup. If a tenant is accidentally changed or deleted from the grace-core master branch, you must manually delete the tenant from the Terraform state with:
+
+  ````sh
+  terraform state rm <object_in_terraform_state>
+  ````
+
+Please consult the [Terraform documentation](https://www.terraform.io/docs/commands/state/rm.html) for more details on using this command to clean up the state file.
+
 ## Security compliance
 
 **Component approval status:** in assessment
