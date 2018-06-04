@@ -34,26 +34,31 @@ resource "aws_iam_policy" "GRACE_tenant_View_Only_Policy3" {
 }
 
 resource "aws_iam_role_policy_attachment" "grace_tenant_admins_policy_attachment" {
+  count      = "${var.create_iam_roles == "true" ? 1 : 0}"
   role       = "${aws_iam_role.tenant_admin_role.name}"
   policy_arn = "${aws_iam_policy.GRACE_tenant_Admins_Policy.arn}"
 }
 
 resource "aws_iam_role_policy_attachment" "grace_tenant_power_user_policy_attachment" {
+  count      = "${var.create_iam_roles == "true" ? 1 : 0}"
   role       = "${aws_iam_role.tenant_power_user_role.name}"
   policy_arn = "${aws_iam_policy.GRACE_tenant_Power_User_Policy.arn}"
 }
 
 resource "aws_iam_role_policy_attachment" "grace_tenant_view_only_policy1_attachment" {
+  count      = "${var.create_iam_roles == "true" ? 1 : 0}"
   role       = "${aws_iam_role.tenant_view_only_role.name}"
   policy_arn = "${aws_iam_policy.GRACE_tenant_View_Only_Policy1.arn}"
 }
 
 resource "aws_iam_role_policy_attachment" "grace_tenant_view_only_policy2_attachment" {
+  count      = "${var.create_iam_roles == "true" ? 1 : 0}"
   role       = "${aws_iam_role.tenant_view_only_role.name}"
   policy_arn = "${aws_iam_policy.GRACE_tenant_View_Only_Policy2.arn}"
 }
 
 resource "aws_iam_role_policy_attachment" "grace_tenant_view_only_policy3_attachment" {
+  count      = "${var.create_iam_roles == "true" ? 1 : 0}"
   role       = "${aws_iam_role.tenant_view_only_role.name}"
   policy_arn = "${aws_iam_policy.GRACE_tenant_View_Only_Policy3.arn}"
 }
