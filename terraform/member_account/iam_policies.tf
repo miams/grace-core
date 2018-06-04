@@ -1,4 +1,8 @@
 resource "aws_iam_policy" "GRACE_tenant_Admins_Policy" {
+  count = "${var.create_iam_roles == "true" ? 1 : 0}"
+
+  provider = "aws.child"
+
   name        = "GRACE_tenant_Admins_Policy"
   path        = "/"
   description = "GRACE_tenant_Admins_Policy"
@@ -6,6 +10,10 @@ resource "aws_iam_policy" "GRACE_tenant_Admins_Policy" {
 }
 
 resource "aws_iam_policy" "GRACE_tenant_Power_User_Policy" {
+  count = "${var.create_iam_roles == "true" ? 1 : 0}"
+
+  provider = "aws.child"
+
   name        = "GRACE_tenant_Power_User_Policy"
   path        = "/"
   description = "GRACE_tenant_Power_User_Policy"
@@ -13,6 +21,10 @@ resource "aws_iam_policy" "GRACE_tenant_Power_User_Policy" {
 }
 
 resource "aws_iam_policy" "GRACE_tenant_View_Only_Policy1" {
+  count = "${var.create_iam_roles == "true" ? 1 : 0}"
+
+  provider = "aws.child"
+
   name        = "GRACE_tenant_View_Only_Policy1"
   path        = "/"
   description = "GRACE_tenant_View_Only_Policy1"
@@ -20,6 +32,10 @@ resource "aws_iam_policy" "GRACE_tenant_View_Only_Policy1" {
 }
 
 resource "aws_iam_policy" "GRACE_tenant_View_Only_Policy2" {
+  count = "${var.create_iam_roles == "true" ? 1 : 0}"
+
+  provider = "aws.child"
+
   name        = "GRACE_tenant_View_Only_Policy2"
   path        = "/"
   description = "GRACE_tenant_View_Only_Policy2"
@@ -27,6 +43,10 @@ resource "aws_iam_policy" "GRACE_tenant_View_Only_Policy2" {
 }
 
 resource "aws_iam_policy" "GRACE_tenant_View_Only_Policy3" {
+  count = "${var.create_iam_roles == "true" ? 1 : 0}"
+
+  provider = "aws.child"
+
   name        = "GRACE_tenant_View_Only_Policy3"
   path        = "/"
   description = "GRACE_tenant_View_Only_Policy3"
@@ -34,31 +54,44 @@ resource "aws_iam_policy" "GRACE_tenant_View_Only_Policy3" {
 }
 
 resource "aws_iam_role_policy_attachment" "grace_tenant_admins_policy_attachment" {
-  count      = "${var.create_iam_roles == "true" ? 1 : 0}"
+  count = "${var.create_iam_roles == "true" ? 1 : 0}"
+
+  provider = "aws.child"
+
   role       = "${aws_iam_role.tenant_admin_role.name}"
   policy_arn = "${aws_iam_policy.GRACE_tenant_Admins_Policy.arn}"
 }
 
 resource "aws_iam_role_policy_attachment" "grace_tenant_power_user_policy_attachment" {
-  count      = "${var.create_iam_roles == "true" ? 1 : 0}"
+  count = "${var.create_iam_roles == "true" ? 1 : 0}"
+
+  provider = "aws.child"
+
   role       = "${aws_iam_role.tenant_power_user_role.name}"
   policy_arn = "${aws_iam_policy.GRACE_tenant_Power_User_Policy.arn}"
 }
 
 resource "aws_iam_role_policy_attachment" "grace_tenant_view_only_policy1_attachment" {
   count      = "${var.create_iam_roles == "true" ? 1 : 0}"
+  provider   = "aws.child"
   role       = "${aws_iam_role.tenant_view_only_role.name}"
   policy_arn = "${aws_iam_policy.GRACE_tenant_View_Only_Policy1.arn}"
 }
 
 resource "aws_iam_role_policy_attachment" "grace_tenant_view_only_policy2_attachment" {
-  count      = "${var.create_iam_roles == "true" ? 1 : 0}"
+  count = "${var.create_iam_roles == "true" ? 1 : 0}"
+
+  provider = "aws.child"
+
   role       = "${aws_iam_role.tenant_view_only_role.name}"
   policy_arn = "${aws_iam_policy.GRACE_tenant_View_Only_Policy2.arn}"
 }
 
 resource "aws_iam_role_policy_attachment" "grace_tenant_view_only_policy3_attachment" {
-  count      = "${var.create_iam_roles == "true" ? 1 : 0}"
+  count = "${var.create_iam_roles == "true" ? 1 : 0}"
+
+  provider = "aws.child"
+
   role       = "${aws_iam_role.tenant_view_only_role.name}"
   policy_arn = "${aws_iam_policy.GRACE_tenant_View_Only_Policy3.arn}"
 }

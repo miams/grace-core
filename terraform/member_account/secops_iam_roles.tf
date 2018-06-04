@@ -1,8 +1,10 @@
 resource "aws_iam_role" "secops_admin_role" {
   count = "${var.create_iam_roles == "true" ? 1 : 0}"
-  name  = "${var.secops_admin_role_name}"
 
-  # TODO
+  provider = "aws.child"
+
+  name = "${var.secops_admin_role_name}"
+
   assume_role_policy = <<EOF
 {
   "Version": "2012-10-17",
@@ -21,9 +23,11 @@ EOF
 
 resource "aws_iam_role" "secops_view_only_role" {
   count = "${var.create_iam_roles == "true" ? 1 : 0}"
-  name  = "${var.secops_view_only_role_name}"
 
-  # TODO
+  provider = "aws.child"
+
+  name = "${var.secops_view_only_role_name}"
+
   assume_role_policy = <<EOF
 {
   "Version": "2012-10-17",
