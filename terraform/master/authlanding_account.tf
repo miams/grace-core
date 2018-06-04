@@ -7,8 +7,10 @@
 module "authlanding_prod" {
   source = "../member_account"
 
-  name  = "authlanding-prod"
-  email = "devsecops-core+authlanding@gsa.gov"
+  name                        = "authlanding-prod"
+  email                       = "devsecops-core+authlanding@gsa.gov"
+  authlanding_prod_account_id = "${module.authlanding_prod.account_id}"
+  create_iam_roles            = "false"
 }
 
 module "authlanding_budget" {
