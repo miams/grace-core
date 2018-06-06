@@ -30,7 +30,7 @@ For new tenants, or tenants that want an additional AWS account, create one or m
     ```
 
 1. **Tenant or DevSecOps team:** Add a `tenant_<name>.tf` file to [`terraform/master/`](terraform/master).
-    * See [`tenant_tenant1.tf`](terraform/master/tenant_tenant1.tf) for an example.
+    * See [`tenant_tenant1.tf`](terraform/master/tenant_tenant1.tf) for an example. Pay close attention to the user management Parameters. See "Managing Users" below for more info.
     * The `name` and `email` for each `member_account` should be unique.
     * For the `email`, use the tenant team's Google Group with a suffix: `<tenantgroup>+<env>@gsa.gov`. For example, `myteam+staging@gsa.gov`.
 1. If the account should be connected to GSA network:
@@ -53,6 +53,19 @@ After the paperwork is done:
 
 1. Change the value in [Parameter Store](https://console.aws.amazon.com/systems-manager/parameters/?region=us-east-1).
 1. [Rerun the latest `master` branch build in CircleCI.](https://circleci.com/gh/GSA/workflows/grace-core/tree/master)
+
+## Managing users
+
+The users are managed by SSM Parameter Store objects. You will want to create the parameter store objects in the authlanding account after it is created. Using the web console is recommended, as this part can get confusing.
+
+1. Switch to the authlanding account in the AWS web console, using an IAM role or account that has permissions to add/modify parameter store objects.
+1. Go to the EC2 SSM Parameter Store page.
+1. Create a parameter store object called "authlanding-user-list". Use the list type "StringList" and type the list of SNA usernames, delimited by commas. Do not use spaces.
+1. Apply the terraform in the master directory. This will create the user objects.
+1. Next, create the tenant-specific parameter objects that describe the groups. For example, tenant 1 has three parameter store objects: "tenant-1-admin-iam-role-list", "tenant-1-poweruser-iam-role-list" and "tenant-1-viewonly-iam-role-list". Look in the file "tenant_tenant1.tf" to see how these parameters are used.
+1. Create the parameter store objects with these names. Make them a type of StringList and use a comma-delimited set of SNA usernames. Note that the users MUST ALREADY EXIST before you add them to these groups, or AWS and Terraform will fail to create or update the IAM roles for the tenant account.
+1. Reapply the template through CircleCI.
+1. The parameter store objects that define the groups are read and constructed into the IAM role policy on the tenant subaccounts. Neat!
 
 ## Changing tenant parameters
 
