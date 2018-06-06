@@ -1,3 +1,4 @@
+# TODO: Set these to SECOPS assume role values
 resource "aws_iam_role" "secops_admin_role" {
   count = "${var.create_iam_roles == "true" ? 1 : 0}"
 

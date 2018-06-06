@@ -1,3 +1,30 @@
+data "aws_ssm_parameter" "tenant_admin_iam_role_list" {
+  provider = "aws.authlanding"
+
+  # The name for this parameter must be unique to other tenants!
+  name = "tenant-1-admin-iam-role-list"
+}
+
+data "aws_ssm_parameter" "tenant_poweruser_iam_role_list" {
+  provider = "aws.authlanding"
+
+  # The name for this parameter must be unique to other tenants!
+  name = "tenant-1-poweruser-iam-role-list"
+}
+
+data "aws_ssm_parameter" "tenant_viewonly_iam_role_list" {
+  provider = "aws.authlanding"
+
+  # The name for this parameter must be unique to other tenants!
+  name = "tenant-1-viewonly-iam-role-list"
+}
+
+locals {
+  tenant_admin_iam_role_list     = ["${split(",", data.aws_ssm_parameter.tenant_admin_iam_role_list.value)}"]
+  tenant_poweruser_iam_role_list = ["${split(",", data.aws_ssm_parameter.tenant_poweruser_iam_role_list.value)}"]
+  tenant_viewonly_iam_role_list  = ["${split(",", data.aws_ssm_parameter.tenant_viewonly_iam_role_list.value)}"]
+}
+
 module "tenant_1_prod" {
   source = "../member_account"
 
@@ -5,6 +32,11 @@ module "tenant_1_prod" {
   email                       = "jasong.miller+tenant1prod@gsa.gov"
   authlanding_prod_account_id = "${module.authlanding_prod.account_id}"
   create_iam_roles            = "true"
+
+  # TODO: Add lists of IAM role memberships
+  tenant_admin_iam_role_list     = ["${local.tenant_admin_iam_role_list}"]
+  tenant_poweruser_iam_role_list = ["${local.tenant_poweruser_iam_role_list}"]
+  tenant_viewonly_iam_role_list  = ["${local.tenant_viewonly_iam_role_list}"]
 }
 
 module "tenant_1_staging" {
@@ -14,6 +46,11 @@ module "tenant_1_staging" {
   email                       = "jasong.miller+tenant1staging@gsa.gov"
   authlanding_prod_account_id = "${module.authlanding_prod.account_id}"
   create_iam_roles            = "true"
+
+  # TODO: Add lists of IAM role memberships
+  tenant_admin_iam_role_list     = ["${local.tenant_admin_iam_role_list}"]
+  tenant_poweruser_iam_role_list = ["${local.tenant_poweruser_iam_role_list}"]
+  tenant_viewonly_iam_role_list  = ["${local.tenant_viewonly_iam_role_list}"]
 }
 
 module "tenant_1_dev" {
@@ -23,6 +60,11 @@ module "tenant_1_dev" {
   email                       = "jasong.miller+tenant1dev@gsa.gov"
   authlanding_prod_account_id = "${module.authlanding_prod.account_id}"
   create_iam_roles            = "true"
+
+  # TODO: Add lists of IAM role memberships
+  tenant_admin_iam_role_list     = ["${local.tenant_admin_iam_role_list}"]
+  tenant_poweruser_iam_role_list = ["${local.tenant_poweruser_iam_role_list}"]
+  tenant_viewonly_iam_role_list  = ["${local.tenant_viewonly_iam_role_list}"]
 }
 
 module "tenant_1_mgmt" {
@@ -32,6 +74,11 @@ module "tenant_1_mgmt" {
   email                       = "jasong.miller+tenant1mgmt@gsa.gov"
   authlanding_prod_account_id = "${module.authlanding_prod.account_id}"
   create_iam_roles            = "true"
+
+  # TODO: Add lists of IAM role memberships
+  tenant_admin_iam_role_list     = ["${local.tenant_admin_iam_role_list}"]
+  tenant_poweruser_iam_role_list = ["${local.tenant_poweruser_iam_role_list}"]
+  tenant_viewonly_iam_role_list  = ["${local.tenant_viewonly_iam_role_list}"]
 }
 
 module "tenant_1_budget" {
