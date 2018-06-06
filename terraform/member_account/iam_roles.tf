@@ -12,7 +12,7 @@ resource "aws_iam_role" "tenant_admin_role" {
     {
       "Effect": "Allow",
       "Principal": {
-        "AWS": "arn:aws:iam::${var.authlanding_prod_account_id}:root"
+        "AWS": ${jsonencode(concat(formatlist("arn:aws:iam::%s:user/%s", var.authlanding_prod_account_id, var.tenant_admin_iam_role_list)))}
       },
       "Action": "sts:AssumeRole"
     }
@@ -35,7 +35,7 @@ resource "aws_iam_role" "tenant_power_user_role" {
     {
       "Effect": "Allow",
       "Principal": {
-        "AWS": "arn:aws:iam::${var.authlanding_prod_account_id}:root"
+        "AWS": ${jsonencode(concat(formatlist("arn:aws:iam::%s:user/%s", var.authlanding_prod_account_id, var.tenant_poweruser_iam_role_list)))}
       },
       "Action": "sts:AssumeRole"
     }
@@ -58,7 +58,7 @@ resource "aws_iam_role" "tenant_view_only_role" {
     {
       "Effect": "Allow",
       "Principal": {
-        "AWS": "arn:aws:iam::${var.authlanding_prod_account_id}:root"
+        "AWS": ${jsonencode(concat(formatlist("arn:aws:iam::%s:user/%s", var.authlanding_prod_account_id, var.tenant_viewonly_iam_role_list)))}
       },
       "Action": "sts:AssumeRole"
     }
