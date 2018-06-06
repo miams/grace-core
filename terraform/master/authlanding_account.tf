@@ -44,6 +44,15 @@ provider "aws" {
 }
 
 ### USER MANAGEMENT
+#
+# Create a KMS key to manage the parameter stores. This key must be used in the web console when creating parameters in authlanding.
+resource "aws_kms_key" "users_parameter_stores_kms_key" {
+  provider                = "aws.authlanding"
+  description             = "KMS key to encrypt and decrypt parameter store objects for user management. Required by security, managed by Terraform in grace-core."
+  deletion_window_in_days = 30
+  enable_key_rotation     = "true"
+}
+
 # This SSM Parameter Store will contain a comma-delimited list of users that will be created with the resource below.
 data "aws_ssm_parameter" "authlanding_user_list" {
   provider = "aws.authlanding"

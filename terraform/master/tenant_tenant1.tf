@@ -33,7 +33,6 @@ module "tenant_1_prod" {
   authlanding_prod_account_id = "${module.authlanding_prod.account_id}"
   create_iam_roles            = "true"
 
-  # TODO: Add lists of IAM role memberships
   tenant_admin_iam_role_list     = ["${local.tenant_admin_iam_role_list}"]
   tenant_poweruser_iam_role_list = ["${local.tenant_poweruser_iam_role_list}"]
   tenant_viewonly_iam_role_list  = ["${local.tenant_viewonly_iam_role_list}"]
@@ -47,7 +46,6 @@ module "tenant_1_staging" {
   authlanding_prod_account_id = "${module.authlanding_prod.account_id}"
   create_iam_roles            = "true"
 
-  # TODO: Add lists of IAM role memberships
   tenant_admin_iam_role_list     = ["${local.tenant_admin_iam_role_list}"]
   tenant_poweruser_iam_role_list = ["${local.tenant_poweruser_iam_role_list}"]
   tenant_viewonly_iam_role_list  = ["${local.tenant_viewonly_iam_role_list}"]
@@ -61,7 +59,6 @@ module "tenant_1_dev" {
   authlanding_prod_account_id = "${module.authlanding_prod.account_id}"
   create_iam_roles            = "true"
 
-  # TODO: Add lists of IAM role memberships
   tenant_admin_iam_role_list     = ["${local.tenant_admin_iam_role_list}"]
   tenant_poweruser_iam_role_list = ["${local.tenant_poweruser_iam_role_list}"]
   tenant_viewonly_iam_role_list  = ["${local.tenant_viewonly_iam_role_list}"]
@@ -75,7 +72,6 @@ module "tenant_1_mgmt" {
   authlanding_prod_account_id = "${module.authlanding_prod.account_id}"
   create_iam_roles            = "true"
 
-  # TODO: Add lists of IAM role memberships
   tenant_admin_iam_role_list     = ["${local.tenant_admin_iam_role_list}"]
   tenant_poweruser_iam_role_list = ["${local.tenant_poweruser_iam_role_list}"]
   tenant_viewonly_iam_role_list  = ["${local.tenant_viewonly_iam_role_list}"]
