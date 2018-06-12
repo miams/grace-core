@@ -4,11 +4,6 @@
 # It only requires a prod account, no other environments.
 # It will be added to the platform OU within the platform, which must be done manually.
 
-# DOCUPDATE: Build authlanding account
-# DOCUPDATE: Add comma-delimited user list to authlanding account
-# DOCUPDATE: SSM parameters must be encrypted - update README SSM command for budget to encrypted (SecureString)
-# TODO: Add KMS keys for SSM parameter stores
-
 module "authlanding_prod" {
   source = "../member_account"
 
