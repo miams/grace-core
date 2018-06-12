@@ -20,9 +20,9 @@ data "aws_ssm_parameter" "tenant_sprint17_viewonly_iam_role_list" {
 }
 
 locals {
-  tenant_admin_iam_role_list     = ["${split(",", data.aws_ssm_parameter.tenant_sprint17_admin_iam_role_list.value)}"]
-  tenant_poweruser_iam_role_list = ["${split(",", data.aws_ssm_parameter.tenant_sprint17_poweruser_iam_role_list.value)}"]
-  tenant_viewonly_iam_role_list  = ["${split(",", data.aws_ssm_parameter.tenant_sprint17_viewonly_iam_role_list.value)}"]
+  tenant_sprint17_admin_iam_role_list     = ["${split(",", data.aws_ssm_parameter.tenant_sprint17_admin_iam_role_list.value)}"]
+  tenant_sprint17_poweruser_iam_role_list = ["${split(",", data.aws_ssm_parameter.tenant_sprint17_poweruser_iam_role_list.value)}"]
+  tenant_sprint17_viewonly_iam_role_list  = ["${split(",", data.aws_ssm_parameter.tenant_sprint17_viewonly_iam_role_list.value)}"]
 }
 
 module "tenant_sprint17_prod" {
