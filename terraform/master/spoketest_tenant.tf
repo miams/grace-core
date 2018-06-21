@@ -51,18 +51,19 @@ module "tenant_spoketest_mgmt" {
   tenant_viewonly_iam_role_list  = ["${local.spoketest_tenant_viewonly_iam_role_list}"]
 }
 
-module "tenant_spoketest_staging" {
-  source = "../member_account"
+# JGM - 06/21/18: Removing this because we're at AWS Organizations limit
+# module "tenant_spoketest_staging" {
+#   source = "../member_account"
 
-  name                        = "tenant_spoketest_staging"
-  email                       = "jasong.miller+spoketeststaging@gsa.gov"
-  authlanding_prod_account_id = "${module.authlanding_prod.account_id}"
-  create_iam_roles            = "true"
+#   name                        = "tenant_spoketest_staging"
+#   email                       = "jasong.miller+spoketeststaging@gsa.gov"
+#   authlanding_prod_account_id = "${module.authlanding_prod.account_id}"
+#   create_iam_roles            = "true"
 
-  tenant_admin_iam_role_list     = ["${local.spoketest_tenant_admin_iam_role_list}"]
-  tenant_poweruser_iam_role_list = ["${local.spoketest_tenant_poweruser_iam_role_list}"]
-  tenant_viewonly_iam_role_list  = ["${local.spoketest_tenant_viewonly_iam_role_list}"]
-}
+#   tenant_admin_iam_role_list     = ["${local.spoketest_tenant_admin_iam_role_list}"]
+#   tenant_poweruser_iam_role_list = ["${local.spoketest_tenant_poweruser_iam_role_list}"]
+#   tenant_viewonly_iam_role_list  = ["${local.spoketest_tenant_viewonly_iam_role_list}"]
+# }
 
 module "tenant_spoketest_dev" {
   source = "../member_account"
