@@ -93,7 +93,8 @@ module "spoketest_budget" {
   account_ids = [
     "${module.tenant_spoketest_prod.account_id}",
     "${module.tenant_spoketest_mgmt.account_id}",
-    "${module.tenant_spoketest_staging.account_id}",
+
+    # "${module.tenant_spoketest_staging.account_id}",
     "${module.tenant_spoketest_dev.account_id}",
   ]
 }
