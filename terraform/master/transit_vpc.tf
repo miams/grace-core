@@ -6,6 +6,10 @@ locals {
     "${module.tenant_1_mgmt.root_arn}",
     "${module.tenant_1_prod.root_arn}",
     "${module.tenant_1_staging.root_arn}",
+    "${module.tenant_spoketest_prod.root_arn}",
+    "${module.tenant_spoketest_mgmt.root_arn}",
+    "${module.tenant_spoketest_staging.root_arn}",
+    "${module.tenant_spoketest_dev.root_arn}",
   ]
 }
 
