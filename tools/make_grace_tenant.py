@@ -112,7 +112,7 @@ def main():
     f.write("}\n")
     f.write("\n")
     for i in range(total_number_of_tenant_environments):
-        f.write("module \"tenant_" + tenant_environment_names[i] + "\"\n")
+        f.write("module \"tenant_" + tenant_environment_names[i] + "\" {\n")
         f.write("  source = \"../member_account\"\n")
         f.write("\n")
         f.write("  name = \"tenant_" + tenant_environment_names[i] + "\"\n")
@@ -128,7 +128,7 @@ def main():
                 tenant_name + "_tenant_viewonly_iam_role_list}\"]\n")
         f.write("}\n")
         f.write("\n")
-    f.write("module \"" + tenant_name + "_budget {\n")
+    f.write("module \"" + tenant_name + "_budget\" {\n")
     f.write("  source = \"../budget\"\n")
     f.write("\n")
     f.write("  name = \"" + tenant_name + "\"\n")
@@ -142,8 +142,8 @@ def main():
     f.write("\n")
     f.write("  account_ids = [\n")
     for i in range(total_number_of_tenant_environments):
-        f.write("    \"${module.tenant_" + tenant_name + "_"
-                + tenant_environment_names[i] + ".account_id}\",\n")
+        f.write("    \"${module.tenant_" + tenant_environment_names[i]
+                + ".account_id}\",\n")
     f.write("  ]")
     f.write("}")
     f.close()
