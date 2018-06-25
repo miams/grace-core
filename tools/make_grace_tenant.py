@@ -114,6 +114,8 @@ def main():
     for i in range(total_number_of_tenant_environments):
         f.write("module \"tenant_" + tenant_environment_names[i] + "\" {\n")
         f.write("  source = \"../member_account\"\n")
+        if i != 0:
+            f.write("  depends_on = [\"module.tenant_" + tenant_environment_names[i - 1] + "\"]\n")
         f.write("\n")
         f.write("  name = \"tenant_" + tenant_environment_names[i] + "\"\n")
         f.write("  email = \"" + tenant_email_owners[i] + "\"\n")
