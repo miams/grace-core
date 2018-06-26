@@ -71,7 +71,7 @@ def main():
     """Check if the terraform file exists, first. Otherwise, we'll create it."""
     # TODO: Probably needs to be a little more robust. Should detect the filename and keep
     # incrementing something.
-    file_name = tenant_name + "_tenant.tf"
+    file_name = "tenant_" + tenant_name + ".tf"
     if os.path.exists(file_name):
         file_name = tenant_name + "_tenant_NEW.tf"
     f = open(file_name, "w+")
@@ -114,8 +114,10 @@ def main():
     for i in range(total_number_of_tenant_environments):
         f.write("module \"tenant_" + tenant_environment_names[i] + "\" {\n")
         f.write("  source = \"../member_account\"\n")
-        if i != 0:
-            f.write("  depends_on = [\"module.tenant_" + tenant_environment_names[i - 1] + "\"]\n")
+        # Commenting this next portion out because of bug in terraform:
+        # https://github.com/hashicorp/terraform/issues/10462
+        # if i != 0:
+        #     f.write("  depends_on = [\"module.tenant_" + tenant_environment_names[i - 1] + "\"]\n")
         f.write("\n")
         f.write("  name = \"tenant_" + tenant_environment_names[i] + "\"\n")
         f.write("  email = \"" + tenant_email_owners[i] + "\"\n")
