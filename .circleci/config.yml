@@ -58,7 +58,7 @@ jobs:
           command: pip3 install --upgrade awscli
       - run:
           name: Deploy the full environment
-          command: cd terraform/master && terraform apply -input=false -var-file=backend.tfvars -auto-approve
+          command: cd terraform/master && terraform apply -input=false -var-file=backend.tfvars -parallelism=1 -auto-approve
 
 workflows:
   version: 2
