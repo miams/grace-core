@@ -32,6 +32,12 @@ data "aws_ssm_parameter" "transit_vpc_subnet_2_cidr" {
   name = "transit_vpc_subnet_2_cidr"
 }
 
+# change the value in ssm parameter during production deployment to deploy CSR with higher throughput rating
+data "aws_ssm_parameter" "transit_vpc_csr_throughput" {
+  name = "transit_vpc_csr_throughput"
+}
+
+
 # not using member_account module since the NetOps account isn't part of the SAIC AWS Organization
 provider "aws" {
   alias = "netops"
@@ -55,6 +61,7 @@ resource "aws_cloudformation_stack" "transit_vpc" {
     PubSubnet1 = "${data.aws_ssm_parameter.transit_vpc_subnet_1_cidr.value}"
     PubSubnet2 = "${data.aws_ssm_parameter.transit_vpc_subnet_2_cidr.value}"
     VpcCidr    = "${data.aws_ssm_parameter.transit_vpc_cidr.value}"
+    CSRType    = "${data.aws_ssm_parameter.transit_vpc_csr_throughput.value}"
   }
 
   lifecycle {
