@@ -7,21 +7,21 @@ output "root_arn" {
 }
 
 output "tenant_admin_role_arn" {
-  value = "${aws_iam_role.tenant_admin_role.arn}"
+  value = "${element(concat(aws_iam_role.tenant_admin_role.*.arn, list("")), 0)}"
 }
 
-output "tenant_power_user_role_arn" {
-  value = "${aws_iam_role.tenant_power_user_role.arn}"
+output "tenant_poweruser_role_arn" {
+  value = "${element(concat(aws_iam_role.tenant_power_user_role.*.arn, list("")), 0)}"
 }
 
-output "tenant_view_only_role_arn" {
-  value = "${aws_iam_role.tenant_view_only_role.arn}"
+output "tenant_viewonly_role_arn" {
+  value = "${element(concat(aws_iam_role.tenant_view_only_role.*.arn, list("")), 0)}"
 }
 
 output "tenant_secops_admin_role_arn" {
-  value = "${aws_iam_role.secops_admin_role.arn}"
+  value = "${element(concat(aws_iam_role.secops_admin_role.*.arn, list("")), 0)}"
 }
 
 output "tenant_secops_view_only_role_arn" {
-  value = "${aws_iam_role.secops_view_only_role.arn}"
+  value = "${element(concat(aws_iam_role.secops_view_only_role.*.arn, list("")), 0)}"
 }
