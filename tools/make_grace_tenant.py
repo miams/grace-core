@@ -189,8 +189,7 @@ def main():
             # Power User role
             f.write("resource \"aws_iam_policy\" \"sts_assume_poweruser_role_user_policy_" + tenant_environment_names[i] + "\" {\n")
             f.write("  provider = \"aws.authlanding\"\n")
-            f.write("  name = \"" + tenant_name + "_" + \
-                    tenant_environment_names[i] + "_poweruser_assume_role_user_policy\"\n")
+            f.write("  name = \"" + tenant_environment_names[i] + "_poweruser_assume_role_user_policy\"\n")
             f.write("  description = \"Allows this user to assume the poweruser role in this " + \
                     tenant_environment_names[i] + "account\"\n")
             f.write("\n")
@@ -221,8 +220,7 @@ def main():
             # View Only role
             f.write("resource \"aws_iam_policy\" \"sts_assume_viewonly_role_user_policy_" + tenant_environment_names[i] + "\" {\n")
             f.write("  provider = \"aws.authlanding\"\n")
-            f.write("  name = \"" + tenant_name + "_" + \
-                    tenant_environment_names[i] + "_viewonly_assume_role_user_policy\"\n")
+            f.write("  name = \"" + tenant_environment_names[i] + "_viewonly_assume_role_user_policy\"\n")
             f.write("  description = \"Allows this user to assume the viewonly role in this " + \
                     tenant_environment_names[i] + "account\"\n")
             f.write("\n")
