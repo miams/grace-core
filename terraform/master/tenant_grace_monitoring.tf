@@ -154,7 +154,7 @@ resource "aws_iam_user_policy_attachment" "sts_assume_viewonly_role_user_policy_
   policy_arn = "${aws_iam_policy.sts_assume_viewonly_role_user_policy_grace_monitoring_prod.arn}"
 }
 
-resource "aws_iam_policy" "sts_assume_admin_role_user_policy_grace_monitoring_mgmt" {
+/*resource "aws_iam_policy" "sts_assume_admin_role_user_policy_grace_monitoring_mgmt" {
   provider = "aws.authlanding"
   name = "grace_monitoring_mgmt_admin_assume_role_user_policy"
   description = "Allows this user to assume the admin role in this grace_monitoring_mgmt account"
@@ -230,4 +230,4 @@ resource "aws_iam_user_policy_attachment" "sts_assume_viewonly_role_user_policy_
   count = "${length(local.grace_monitoring_tenant_viewonly_iam_role_list)}"
   user = "${local.grace_monitoring_tenant_viewonly_iam_role_list[count.index]}"
   policy_arn = "${aws_iam_policy.sts_assume_viewonly_role_user_policy_grace_monitoring_mgmt.arn}"
-}
+}*/
