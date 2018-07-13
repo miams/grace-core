@@ -39,23 +39,10 @@ module "tenant_grace_monitoring_prod" {
   tenant_viewonly_iam_role_list = ["${local.grace_monitoring_tenant_viewonly_iam_role_list}"]
 }
 
-/*module "tenant_grace_monitoring_mgmt" {
-  source = "../member_account"
-
-  name = "tenant_grace_monitoring_mgmt"
-  email = "manoj.chalise+devsecops@gsa.gov"
-  authlanding_prod_account_id = "${module.authlanding_prod.account_id}"
-  create_iam_roles = "true"
-
-  tenant_admin_iam_role_list = ["${local.grace_monitoring_tenant_admin_iam_role_list}"]
-  tenant_poweruser_iam_role_list = ["${local.grace_monitoring_tenant_poweruser_iam_role_list}"]
-  tenant_viewonly_iam_role_list = ["${local.grace_monitoring_tenant_viewonly_iam_role_list}"]
-}*/
-
 module "grace_monitoring_budget" {
   source = "../budget"
 
-  name = "grace_monitoring"
+  name = "grace-monitoring"
 
   budget_notifications = [
     {
@@ -153,81 +140,3 @@ resource "aws_iam_user_policy_attachment" "sts_assume_viewonly_role_user_policy_
   user = "${local.grace_monitoring_tenant_viewonly_iam_role_list[count.index]}"
   policy_arn = "${aws_iam_policy.sts_assume_viewonly_role_user_policy_grace_monitoring_prod.arn}"
 }
-
-/*resource "aws_iam_policy" "sts_assume_admin_role_user_policy_grace_monitoring_mgmt" {
-  provider = "aws.authlanding"
-  name = "grace_monitoring_mgmt_admin_assume_role_user_policy"
-  description = "Allows this user to assume the admin role in this grace_monitoring_mgmt account"
-
-  policy = <<EOF
-{
-  "Version": "2012-10-17",
-  "Statement": [
-     {
-       "Effect": "Allow",
-       "Resource": "${module.tenant_grace_monitoring_mgmt.tenant_admin_role_arn}",
-       "Action": "sts:AssumeRole"
-     }
-   ]
-}
-EOF
-}
-
-resource "aws_iam_user_policy_attachment" "sts_assume_admin_role_user_policy_grace_monitoring_mgmt_attachment" {
-  provider = "aws.authlanding"
-  count = "${length(local.grace_monitoring_tenant_admin_iam_role_list)}"
-  user = "${local.grace_monitoring_tenant_admin_iam_role_list[count.index]}"
-  policy_arn = "${aws_iam_policy.sts_assume_admin_role_user_policy_grace_monitoring_mgmt.arn}"
-}
-
-resource "aws_iam_policy" "sts_assume_poweruser_role_user_policy_grace_monitoring_mgmt" {
-  provider = "aws.authlanding"
-  name = "grace_monitoring_mgmt_poweruser_assume_role_user_policy"
-  description = "Allows this user to assume the poweruser role in this grace_monitoring_mgmtaccount"
-
-  policy = <<EOF
-{
-  "Version": "2012-10-17",
-  "Statement": [
-     {
-       "Effect": "Allow",
-       "Resource": "${module.tenant_grace_monitoring_mgmt.tenant_poweruser_role_arn}",
-       "Action": "sts:AssumeRole"
-     }
-   ]
-}
-EOF
-}
-
-resource "aws_iam_user_policy_attachment" "sts_assume_poweruser_role_user_policy_grace_monitoring_mgmt_attachment" {
-  provider = "aws.authlanding"
-  count = "${length(local.grace_monitoring_tenant_poweruser_iam_role_list)}"
-  user = "${local.grace_monitoring_tenant_poweruser_iam_role_list[count.index]}"
-  policy_arn = "${aws_iam_policy.sts_assume_poweruser_role_user_policy_grace_monitoring_mgmt.arn}"
-}
-
-resource "aws_iam_policy" "sts_assume_viewonly_role_user_policy_grace_monitoring_mgmt" {
-  provider = "aws.authlanding"
-  name = "grace_monitoring_mgmt_viewonly_assume_role_user_policy"
-  description = "Allows this user to assume the viewonly role in this grace_monitoring_mgmtaccount"
-
-  policy = <<EOF
-{
-  "Version": "2012-10-17",
-  "Statement": [
-     {
-       "Effect": "Allow",
-       "Resource": "${module.tenant_grace_monitoring_mgmt.tenant_viewonly_role_arn}",
-       "Action": "sts:AssumeRole"
-     }
-   ]
-}
-EOF
-}
-
-resource "aws_iam_user_policy_attachment" "sts_assume_viewonly_role_user_policy_grace_monitoring_mgmt_attachment" {
-  provider = "aws.authlanding"
-  count = "${length(local.grace_monitoring_tenant_viewonly_iam_role_list)}"
-  user = "${local.grace_monitoring_tenant_viewonly_iam_role_list[count.index]}"
-  policy_arn = "${aws_iam_policy.sts_assume_viewonly_role_user_policy_grace_monitoring_mgmt.arn}"
-}*/
