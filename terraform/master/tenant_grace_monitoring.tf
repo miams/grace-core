@@ -39,7 +39,7 @@ module "tenant_grace_monitoring_prod" {
   tenant_viewonly_iam_role_list = ["${local.grace_monitoring_tenant_viewonly_iam_role_list}"]
 }
 
-module "tenant_grace_monitoring_mgmt" {
+/*module "tenant_grace_monitoring_mgmt" {
   source = "../member_account"
 
   name = "tenant_grace_monitoring_mgmt"
@@ -50,7 +50,7 @@ module "tenant_grace_monitoring_mgmt" {
   tenant_admin_iam_role_list = ["${local.grace_monitoring_tenant_admin_iam_role_list}"]
   tenant_poweruser_iam_role_list = ["${local.grace_monitoring_tenant_poweruser_iam_role_list}"]
   tenant_viewonly_iam_role_list = ["${local.grace_monitoring_tenant_viewonly_iam_role_list}"]
-}
+}*/
 
 module "grace_monitoring_budget" {
   source = "../budget"
@@ -66,9 +66,13 @@ module "grace_monitoring_budget" {
 
   account_ids = [
     "${module.tenant_grace_monitoring_prod.account_id}",
-    "${module.tenant_grace_monitoring_mgmt.account_id}",
+  #  "${module.tenant_grace_monitoring_mgmt.account_id}",
   ]
 }
+
+
+
+
 
 # IAM role permission section - have to give sts-assume-role permission to users to allow them to switch to the roles.
 
@@ -227,4 +231,3 @@ resource "aws_iam_user_policy_attachment" "sts_assume_viewonly_role_user_policy_
   user = "${local.grace_monitoring_tenant_viewonly_iam_role_list[count.index]}"
   policy_arn = "${aws_iam_policy.sts_assume_viewonly_role_user_policy_grace_monitoring_mgmt.arn}"
 }
-
