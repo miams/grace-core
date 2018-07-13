@@ -3,3 +3,4 @@
 !backend.tfvars
 *.tfstate*
 *.pem
+.DS_Store
