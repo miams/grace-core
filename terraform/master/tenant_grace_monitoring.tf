@@ -42,7 +42,7 @@ module "tenant_grace_monitoring_prod" {
 module "grace_monitoring_budget" {
   source = "../budget"
 
-  name = "grace_monitoring"
+  name = "grace-monitoring"
 
   budget_notifications = [
     {
