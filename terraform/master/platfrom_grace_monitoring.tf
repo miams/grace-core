@@ -7,6 +7,7 @@
 
 # DOCUPDATE: Build authlanding account
 # DOCUPDATE: Add description and provider for this account
+# Add Master guard duty config and S3 for hostting common shared files
 
 
 
@@ -163,4 +164,42 @@ resource "aws_iam_user_policy_attachment" "sts_assume_viewonly_role_user_policy_
   count = "${length(local.grace_monitoring_tenant_viewonly_iam_role_list)}"
   user = "${local.grace_monitoring_tenant_viewonly_iam_role_list[count.index]}"
   policy_arn = "${aws_iam_policy.sts_assume_viewonly_role_user_policy_grace_monitoring_prod.arn}"
+}
+
+
+#-----S3 for hostting common shared files, such as threat file for guardduty----
+
+resource "aws_s3_bucket" "central_mon_account_bucket" {
+    bucket = "${var.s3_bucket_monitoring_account}"
+    acl = "private"
+
+    versioning {
+    enabled = true
+    }
+    #logging {
+    #  target_bucket = "${var.logging_bucket}"
+    #  target_prefix = "s3/${local.bucket_id}/"
+    #}
+    server_side_encryption_configuration {
+    rule {
+          apply_server_side_encryption_by_default {
+              sse_algorithm     = "AES256"
+          }
+        }
+}
+}
+
+#----Enable GuardDuty and Configure threat feed source
+
+resource "aws_guardduty_detector" "aws_guardduty_master" {
+  enable = true
+}
+
+# To do integrate with FireEye Threatfeed . Build Lambda to download feed and put into S3 bucket
+resource "aws_guardduty_threatintelset" "MyThreatIntelSet" {
+  activate    = true
+  detector_id = "${aws_guardduty_detector.aws_guardduty_master.id}"
+  format      = "TXT"
+  location    = "https://s3.amazonaws.com/${aws_s3_bucket.central_mon_account_bucket.bucket}/${var.s3_bucket_key_threatfeed}"
+  name        = "GuardDutyThreatIntelSet"
 }
