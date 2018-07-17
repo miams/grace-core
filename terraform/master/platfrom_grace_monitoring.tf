@@ -170,6 +170,7 @@ resource "aws_iam_user_policy_attachment" "sts_assume_viewonly_role_user_policy_
 #-----S3 for hostting common shared files, such as threat file for guardduty----
 
 resource "aws_s3_bucket" "central_mon_account_bucket" {
+    provider    = "aws.gracemonitoring"
     bucket = "${var.s3_bucket_monitoring_account}"
     acl = "private"
 
@@ -192,11 +193,13 @@ resource "aws_s3_bucket" "central_mon_account_bucket" {
 #----Enable GuardDuty and Configure threat feed source
 
 resource "aws_guardduty_detector" "aws_guardduty_master" {
+  provider    = "aws.gracemonitoring"
   enable = true
 }
 
 # To do integrate with FireEye Threatfeed . Build Lambda to download feed and put into S3 bucket
 resource "aws_guardduty_threatintelset" "MyThreatIntelSet" {
+  provider    = "aws.gracemonitoring"
   activate    = true
   detector_id = "${aws_guardduty_detector.aws_guardduty_master.id}"
   format      = "TXT"

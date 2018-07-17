@@ -4,7 +4,7 @@ variable "bucket" {
 
 variable "s3_bucket_monitoring_account" {
   type = "string"
-  default = "grace_monitoring"
+  default = "grace-monitoring"
 }
 
 variable "s3_bucket_key_threatfeed" {
