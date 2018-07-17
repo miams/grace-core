@@ -5,9 +5,9 @@
 # It only requires a prod account, no other environments.
 # It will be added to the platform OU within the platform, which must be done manually.
 
-# DOCUPDATE: Build authlanding account
-# DOCUPDATE: Add description and provider for this account
-# Add Master guard duty config and S3 for hostting common shared files
+# update: Build authlanding account
+# update: Add description and provider for this account
+#  update : Enable guardduty (Master) and create S3 for hostting common shared files like threatfile for guardduty
 
 
 
