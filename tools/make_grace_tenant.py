@@ -1,6 +1,6 @@
 """Creates a GRACE tenant file and budget notification parameter."""
 #!/usr/bin/env python
-# Requires Python 3.6.4
+# Requires Python 3.6.4 or higher and boto3
 #
 # This script will take input and create a GRACE Tenant terraform file that should be checked in to
 # source control. Hopefully, this will make it easier to create GRACE Tenants.
@@ -13,9 +13,13 @@
 # import re
 import sys
 import os.path
+import boto3
 
 def main():
     """Main function to collect info and produce the file."""
+    iam = boto3.client('iam')
+    ssm = boto3.client('ssm')
+    kms = boto3.client('kms')
     budget_notification_email = input("Enter a budget notification email address: ")
     budget_notification_amount = input("Enter the amount of whole dollars for the "
                                        + "tenant budget (ex: 100 for $100): ")
@@ -24,6 +28,7 @@ def main():
                                           + " that will be used, aside from prod and management."
                                           + " If no other environments will be used, just input "
                                           + "0: ")
+    primary_iam_user = input("Enter the shortname of the primary IAM user: ")
     prod_environment_email_owner = input("Enter the email address of the tenant prod owner: ")
     mgmt_environment_email_owner = input("Enter the email address of the tenant mgmt owner: ")
     tenant_environment_names = []
@@ -63,11 +68,18 @@ def main():
           + "to create a budget notification for you via the AWSCLI, then output a terraform file. "
           + "It will be up to you to get the Terraform file into the grace-core repo and apply it "
           + "properly.")
-    from subprocess import run
     # TODO: Return the friendly happy stuff if we get back a JSON "Version: 1"
-    create_budget_parameter = run(["aws ssm put-parameter --type String --name "
-                                   + tenant_name + "-budget --value " +
-                                   str(budget_notification_amount)], shell=True)
+    create_budget_parameter = ssm.put_parameter(
+        Name = tenant_name + '-budget',
+        Description = 'Budget notification parameter for tenant',
+        Value = str(budget_notification_amount),
+        Type = 'String',
+        Overwrite=True
+    )
+    # TODO: Check to see if the primary IAM user exists. If not, create it, then add it to the authlanding user list.
+    user_list = iam.list_users()
+    # TODO: Create the SSM parameters for the default IAM roles.
+
     """Check if the terraform file exists, first. Otherwise, we'll create it."""
     # TODO: Probably needs to be a little more robust. Should detect the filename and keep
     # incrementing something.
