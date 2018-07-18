@@ -36,6 +36,8 @@ module "tenant_ociso-ise_prod" {
   tenant_admin_iam_role_list = ["${local.ociso-ise_tenant_admin_iam_role_list}"]
   tenant_poweruser_iam_role_list = ["${local.ociso-ise_tenant_poweruser_iam_role_list}"]
   tenant_viewonly_iam_role_list = ["${local.ociso-ise_tenant_viewonly_iam_role_list}"]
+  enable_member_guardduty = "true"
+  guardduty_master_detector_id = "${aws_guardduty_detector.aws_guardduty_master.id}"
 }
 /*
 module "tenant_ociso-ise_mgmt" {
