@@ -39,7 +39,7 @@ data "aws_ssm_parameter" "grace_monitoring_tenant_viewonly_iam_role_list" {
 
 data "aws_ssm_parameter" "grace_monitoring_guardduty_threatfeed_priv" {
   # Create parameter from console with name below in master account. Use kms key create secure string.
-  name = "grace_monitoring_guardduty_threatfeed_pub"
+  name = "grace_monitoring_guardduty_threatfeed_priv"
 }
 data "aws_ssm_parameter" "grace_monitoring_guardduty_threatfeed_pub" {
   # Create parameter from console with name below in master account. Use kms key create secure string.
@@ -204,9 +204,14 @@ resource "aws_s3_bucket" "central_mon_account_bucket" {
 # SSM parameter are created manually from console.
 
 resource "aws_kms_key" "grace_master_account_parameter_stores_kms_key" {
-  description             = "KMS key to encrypt and decrypt parameter store objects in master account. Use this for storing GuardDuty secure sting to download threat feeds"
+  description             = "KMS key to encrypt and decrypt parameter store objects in master account. Use this for storing GuardDuty secure string to download threat feeds"
   deletion_window_in_days = 30
   enable_key_rotation     = "true"
+}
+
+resource "aws_kms_alias" "grace_master_account_parameter_stores_kms_key_name" {
+  name          = "alias/GuardDuty_Keys"
+  target_key_id = "${aws_kms_key.grace_master_account_parameter_stores_kms_key.key_id}"
 }
 
 #----Enable GuardDuty and Configure threat feed source
