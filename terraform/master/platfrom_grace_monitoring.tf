@@ -37,6 +37,16 @@ data "aws_ssm_parameter" "grace_monitoring_tenant_viewonly_iam_role_list" {
   name = "grace_monitoring-tenant-viewonly-iam-role-list"
 }
 
+data "aws_ssm_parameter" "grace_monitoring_guardduty_threatfeed_priv" {
+  # Create parameter from console with name below in master account. Use kms key create secure string.
+  name = "grace_monitoring_guardduty_threatfeed_pub"
+}
+data "aws_ssm_parameter" "grace_monitoring_guardduty_threatfeed_pub" {
+  # Create parameter from console with name below in master account. Use kms key create secure string.
+  name = "grace_monitoring_guardduty_threatfeed_pub"
+}
+
+
 locals {
   grace_monitoring_tenant_admin_iam_role_list = ["${split(",", data.aws_ssm_parameter.grace_monitoring_tenant_admin_iam_role_list.value)}"]
   grace_monitoring_tenant_poweruser_iam_role_list = ["${split(",", data.aws_ssm_parameter.grace_monitoring_tenant_poweruser_iam_role_list.value)}"]
@@ -190,6 +200,15 @@ resource "aws_s3_bucket" "central_mon_account_bucket" {
 }
 }
 
+# Create a KMS key in master account to store secure string in parameter store. Use this key to store secure sting in master account
+# SSM parameter are created manually from console.
+
+resource "aws_kms_key" "grace_master_account_parameter_stores_kms_key" {
+  description             = "KMS key to encrypt and decrypt parameter store objects in master account. Use this for storing GuardDuty secure sting to download threat feeds"
+  deletion_window_in_days = 30
+  enable_key_rotation     = "true"
+}
+
 #----Enable GuardDuty and Configure threat feed source
 
 resource "aws_guardduty_detector" "aws_guardduty_master" {
@@ -197,12 +216,12 @@ resource "aws_guardduty_detector" "aws_guardduty_master" {
   enable = true
 }
 
-# To do integrate with FireEye Threatfeed . Build Lambda to download feed and put into S3 bucket
-resource "aws_guardduty_threatintelset" "MyThreatIntelSet" {
-  provider    = "aws.gracemonitoring"
-  activate    = true
-  detector_id = "${aws_guardduty_detector.aws_guardduty_master.id}"
-  format      = "TXT"
-  location    = "https://s3.amazonaws.com/${aws_s3_bucket.central_mon_account_bucket.bucket}/${var.s3_bucket_key_threatfeed}"
-  name        = "GuardDutyThreatIntelSet"
+# Call a module to deploy threat feed lambda
+module "grace_monitoring_guardduty_threatfeed" {
+
+  source = "../platform/guardduty_lambda"
+  deploy_guardduty_threatfeed_lambda = "true"
+  threatfeed_output_bucket = "${aws_s3_bucket.central_mon_account_bucket.bucket}"
+  threatfeed_priv_key = "${data.aws_ssm_parameter.grace_monitoring_guardduty_threatfeed_priv.value}"
+  threatfeed_pub_key = "${data.aws_ssm_parameter.grace_monitoring_guardduty_threatfeed_pub.value}"
 }

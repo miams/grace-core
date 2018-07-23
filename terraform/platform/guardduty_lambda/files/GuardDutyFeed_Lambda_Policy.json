@@ -1,0 +1,46 @@
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Sid": "Stmt1532114661194",
+      "Action": [
+        "guardduty:CreateThreatIntelSet",
+        "guardduty:GetDetector",
+        "guardduty:GetThreatIntelSet",
+        "guardduty:ListDetectors",
+        "guardduty:ListThreatIntelSets",
+        "guardduty:UpdateThreatIntelSet"
+      ],
+      "Effect": "Allow",
+      "Resource": "*"
+    },
+    {
+      "Sid": "Stmt1532114881695",
+      "Action": [
+        "iam:DeleteRolePolicy",
+        "iam:PutRolePolicy"
+      ],
+      "Effect": "Allow",
+      "Resource": "*"
+    },
+    {
+      "Sid": "Stmt1532115052524",
+      "Action": [
+        "logs:CreateLogGroup",
+        "logs:CreateLogStream",
+        "logs:PutLogEvents"
+      ],
+      "Effect": "Allow",
+      "Resource": "*"
+    },
+    {
+      "Sid": "Stmt1532115168610",
+      "Action": [
+        "s3:GetObject",
+        "s3:PutObject"
+      ],
+      "Effect": "Allow",
+      "Resource": "*"
+    }
+  ]
+}
