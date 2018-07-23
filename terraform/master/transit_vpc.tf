@@ -13,6 +13,10 @@ locals {
     "${module.tenant_demotest14_prod.root_arn}",
     "${module.tenant_demotest14_mgmt.root_arn}",
     "${module.tenant_demotest14_dev.root_arn}",
+    "${module.tenant_demotest15_prod.root_arn}",
+    "${module.tenant_demotest15_mgmt.root_arn}",
+    "${module.tenant_demotest15_staging.root_arn}",
+    "${module.tenant_demotest15_dev.root_arn}",
   ]
 }
 
