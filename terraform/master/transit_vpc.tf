@@ -9,6 +9,10 @@ locals {
     "${module.tenant_spoketest_prod.root_arn}",
     "${module.tenant_spoketest_mgmt.root_arn}",
     "${module.tenant_spoketest_dev.root_arn}",
+    "${module.tenant_demotest14_staging.root_arn}",
+    "${module.tenant_demotest14_prod.root_arn}",
+    "${module.tenant_demotest14_mgmt.root_arn}",
+    "${module.tenant_demotest14_dev.root_arn}",
   ]
 }
 
@@ -36,7 +40,6 @@ data "aws_ssm_parameter" "transit_vpc_subnet_2_cidr" {
 data "aws_ssm_parameter" "transit_vpc_csr_throughput" {
   name = "transit_vpc_csr_throughput"
 }
-
 
 # not using member_account module since the NetOps account isn't part of the SAIC AWS Organization
 provider "aws" {
