@@ -17,6 +17,10 @@ locals {
     "${module.tenant_demotest15_mgmt.root_arn}",
     "${module.tenant_demotest15_staging.root_arn}",
     "${module.tenant_demotest15_dev.root_arn}",
+    "${module.tenant_demotest17_prod.root_arn}",
+    "${module.tenant_demotest17_mgmt.root_arn}",
+    "${module.tenant_demotest17_staging.root_arn}",
+    "${module.tenant_demotest17_dev.root_arn}",
   ]
 }
 
