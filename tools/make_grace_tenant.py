@@ -134,7 +134,7 @@ def main():
             f.write("  tenant_viewonly_iam_role_list = [\"${local." +
                     tenant_name + "_tenant_viewonly_iam_role_list}\"]\n")
             f.write("  enable_member_guardduty = \"true\"\n")
-            f.write("  guardduty_master_detector_id=\"" +
+            f.write("  guardduty_master_detector_id = \"" +
                     "${aws_guardduty_detector.aws_guardduty_master.id}\"\n")
         f.write("}\n")
         f.write("\n")
