@@ -68,6 +68,15 @@ The users are managed by SSM Parameter Store objects. You will want to create th
 1. Reapply the template through CircleCI.
 1. The parameter store objects that define the groups are read and constructed into the IAM role policy on the tenant subaccounts. Neat!
 
+## GuardDuty
+Guardduty is configured with aggregator in [GRACE Platform Monitoring Account](https://github.com/GSA/grace-core/blob/master/terraform/master/platfrom_grace_monitoring.tf). Tenant account will automatically have GuardDuty enabled and added to aggregator account . There is manual step for tenant account to accept invitation from AWS console. Automation of this is not supported by terraform yet.
+
+GuardDuty threatfeed lambda is deployed in [GRACE Platform Monitoring Account](https://github.com/GSA/grace-core/blob/master/terraform/master/platfrom_grace_monitoring.tf). Lambda downloads threat IOC and automatically updates GuardDuty threat feed list in aggregator account. Tenant GuardDuty configuration are automatically synced with latest threat feed from aggregator account.
+
+Accept GuardDuty invitation from aggregator.
+1. Tenant log in to AWS console account. Switch to GuardDuty service and accept invitation.
+
+
 ## Changing tenant parameters
 
 Unfortunately, AWS Organizations does not allow adjusting the "name" or "email" properties of an account. You will receive errors about being unable to close the account because a credit card is required. At this time, grace-core is unable to allow changes to these properties once the accounts are created. [See issue #55](https://github.com/GSA/grace-core/issues/55).
