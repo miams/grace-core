@@ -10,16 +10,36 @@
 # by Jason Miller - jasong.miller@gsa.gov
 #
 
-# import re
 import sys
 import os.path
 import boto3
+import argparse
+
+"""Set up command parsing"""
+parser = argparse.ArgumentParser(description='Create GRACE users, budget parameters, '
+                                 + 'IAM role parameters and a tenant file for a new tenant. Two sets of AWS credentials '
+                                 + 'must be supplied.'
+                                 + '  The credentials must exist in your ~.aws/credentials file. You must also supply '
+                                 + ' a KMS KeyId to create the new tenant IAM roles.',
+                                 epilog='Sorry, I know it is painful.')
+parser.add_argument('--masteraccount', required=True, help='AWS credentials profile of the master account')
+parser.add_argument('--authlandingaccount', required=True,
+                    help='AWS credentials profile of the authlanding account')
+parser.add_argument('--keyid', required=True,
+                    help='KeyId of the KMS key to use when creating IAM roles')
+args = parser.parse_args()
+
+"""Set up boto3 sessions"""
+master_payer_session = boto3.session.Session(
+    profile_name=str(args.masteraccount))
+authlanding_session = boto3.session.Session(
+    profile_name=str(args.authlandingaccount))
+authlanding_key_id = str(args.keyid)
+master_payer_ssm = master_payer_session.client('ssm')
+authlanding_ssm = authlanding_session.client('ssm')
 
 def main():
     """Main function to collect info and produce the file."""
-    iam = boto3.client('iam')
-    ssm = boto3.client('ssm')
-    kms = boto3.client('kms')
     budget_notification_email = input("Enter a budget notification email address: ")
     budget_notification_amount = input("Enter the amount of whole dollars for the "
                                        + "tenant budget (ex: 100 for $100): ")
@@ -28,7 +48,6 @@ def main():
                                           + " that will be used, aside from prod and management."
                                           + " If no other environments will be used, just input "
                                           + "0: ")
-    primary_iam_user = input("Enter the shortname of the primary IAM user: ")
     prod_environment_email_owner = input("Enter the email address of the tenant prod owner: ")
     mgmt_environment_email_owner = input("Enter the email address of the tenant mgmt owner: ")
     tenant_environment_names = []
@@ -43,10 +62,15 @@ def main():
         tenant_environment_names.append(tenant_name + "_" + tenant_environment_name)
         tenant_email_owner = input("Enter the email address of the owner for the account: ")
         tenant_email_owners.append(tenant_email_owner)
-    create_iam_roles = ""
-    if create_iam_roles != "true" or create_iam_roles != "false":
-        create_iam_roles = input(
-            "Create the default IAM roles in each tenant? Valid values are 'true' or 'false': ")
+    create_iam_roles = "true"
+    print("IAM users are next. We'll ask which IAM users to add to the roles. If the users "
+        + "do not exist, we'll create them. You can specify the same user for all three roles.")
+    iam_admin_user = input("Enter the name of an IAM user to be added to the admin role: ")
+    iam_poweruser_user = input("Enter the name of an IAM user to be added to the power user role: ")
+    iam_viewonly_user = input("Enter the name of an IAM user to be added to the view only role: ")
+#     if create_iam_roles != "true" or create_iam_roles != "false":
+#         create_iam_roles = input(
+#             "Create the default IAM roles in each tenant? Valid values are 'true' or 'false': ")
     print("The information you gave me is listed below. Please review it before continuing.")
     print("Budget notification email: " + budget_notification_email)
     print("Budget notification amount: " + budget_notification_amount)
@@ -57,7 +81,10 @@ def main():
     for i in range(total_number_of_tenant_environments):
         print("Tenant Environment Name: " + tenant_environment_names[i] + ", Tenant email owner: "
               + tenant_email_owners[i])
-    print("Create default IAM roles: " + create_iam_roles)
+#     print("Create default IAM roles: " + create_iam_roles)
+    print("Admin IAM user: " + iam_admin_user)
+    print("Power IAM user: " + iam_poweruser_user)
+    print("View only IAM user: " + iam_viewonly_user)
     ready_to_continue = input("Ready to proceed? (yes or no): ")
     if ready_to_continue != "yes" or ready_to_continue != "no":
         if ready_to_continue == "no":
@@ -68,18 +95,71 @@ def main():
           + "to create a budget notification for you via the AWSCLI, then output a terraform file. "
           + "It will be up to you to get the Terraform file into the grace-core repo and apply it "
           + "properly.")
-    # TODO: Return the friendly happy stuff if we get back a JSON "Version: 1"
-    create_budget_parameter = ssm.put_parameter(
+    print("Creating budget parameter...")
+    create_budget_parameter_response = master_payer_ssm.put_parameter(
         Name = tenant_name + '-budget',
         Description = 'Budget notification parameter for tenant',
         Value = str(budget_notification_amount),
         Type = 'String',
         Overwrite=True
     )
-    # TODO: Check to see if the primary IAM user exists. If not, create it, then add it to the authlanding user list.
-    user_list = iam.list_users()
-    # TODO: Create the SSM parameters for the default IAM roles.
-
+    print("create_budget_parameter_response: " + str(create_budget_parameter_response))
+    print("Checking list of IAM users...")
+    # Check to see if the primary IAM user exists. If not, create it, then add it to the authlanding user list.
+    # Check to see if the user exists from the above values. If not, put the user into the SSM parameter for the user
+    # list, but we'll let the pipeline create them. This may present issues when running Terraform in CircleCI.
+    create_iam_admin_user = "false"
+    create_iam_poweruser_user = "false"
+    create_iam_viewonly_user = "false"
+    print("Comparing list of IAM users with the users you specified...")
+    # Check Admin IAM user
+    create_iam_admin_user = search_authlanding_user_list_parameter(
+        iam_admin_user, "admin")
+    if create_iam_admin_user == "true":
+        print("Adding admin user to the authlanding user list...")
+        update_authlanding_user_list_parameter(iam_admin_user, "admin")
+    # Check PowerUser IAM user
+    create_iam_poweruser_user = search_authlanding_user_list_parameter(iam_poweruser_user, "poweruser")
+    if create_iam_poweruser_user == "true":
+        print("Adding poweruser user to the authlanding user list...")
+        update_authlanding_user_list_parameter(iam_poweruser_user, "poweruser")
+    # Check View Only user
+    create_iam_viewonly_user = search_authlanding_user_list_parameter(
+        iam_viewonly_user, "viewonly")
+    if create_iam_viewonly_user == "true":
+        print("Adding viewonly user to the authlanding user list...")
+        update_authlanding_user_list_parameter(iam_viewonly_user, "viewonly")
+    print("User actions complete...")
+    print("Creating IAM role lists...")
+    create_iam_admin_role_list_response = authlanding_ssm.put_parameter(
+        Name=tenant_name + '-tenant-admin-iam-role-list',
+        Description='List of users for admin role in' + tenant_name,
+        Value=str(iam_admin_user),
+        Type='SecureString',
+        KeyId=authlanding_key_id,
+        Overwrite=True
+    )
+    print("create_iam_admin_role_list_response: " + str(create_iam_admin_role_list_response))
+    create_iam_poweruser_role_list_response = authlanding_ssm.put_parameter(
+        Name=tenant_name + '-tenant-poweruser-iam-role-list',
+        Description='List of users for poweruser role in' + tenant_name,
+        Value=str(iam_poweruser_user),
+        Type='SecureString',
+        KeyId=authlanding_key_id,
+        Overwrite=True
+    )
+    print("create_iam_poweruser_role_list_response:" + str(create_iam_poweruser_role_list_response))
+    create_iam_viewonly_role_list_response = authlanding_ssm.put_parameter(
+        Name=tenant_name + '-tenant-viewonly-iam-role-list',
+        Description='List of users for viewonly role in' + tenant_name,
+        Value=str(iam_viewonly_user),
+        Type='SecureString',
+        KeyId=authlanding_key_id,
+        Overwrite=True
+    )
+    print("create_iam_viewonly_role_list_response: " + str(create_iam_viewonly_role_list_response))
+    print("Roles created...")
+    print("Now producing the Terraform file...")
     """Check if the terraform file exists, first. Otherwise, we'll create it."""
     # TODO: Probably needs to be a little more robust. Should detect the filename and keep
     # incrementing something.
@@ -88,42 +168,41 @@ def main():
         file_name = tenant_name + "_tenant_NEW.tf"
     f = open(file_name, "w+")
     f.write("# Tenant file for "+ tenant_name + ", autogenerated by python tool.\n")
-    if create_iam_roles != "false":
-        f.write("data \"aws_ssm_parameter\" \"" + tenant_name + "_tenant_admin_iam_role_list\" {\n")
-        f.write("  provider = \"aws.authlanding\"\n")
-        f.write("\n")
-        f.write("  # The name for this parameter must be unique to other tenants!\n")
-        f.write("  name = \"" + tenant_name + "-tenant-admin-iam-role-list\"\n")
-        f.write("}\n")
-        f.write("\n")
-        f.write("data \"aws_ssm_parameter\" \"" + tenant_name +
-                "_tenant_poweruser_iam_role_list\" {\n")
-        f.write("  provider = \"aws.authlanding\"\n")
-        f.write("\n")
-        f.write("  # The name for this parameter must be unique to other tenants!\n")
-        f.write("  name = \"" + tenant_name + "-tenant-poweruser-iam-role-list\"\n")
-        f.write("}\n")
-        f.write("\n")
-        f.write("data \"aws_ssm_parameter\" \"" + tenant_name +
-                "_tenant_viewonly_iam_role_list\" {\n")
-        f.write("  provider = \"aws.authlanding\"\n")
-        f.write("\n")
-        f.write("  # The name for this parameter must be unique to other tenants!\n")
-        f.write("  name = \"" + tenant_name + "-tenant-viewonly-iam-role-list\"\n")
-        f.write("}\n")
-        f.write("\n")
-        f.write("locals {\n")
-        f.write("  " + tenant_name + "_tenant_admin_iam_role_list = [\"${split(\",\", "
-                + "data.aws_ssm_parameter." + tenant_name + "_tenant_admin_iam_role_list."
-                + "value)}\"]\n")
-        f.write("  " + tenant_name +
-                "_tenant_poweruser_iam_role_list = [\"${split(\",\", "
-                + "data.aws_ssm_parameter." + tenant_name + "_tenant_poweruser_iam_role_list."
-                + "value)}\"]\n")
-        f.write("  " + tenant_name +
-                "_tenant_viewonly_iam_role_list = [\"${split(\",\", data.aws_ssm_parameter."
-                + tenant_name + "_tenant_viewonly_iam_role_list.value)}\"]\n")
-        f.write("}\n")
+    f.write("data \"aws_ssm_parameter\" \"" + tenant_name + "_tenant_admin_iam_role_list\" {\n")
+    f.write("  provider = \"aws.authlanding\"\n")
+    f.write("\n")
+    f.write("  # The name for this parameter must be unique to other tenants!\n")
+    f.write("  name = \"" + tenant_name + "-tenant-admin-iam-role-list\"\n")
+    f.write("}\n")
+    f.write("\n")
+    f.write("data \"aws_ssm_parameter\" \"" + tenant_name +
+            "_tenant_poweruser_iam_role_list\" {\n")
+    f.write("  provider = \"aws.authlanding\"\n")
+    f.write("\n")
+    f.write("  # The name for this parameter must be unique to other tenants!\n")
+    f.write("  name = \"" + tenant_name + "-tenant-poweruser-iam-role-list\"\n")
+    f.write("}\n")
+    f.write("\n")
+    f.write("data \"aws_ssm_parameter\" \"" + tenant_name +
+            "_tenant_viewonly_iam_role_list\" {\n")
+    f.write("  provider = \"aws.authlanding\"\n")
+    f.write("\n")
+    f.write("  # The name for this parameter must be unique to other tenants!\n")
+    f.write("  name = \"" + tenant_name + "-tenant-viewonly-iam-role-list\"\n")
+    f.write("}\n")
+    f.write("\n")
+    f.write("locals {\n")
+    f.write("  " + tenant_name + "_tenant_admin_iam_role_list = [\"${split(\",\", "
+            + "data.aws_ssm_parameter." + tenant_name + "_tenant_admin_iam_role_list."
+            + "value)}\"]\n")
+    f.write("  " + tenant_name +
+            "_tenant_poweruser_iam_role_list = [\"${split(\",\", "
+            + "data.aws_ssm_parameter." + tenant_name + "_tenant_poweruser_iam_role_list."
+            + "value)}\"]\n")
+    f.write("  " + tenant_name +
+            "_tenant_viewonly_iam_role_list = [\"${split(\",\", data.aws_ssm_parameter."
+            + tenant_name + "_tenant_viewonly_iam_role_list.value)}\"]\n")
+    f.write("}\n")
     f.write("\n")
     for i in range(total_number_of_tenant_environments):
         f.write("module \"tenant_" + tenant_environment_names[i] + "\" {\n")
@@ -264,7 +343,42 @@ def main():
             f.write("}\n")
             f.write("\n")
     f.close()
+    print("Finished.")
+        
+def get_authlanding_user_list_parameter():
+    authlanding_user_list = authlanding_ssm.get_parameter(
+        Name='authlanding-user-list',
+        WithDecryption=True
+    )
+    user_list = authlanding_user_list['Parameter']['Value']
+    return str(user_list)
+        
+def search_authlanding_user_list_parameter(user_name, role):
+    user_list = get_authlanding_user_list_parameter()
+    print("Current user list parameter contents (" + role + " user execution): " + str(user_list))
+    if user_name in user_list:
+        print("User " + user_name + " found, so not creating them.")
+        return "false"
+    else:
+        print("We'll create the user " + user_name + " as role " + role)
+        return "true"
 
+def update_authlanding_user_list_parameter(user_name, role):
+    user_list = get_authlanding_user_list_parameter()
+    create_iam_user_response = authlanding_ssm.put_parameter(
+        Name='authlanding-user-list',
+        Description='List of users for GRACE platform',
+        Value=str(user_list) + "," + str(user_name),
+        Type='SecureString',
+        Overwrite=True
+    )
+    print("create_iam_" + role + "_user_response: " +
+          str(create_iam_user_response))
+
+# def create_iam_role_parameter(iam_role_parameter, user_name):
+        
+# def create_tenant_file(tenant_name):
+        
 def usage():
     """Just display a little page about usage."""
     print(' -------------------------------------------------------------------------')
