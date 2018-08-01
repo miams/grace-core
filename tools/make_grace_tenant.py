@@ -1,6 +1,6 @@
 """Creates a GRACE tenant file and budget notification parameter."""
 #!/usr/bin/env python
-# Requires Python 3.6.4
+# Requires Python 3.6.4 or higher and boto3
 #
 # This script will take input and create a GRACE Tenant terraform file that should be checked in to
 # source control. Hopefully, this will make it easier to create GRACE Tenants.
@@ -9,12 +9,39 @@
 #
 # by Jason Miller - jasong.miller@gsa.gov
 #
+# pylint: disable=W0511
 
-# import re
 import sys
 import os.path
+import argparse
+import boto3
 
-def main():
+# Set up command parsing
+PARSER = argparse.ArgumentParser(description='Create GRACE users, budget parameters, '
+                                 + 'IAM role parameters and a tenant file for a new tenant. '
+                                 + 'Two sets of AWS credentials must be supplied.'
+                                 + '  The credentials must exist in your ~.aws/credentials file. '
+                                 + 'You must also supply a KMS KeyId to create the new tenant '
+                                 + 'IAM roles.', epilog='Sorry, I know it is painful.')
+PARSER.add_argument('--masteraccount', required=True, help='AWS credentials '
+                    + 'profile of the master account')
+PARSER.add_argument('--authlandingaccount', required=True,
+                    help='AWS credentials profile of the authlanding account')
+PARSER.add_argument('--keyid', required=True,
+                    help='KeyId of the KMS key to use when creating IAM roles')
+ARGS = PARSER.parse_args()
+
+"""Set up boto3 sessions"""
+MASTER_PAYER_SESSION = boto3.session.Session(
+    profile_name=str(ARGS.masteraccount))
+AUTHLANDING_SESSION = boto3.session.Session(
+    profile_name=str(ARGS.authlandingaccount))
+AUTHLANDING_KEY_ID = str(ARGS.keyid)
+MASTER_PAYER_SSM = MASTER_PAYER_SESSION.client('ssm')
+AUTHLANDING_SSM = AUTHLANDING_SESSION.client('ssm')
+
+
+def main():  # pylint: disable=R0914,R0912,R0915
     """Main function to collect info and produce the file."""
     budget_notification_email = input("Enter a budget notification email address: ")
     budget_notification_amount = input("Enter the amount of whole dollars for the "
@@ -38,10 +65,15 @@ def main():
         tenant_environment_names.append(tenant_name + "_" + tenant_environment_name)
         tenant_email_owner = input("Enter the email address of the owner for the account: ")
         tenant_email_owners.append(tenant_email_owner)
-    create_iam_roles = ""
-    if create_iam_roles != "true" or create_iam_roles != "false":
-        create_iam_roles = input(
-            "Create the default IAM roles in each tenant? Valid values are 'true' or 'false': ")
+    create_iam_roles = "true"
+    print("IAM users are next. We'll ask which IAM users to add to the roles. If the users "
+          + "do not exist, we'll create them. You can specify the same user for all three roles.")
+    iam_admin_user = input("Enter the name of an IAM user to be added to the admin role: ")
+    iam_poweruser_user = input("Enter the name of an IAM user to be added to the power user role: ")
+    iam_viewonly_user = input("Enter the name of an IAM user to be added to the view only role: ")
+#     if create_iam_roles != "true" or create_iam_roles != "false":
+#         create_iam_roles = input(
+#             "Create the default IAM roles in each tenant? Valid values are 'true' or 'false': ")
     print("The information you gave me is listed below. Please review it before continuing.")
     print("Budget notification email: " + budget_notification_email)
     print("Budget notification amount: " + budget_notification_amount)
@@ -52,7 +84,10 @@ def main():
     for i in range(total_number_of_tenant_environments):
         print("Tenant Environment Name: " + tenant_environment_names[i] + ", Tenant email owner: "
               + tenant_email_owners[i])
-    print("Create default IAM roles: " + create_iam_roles)
+#     print("Create default IAM roles: " + create_iam_roles)
+    print("Admin IAM user: " + iam_admin_user)
+    print("Power IAM user: " + iam_poweruser_user)
+    print("View only IAM user: " + iam_viewonly_user)
     ready_to_continue = input("Ready to proceed? (yes or no): ")
     if ready_to_continue != "yes" or ready_to_continue != "no":
         if ready_to_continue == "no":
@@ -63,55 +98,118 @@ def main():
           + "to create a budget notification for you via the AWSCLI, then output a terraform file. "
           + "It will be up to you to get the Terraform file into the grace-core repo and apply it "
           + "properly.")
-    from subprocess import run
-    # TODO: Return the friendly happy stuff if we get back a JSON "Version: 1"
-    create_budget_parameter = run(["aws ssm put-parameter --type String --name "
-                                   + tenant_name + "-budget --value " +
-                                   str(budget_notification_amount)], shell=True)
-    """Check if the terraform file exists, first. Otherwise, we'll create it."""
+    print("Creating budget parameter...")
+    create_budget_parameter_response = MASTER_PAYER_SSM.put_parameter(
+        Name=tenant_name + '-budget',
+        Description='Budget notification parameter for tenant',
+        Value=str(budget_notification_amount),
+        Type='String',
+        Overwrite=True
+    )
+    print("create_budget_parameter_response: " + str(create_budget_parameter_response))
+    print("Checking list of IAM users...")
+    # Check to see if the primary IAM user exists. If not, create it,
+    # then add it to the authlanding user list.
+    # Check to see if the user exists from the above values.
+    # If not, put the user into the SSM parameter for the user
+    # list, but we'll let the pipeline create them.
+    # This may present issues when running Terraform in CircleCI.
+    create_iam_admin_user = "false"
+    create_iam_poweruser_user = "false"
+    create_iam_viewonly_user = "false"
+    print("Comparing list of IAM users with the users you specified...")
+    # Check Admin IAM user
+    create_iam_admin_user = search_authlanding_user_list_parameter(
+        iam_admin_user, "admin")
+    if create_iam_admin_user == "true":
+        print("Adding admin user to the authlanding user list...")
+        update_authlanding_user_list_parameter(iam_admin_user, "admin")
+    # Check PowerUser IAM user
+    create_iam_poweruser_user = search_authlanding_user_list_parameter(
+        iam_poweruser_user, "poweruser")
+    if create_iam_poweruser_user == "true":
+        print("Adding poweruser user to the authlanding user list...")
+        update_authlanding_user_list_parameter(iam_poweruser_user, "poweruser")
+    # Check View Only user
+    create_iam_viewonly_user = search_authlanding_user_list_parameter(
+        iam_viewonly_user, "viewonly")
+    if create_iam_viewonly_user == "true":
+        print("Adding viewonly user to the authlanding user list...")
+        update_authlanding_user_list_parameter(iam_viewonly_user, "viewonly")
+    print("User actions complete...")
+    print("Creating IAM role lists...")
+    create_iam_admin_role_list_response = AUTHLANDING_SSM.put_parameter(
+        Name=tenant_name + '-tenant-admin-iam-role-list',
+        Description='List of users for admin role in' + tenant_name,
+        Value=str(iam_admin_user),
+        Type='SecureString',
+        KeyId=AUTHLANDING_KEY_ID,
+        Overwrite=True
+    )
+    print("create_iam_admin_role_list_response: " + str(create_iam_admin_role_list_response))
+    create_iam_poweruser_role_list_response = AUTHLANDING_SSM.put_parameter(
+        Name=tenant_name + '-tenant-poweruser-iam-role-list',
+        Description='List of users for poweruser role in' + tenant_name,
+        Value=str(iam_poweruser_user),
+        Type='SecureString',
+        KeyId=AUTHLANDING_KEY_ID,
+        Overwrite=True
+    )
+    print("create_iam_poweruser_role_list_response:" + str(create_iam_poweruser_role_list_response))
+    create_iam_viewonly_role_list_response = AUTHLANDING_SSM.put_parameter(
+        Name=tenant_name + '-tenant-viewonly-iam-role-list',
+        Description='List of users for viewonly role in' + tenant_name,
+        Value=str(iam_viewonly_user),
+        Type='SecureString',
+        KeyId=AUTHLANDING_KEY_ID,
+        Overwrite=True
+    )
+    print("create_iam_viewonly_role_list_response: " + str(create_iam_viewonly_role_list_response))
+    print("Roles created...")
+    print("Now producing the Terraform file...")
+    # Check if the terraform file exists, first. Otherwise, we'll create it.
     # TODO: Probably needs to be a little more robust. Should detect the filename and keep
     # incrementing something.
     file_name = "tenant_" + tenant_name + ".tf"
     if os.path.exists(file_name):
         file_name = tenant_name + "_tenant_NEW.tf"
-    f = open(file_name, "w+")
+    f = open(file_name, "w+")  # pylint: disable=C0103
     f.write("# Tenant file for "+ tenant_name + ", autogenerated by python tool.\n")
-    if create_iam_roles != "false":
-        f.write("data \"aws_ssm_parameter\" \"" + tenant_name + "_tenant_admin_iam_role_list\" {\n")
-        f.write("  provider = \"aws.authlanding\"\n")
-        f.write("\n")
-        f.write("  # The name for this parameter must be unique to other tenants!\n")
-        f.write("  name = \"" + tenant_name + "-tenant-admin-iam-role-list\"\n")
-        f.write("}\n")
-        f.write("\n")
-        f.write("data \"aws_ssm_parameter\" \"" + tenant_name +
-                "_tenant_poweruser_iam_role_list\" {\n")
-        f.write("  provider = \"aws.authlanding\"\n")
-        f.write("\n")
-        f.write("  # The name for this parameter must be unique to other tenants!\n")
-        f.write("  name = \"" + tenant_name + "-tenant-poweruser-iam-role-list\"\n")
-        f.write("}\n")
-        f.write("\n")
-        f.write("data \"aws_ssm_parameter\" \"" + tenant_name +
-                "_tenant_viewonly_iam_role_list\" {\n")
-        f.write("  provider = \"aws.authlanding\"\n")
-        f.write("\n")
-        f.write("  # The name for this parameter must be unique to other tenants!\n")
-        f.write("  name = \"" + tenant_name + "-tenant-viewonly-iam-role-list\"\n")
-        f.write("}\n")
-        f.write("\n")
-        f.write("locals {\n")
-        f.write("  " + tenant_name + "_tenant_admin_iam_role_list = [\"${split(\",\", "
-                + "data.aws_ssm_parameter." + tenant_name + "_tenant_admin_iam_role_list."
-                + "value)}\"]\n")
-        f.write("  " + tenant_name +
-                "_tenant_poweruser_iam_role_list = [\"${split(\",\", "
-                + "data.aws_ssm_parameter." + tenant_name + "_tenant_poweruser_iam_role_list."
-                + "value)}\"]\n")
-        f.write("  " + tenant_name +
-                "_tenant_viewonly_iam_role_list = [\"${split(\",\", data.aws_ssm_parameter."
-                + tenant_name + "_tenant_viewonly_iam_role_list.value)}\"]\n")
-        f.write("}\n")
+    f.write("data \"aws_ssm_parameter\" \"" + tenant_name + "_tenant_admin_iam_role_list\" {\n")
+    f.write("  provider = \"aws.authlanding\"\n")
+    f.write("\n")
+    f.write("  # The name for this parameter must be unique to other tenants!\n")
+    f.write("  name = \"" + tenant_name + "-tenant-admin-iam-role-list\"\n")
+    f.write("}\n")
+    f.write("\n")
+    f.write("data \"aws_ssm_parameter\" \"" + tenant_name +
+            "_tenant_poweruser_iam_role_list\" {\n")
+    f.write("  provider = \"aws.authlanding\"\n")
+    f.write("\n")
+    f.write("  # The name for this parameter must be unique to other tenants!\n")
+    f.write("  name = \"" + tenant_name + "-tenant-poweruser-iam-role-list\"\n")
+    f.write("}\n")
+    f.write("\n")
+    f.write("data \"aws_ssm_parameter\" \"" + tenant_name +
+            "_tenant_viewonly_iam_role_list\" {\n")
+    f.write("  provider = \"aws.authlanding\"\n")
+    f.write("\n")
+    f.write("  # The name for this parameter must be unique to other tenants!\n")
+    f.write("  name = \"" + tenant_name + "-tenant-viewonly-iam-role-list\"\n")
+    f.write("}\n")
+    f.write("\n")
+    f.write("locals {\n")
+    f.write("  " + tenant_name + "_tenant_admin_iam_role_list = [\"${split(\",\", "
+            + "data.aws_ssm_parameter." + tenant_name + "_tenant_admin_iam_role_list."
+            + "value)}\"]\n")
+    f.write("  " + tenant_name +
+            "_tenant_poweruser_iam_role_list = [\"${split(\",\", "
+            + "data.aws_ssm_parameter." + tenant_name + "_tenant_poweruser_iam_role_list."
+            + "value)}\"]\n")
+    f.write("  " + tenant_name +
+            "_tenant_viewonly_iam_role_list = [\"${split(\",\", data.aws_ssm_parameter."
+            + tenant_name + "_tenant_viewonly_iam_role_list.value)}\"]\n")
+    f.write("}\n")
     f.write("\n")
     for i in range(total_number_of_tenant_environments):
         f.write("module \"tenant_" + tenant_environment_names[i] + "\" {\n")
@@ -119,7 +217,8 @@ def main():
         # Commenting this next portion out because of bug in terraform:
         # https://github.com/hashicorp/terraform/issues/10462
         # if i != 0:
-        #     f.write("  depends_on = [\"module.tenant_" + tenant_environment_names[i - 1] + "\"]\n")
+        #     f.write("  depends_on = [\"module.tenant_"
+        #             + tenant_environment_names[i - 1] + "\"]\n")
         f.write("\n")
         f.write("  name = \"tenant_" + tenant_environment_names[i] + "\"\n")
         f.write("  email = \"" + tenant_email_owners[i] + "\"\n")
@@ -159,14 +258,17 @@ def main():
     f.write("\n")
     if create_iam_roles != "false":
         f.write("# IAM role permission section - have to give sts-assume-role permission "
-            + "to users to allow them to switch to the roles.\n")
+                + "to users to allow them to switch to the roles.\n")
         f.write("\n")
         for i in range(total_number_of_tenant_environments):
             # Admin policy and role attachment
-            f.write("resource \"aws_iam_policy\" \"sts_assume_admin_role_user_policy_" + tenant_environment_names[i] + "\" {\n")
+            f.write("resource \"aws_iam_policy\" \"sts_assume_admin_role_user_policy_"
+                    + tenant_environment_names[i] + "\" {\n")
             f.write("  provider = \"aws.authlanding\"\n")
-            f.write("  name = \"" + tenant_environment_names[i] + "_admin_assume_role_user_policy\"\n")
-            f.write("  description = \"Allows this user to assume the admin role in this " + tenant_environment_names[i] + " account\"\n")
+            f.write("  name = \"" + tenant_environment_names[i]
+                    + "_admin_assume_role_user_policy\"\n")
+            f.write("  description = \"Allows this user to assume the admin role in this "
+                    + tenant_environment_names[i] + " account\"\n")
             f.write("\n")
             f.write("  policy = <<EOF\n")
             f.write("{\n")
@@ -174,7 +276,8 @@ def main():
             f.write("  \"Statement\": [\n")
             f.write("     {\n")
             f.write("       \"Effect\": \"Allow\",\n")
-            f.write("       \"Resource\": \"${module.tenant_" + tenant_environment_names[i] + ".tenant_admin_role_arn}\",\n")
+            f.write("       \"Resource\": \"${module.tenant_" + tenant_environment_names[i]
+                    + ".tenant_admin_role_arn}\",\n")
             f.write("       \"Action\": \"sts:AssumeRole\"\n")
             f.write("     }\n")
             f.write("   ]\n")
@@ -182,19 +285,26 @@ def main():
             f.write("EOF\n")
             f.write("}\n")
             f.write("\n")
-            f.write("resource \"aws_iam_user_policy_attachment\" \"sts_assume_admin_role_user_policy_" +             tenant_environment_names[i] + "_attachment\" {\n")
+            f.write("resource \"aws_iam_user_policy_attachment\" "
+                    + "\"sts_assume_admin_role_user_policy_"
+                    + tenant_environment_names[i] + "_attachment\" {\n")
             f.write("  provider = \"aws.authlanding\"\n")
-            f.write("  count = \"${length(local." + tenant_name + "_tenant_admin_iam_role_list)}\"\n")
-            f.write("  user = \"${local." + tenant_name + "_tenant_admin_iam_role_list[count.index]}\"\n")
-            f.write("  policy_arn = \"${aws_iam_policy.sts_assume_admin_role_user_policy_" +                         tenant_environment_names[i] + ".arn}\"\n")
+            f.write("  count = \"${length(local." + tenant_name
+                    + "_tenant_admin_iam_role_list)}\"\n")
+            f.write("  user = \"${local." + tenant_name
+                    + "_tenant_admin_iam_role_list[count.index]}\"\n")
+            f.write("  policy_arn = \"${aws_iam_policy.sts_assume_admin_role_user_policy_"
+                    + tenant_environment_names[i] + ".arn}\"\n")
             f.write("}\n")
             f.write("\n")
             # Power User role
-            f.write("resource \"aws_iam_policy\" \"sts_assume_poweruser_role_user_policy_" + tenant_environment_names[i] + "\" {\n")
+            f.write("resource \"aws_iam_policy\" \"sts_assume_poweruser_role_user_policy_"
+                    + tenant_environment_names[i] + "\" {\n")
             f.write("  provider = \"aws.authlanding\"\n")
-            f.write("  name = \"" + tenant_environment_names[i] + "_poweruser_assume_role_user_policy\"\n")
-            f.write("  description = \"Allows this user to assume the poweruser role in this " + \
-                    tenant_environment_names[i] + "account\"\n")
+            f.write("  name = \"" + tenant_environment_names[i]
+                    + "_poweruser_assume_role_user_policy\"\n")
+            f.write("  description = \"Allows this user to assume the poweruser role in this "
+                    + tenant_environment_names[i] + " account\"\n")
             f.write("\n")
             f.write("  policy = <<EOF\n")
             f.write("{\n")
@@ -202,8 +312,8 @@ def main():
             f.write("  \"Statement\": [\n")
             f.write("     {\n")
             f.write("       \"Effect\": \"Allow\",\n")
-            f.write(
-                    "       \"Resource\": \"${module.tenant_" + tenant_environment_names[i] + ".tenant_poweruser_role_arn}\",\n")
+            f.write("       \"Resource\": \"${module.tenant_" + tenant_environment_names[i]
+                    + ".tenant_poweruser_role_arn}\",\n")
             f.write("       \"Action\": \"sts:AssumeRole\"\n")
             f.write("     }\n")
             f.write("   ]\n")
@@ -211,21 +321,26 @@ def main():
             f.write("EOF\n")
             f.write("}\n")
             f.write("\n")
-            f.write("resource \"aws_iam_user_policy_attachment\" \"sts_assume_poweruser_role_user_policy_" + tenant_environment_names[i] + "_attachment\" {\n")
+            f.write("resource \"aws_iam_user_policy_attachment\" "
+                    + "\"sts_assume_poweruser_role_user_policy_"
+                    + tenant_environment_names[i] + "_attachment\" {\n")
             f.write("  provider = \"aws.authlanding\"\n")
-            f.write(
-                    "  count = \"${length(local." + tenant_name + "_tenant_poweruser_iam_role_list)}\"\n")
+            f.write("  count = \"${length(local." + tenant_name
+                    + "_tenant_poweruser_iam_role_list)}\"\n")
             f.write("  user = \"${local." + tenant_name + \
                     "_tenant_poweruser_iam_role_list[count.index]}\"\n")
-            f.write("  policy_arn = \"${aws_iam_policy.sts_assume_poweruser_role_user_policy_" + tenant_environment_names[i] + ".arn}\"\n")
+            f.write("  policy_arn = \"${aws_iam_policy.sts_assume_poweruser_role_user_policy_"
+                    + tenant_environment_names[i] + ".arn}\"\n")
             f.write("}\n")
             f.write("\n")
             # View Only role
-            f.write("resource \"aws_iam_policy\" \"sts_assume_viewonly_role_user_policy_" + tenant_environment_names[i] + "\" {\n")
+            f.write("resource \"aws_iam_policy\" \"sts_assume_viewonly_role_user_policy_"
+                    + tenant_environment_names[i] + "\" {\n")
             f.write("  provider = \"aws.authlanding\"\n")
-            f.write("  name = \"" + tenant_environment_names[i] + "_viewonly_assume_role_user_policy\"\n")
-            f.write("  description = \"Allows this user to assume the viewonly role in this " + \
-                    tenant_environment_names[i] + "account\"\n")
+            f.write("  name = \"" + tenant_environment_names[i]
+                    + "_viewonly_assume_role_user_policy\"\n")
+            f.write("  description = \"Allows this user to assume the viewonly role in this "
+                    + tenant_environment_names[i] + " account\"\n")
             f.write("\n")
             f.write("  policy = <<EOF\n")
             f.write("{\n")
@@ -233,8 +348,8 @@ def main():
             f.write("  \"Statement\": [\n")
             f.write("     {\n")
             f.write("       \"Effect\": \"Allow\",\n")
-            f.write(
-                    "       \"Resource\": \"${module.tenant_" + tenant_environment_names[i] + ".tenant_viewonly_role_arn}\",\n")
+            f.write("       \"Resource\": \"${module.tenant_" + tenant_environment_names[i]
+                    + ".tenant_viewonly_role_arn}\",\n")
             f.write("       \"Action\": \"sts:AssumeRole\"\n")
             f.write("     }\n")
             f.write("   ]\n")
@@ -242,16 +357,58 @@ def main():
             f.write("EOF\n")
             f.write("}\n")
             f.write("\n")
-            f.write("resource \"aws_iam_user_policy_attachment\" \"sts_assume_viewonly_role_user_policy_" + tenant_environment_names[i] + "_attachment\" {\n")
+            f.write("resource \"aws_iam_user_policy_attachment\" "
+                    + "\"sts_assume_viewonly_role_user_policy_"
+                    + tenant_environment_names[i] + "_attachment\" {\n")
             f.write("  provider = \"aws.authlanding\"\n")
-            f.write(
-                    "  count = \"${length(local." + tenant_name + "_tenant_viewonly_iam_role_list)}\"\n")
+            f.write("  count = \"${length(local." + tenant_name
+                    + "_tenant_viewonly_iam_role_list)}\"\n")
             f.write("  user = \"${local." + tenant_name + \
                     "_tenant_viewonly_iam_role_list[count.index]}\"\n")
-            f.write("  policy_arn = \"${aws_iam_policy.sts_assume_viewonly_role_user_policy_" + tenant_environment_names[i] + ".arn}\"\n")
+            f.write("  policy_arn = \"${aws_iam_policy.sts_assume_viewonly_role_user_policy_"
+                    + tenant_environment_names[i] + ".arn}\"\n")
             f.write("}\n")
             f.write("\n")
     f.close()
+    print("Finished.")
+
+def get_authlanding_user_list_parameter():
+    """Retrieves the authlanding user list parameter and returns result"""
+    authlanding_user_list = AUTHLANDING_SSM.get_parameter(
+        Name='authlanding-user-list',
+        WithDecryption=True
+    )
+    user_list = authlanding_user_list['Parameter']['Value']
+    return str(user_list)
+
+def search_authlanding_user_list_parameter(user_name, role):
+    """Searches authlanding user list parameter contents"""
+    user_list = get_authlanding_user_list_parameter()
+    print("Current user list parameter contents (" + role + " user execution): "
+          + str(user_list))
+    if user_name in user_list:  # pylint: disable=R1705
+        print("User " + user_name + " found, so not creating them.")
+        return "false"
+    else:
+        print("We'll create the user " + user_name + " as role " + role)
+        return "true"
+
+def update_authlanding_user_list_parameter(user_name, role):
+    """Adds a user to the authlanding user list parameter"""
+    user_list = get_authlanding_user_list_parameter()
+    create_iam_user_response = AUTHLANDING_SSM.put_parameter(
+        Name='authlanding-user-list',
+        Description='List of users for GRACE platform',
+        Value=str(user_list) + "," + str(user_name),
+        Type='SecureString',
+        Overwrite=True
+    )
+    print("create_iam_" + role + "_user_response: " +
+          str(create_iam_user_response))
+
+# def create_iam_role_parameter(iam_role_parameter, user_name):
+
+# def create_tenant_file(tenant_name):
 
 def usage():
     """Just display a little page about usage."""
