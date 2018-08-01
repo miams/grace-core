@@ -4,3 +4,4 @@
 *.tfstate*
 *.pem
 .DS_Store
+.vscode/settings.json
