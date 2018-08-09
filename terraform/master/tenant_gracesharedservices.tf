@@ -276,11 +276,50 @@ resource "aws_iam_user_policy_attachment" "sts_assume_viewonly_role_user_policy_
 resource "aws_s3_bucket" "tenant_info_bucket" {
   bucket = "grace-tenant-info"
   acl    = "private"
+  policy = "${data.template_file.tenant_info_bucket_policy.rendered}"
 
   tags {
     Purpose = "Stores information about the tenant subaccount IDs for other grace-core elements to use."
   }
 }
+
+data "template_file" "tenant_info_bucket_policy" {
+    template = "${file("${path.module}/files/tenant-info-bucket-policy.json")}"
+    vars = {
+      shared_services_prod_account_id = "${module.tenant_gracesharedservices_prod.account_id}"
+      shared_services_mgmt_account_id = "${module.tenant_gracesharedservices_mgmt.account_id}"
+    }
+}
+
+# resource "aws_s3_bucket_policy" "tenant_info_bucket_policy" {
+#   bucket = "${aws_s3_bucket.tenant_info_bucket}"
+#   policy =<<POLICY
+# {
+#   "Id": "Policy1533845369120",
+#   "Version": "2012-10-17",
+#   "Statement": [
+#     {
+#       "Sid": "Stmt1533845360625",
+#       "Action": [
+#         "s3:GetBucketAcl",
+#         "s3:GetObject",
+#         "s3:GetObjectAcl",
+#         "s3:ListAllMyBuckets",
+#         "s3:ListBucket"
+#       ],
+#       "Effect": "Allow",
+#       "Resource": "arn:aws:s3:::grace-tenant-info",
+#       "Principal": {
+#         "AWS": [
+#           "arn:aws:iam::705583254036:root",
+#           "arn:aws:iam::717447543285:root"
+#         ]
+#       }
+#     }
+#   ]
+# }
+# POLICY
+# }
 resource "aws_iam_role" "tenant_account_lister_role" {
   name = "tenant-account-lister-role"
 

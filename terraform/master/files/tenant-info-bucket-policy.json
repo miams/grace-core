@@ -1,0 +1,24 @@
+{
+    "Id": "Policy1533845369120",
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Sid": "Stmt1533845360625",
+            "Action": [
+                "s3:GetBucketAcl",
+                "s3:GetObject",
+                "s3:GetObjectAcl",
+                "s3:ListAllMyBuckets",
+                "s3:ListBucket"
+            ],
+            "Effect": "Allow",
+            "Resource": "arn:aws:s3:::grace-tenant-info",
+            "Principal": {
+                "AWS": [
+                    "arn:aws:iam::${shared_services_prod_account_id}:root",
+                    "arn:aws:iam::${shared_services_mgmt_account_id}:root"
+                ]
+            }
+        }
+    ]
+}
