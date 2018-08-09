@@ -5,11 +5,7 @@
         {
             "Sid": "Stmt1533845360625",
             "Action": [
-                "s3:GetBucketAcl",
-                "s3:GetObject",
-                "s3:GetObjectAcl",
-                "s3:ListAllMyBuckets",
-                "s3:ListBucket"
+                "s3:*"
             ],
             "Effect": "Allow",
             "Resource": "arn:aws:s3:::grace-tenant-info",
