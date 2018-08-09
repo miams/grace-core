@@ -19,7 +19,12 @@ resource "aws_iam_user_policy" "deployer_org" {
   "Statement": [
     {
       "Action": [
-        "organizations:*"
+        "organizations:*",
+        "iam:CreateRole",
+        "iam:GetRole",
+        "iam:GetRolePolicy",
+        "iam:PutRolePolicy",
+        "iam:PassRole"
       ],
       "Effect": "Allow",
       "Resource": "*"
