@@ -8,7 +8,7 @@
                 "s3:*"
             ],
             "Effect": "Allow",
-            "Resource": "arn:aws:s3:::grace-tenant-info",
+            "Resource": "arn:aws:s3:::grace-tenant-info/*",
             "Principal": {
                 "AWS": [
                     "arn:aws:iam::${shared_services_prod_account_id}:root",
