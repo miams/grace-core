@@ -18,5 +18,7 @@ def lambda_handler(event, context):
     for account_id in organizations_response['Accounts']:
         tenant_accounts += account_id['Id'] + ","
 
+    tenant_accounts = tenant_accounts[:-1]
+
     MASTER_PAYER_S3.put_object(
         Body=tenant_accounts, Bucket=TENANT_BUCKET, Key=TENANT_KEY + "/" + TENANTS_FILE)
