@@ -98,16 +98,65 @@ resource "aws_iam_user_policy" "packer_builder_iam_policy" {
 
   policy = <<EOF
 {
-  "Version": "2012-10-17",
-  "Statement": [
-    {
-      "Action": [
-        "*"
-      ],
-      "Effect": "Allow",
-      "Resource": "*"
-    }
-  ]
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Sid": "VisualEditor0",
+            "Effect": "Allow",
+            "Action": [
+                "s3:GetObjectAcl",
+                "s3:GetObject",
+                "s3:ListBucket",
+                "s3:GetBucketAcl",
+                "s3:GetBucketPolicy"
+            ],
+            "Resource": [
+                "arn:aws:s3:::grace-tenant-info",
+                "arn:aws:s3:::grace-tenant-info/tenant-info/*"
+            ]
+        },
+        {
+            "Sid": "VisualEditor1",
+            "Effect": "Allow",
+            "Action": [
+                "ec2:AttachVolume",
+                "ec2:AuthorizeSecurityGroupIngress",
+                "ec2:DeregisterImage",
+                "ec2:DeleteSnapshot",
+                "ec2:DescribeInstances",
+                "ec2:CreateKeyPair",
+                "ec2:DescribeRegions",
+                "ec2:CreateImage",
+                "ec2:CopyImage",
+                "ec2:ModifyImageAttribute",
+                "ec2:DescribeSnapshots",
+                "ec2:DeleteVolume",
+                "ec2:ModifySnapshotAttribute",
+                "ec2:CreateSecurityGroup",
+                "ec2:DescribeVolumes",
+                "ec2:CreateSnapshot",
+                "s3:HeadBucket",
+                "ec2:ModifyInstanceAttribute",
+                "ec2:DetachVolume",
+                "ec2:TerminateInstances",
+                "ec2:DescribeTags",
+                "ec2:CreateTags",
+                "ec2:RegisterImage",
+                "ec2:RunInstances",
+                "ec2:StopInstances",
+                "ec2:DescribeSecurityGroups",
+                "ec2:CreateVolume",
+                "ec2:DescribeImages",
+                "ec2:GetPasswordData",
+                "s3:ListAllMyBuckets",
+                "ec2:DescribeImageAttribute",
+                "ec2:DeleteSecurityGroup",
+                "ec2:DescribeSubnets",
+                "ec2:DeleteKeyPair"
+            ],
+            "Resource": "*"
+        }
+    ]
 }
 EOF
 }
@@ -291,35 +340,6 @@ data "template_file" "tenant_info_bucket_policy" {
     }
 }
 
-# resource "aws_s3_bucket_policy" "tenant_info_bucket_policy" {
-#   bucket = "${aws_s3_bucket.tenant_info_bucket}"
-#   policy =<<POLICY
-# {
-#   "Id": "Policy1533845369120",
-#   "Version": "2012-10-17",
-#   "Statement": [
-#     {
-#       "Sid": "Stmt1533845360625",
-#       "Action": [
-#         "s3:GetBucketAcl",
-#         "s3:GetObject",
-#         "s3:GetObjectAcl",
-#         "s3:ListAllMyBuckets",
-#         "s3:ListBucket"
-#       ],
-#       "Effect": "Allow",
-#       "Resource": "arn:aws:s3:::grace-tenant-info",
-#       "Principal": {
-#         "AWS": [
-#           "arn:aws:iam::705583254036:root",
-#           "arn:aws:iam::717447543285:root"
-#         ]
-#       }
-#     }
-#   ]
-# }
-# POLICY
-# }
 resource "aws_iam_role" "tenant_account_lister_role" {
   name = "tenant-account-lister-role"
 
