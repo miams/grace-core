@@ -1,0 +1,25 @@
+{
+    "Id": "Policy0813201801",
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Sid": "Stmt0813201801",
+            "Action": [
+                "kms:Encrypt",
+                "kms:Decrypt",
+                "kms:ReEncrypt*",
+                "kms:GenerateDataKey*",
+                "kms:DescribeKey"
+            ],
+            "Effect": "Allow",
+            "Resource": "arn:aws:s3:::grace-tenant-info/*",
+            "Principal": {
+                "AWS": [
+                    "arn:aws:iam::${shared_services_prod_account_id}:root",
+                    "arn:aws:iam::${shared_services_mgmt_account_id}:root",
+                    "${tenant_account_lister_role_arn}"
+                ]
+            }
+        }
+    ]
+}
