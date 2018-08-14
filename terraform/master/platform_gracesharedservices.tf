@@ -322,21 +322,6 @@ resource "aws_iam_user_policy_attachment" "sts_assume_viewonly_role_user_policy_
 # This tenant also has a lambda function that will query the tenant accounts in a sub OU to get the AWS accounts IDs.
 # 08/08/18 by Jason Miller - jasong.miller@gsa.gov
 
-data "template_file" "tenant_info_bucket_kms_key_policy" {
-  template = "${file("${path.module}/files/tenant-info-bucket-kms-key-policy.json")}"
-    vars = {
-      shared_services_prod_account_id = "${module.tenant_gracesharedservices_prod.account_id}"
-      shared_services_mgmt_account_id = "${module.tenant_gracesharedservices_mgmt.account_id}"
-      packer_builder_user_arn = "${aws_iam_user.packer_builder.arn}"
-      tenant_account_lister_role_arn = "${aws_iam_role.tenant_account_lister_role.arn}"
-  }
-}
-
-resource "aws_kms_key" "grace-tenant-info-bucket-kms-key" {
-  description             = "This key is used to encrypt bucket objects in the grace-tenant-info bucket"
-  policy = "${data.template_file.tenant_info_bucket_kms_key_policy.rendered}"
-}
-
 resource "aws_s3_bucket" "tenant_info_bucket" {
   bucket = "grace-tenant-info"
   acl    = "private"
@@ -344,8 +329,7 @@ resource "aws_s3_bucket" "tenant_info_bucket" {
   server_side_encryption_configuration {
     rule {
       apply_server_side_encryption_by_default {
-        kms_master_key_id = "${aws_kms_key.grace-tenant-info-bucket-kms-key.arn}"
-        sse_algorithm     = "aws:kms"
+        sse_algorithm     = "AES256"
       }
     }
   }
