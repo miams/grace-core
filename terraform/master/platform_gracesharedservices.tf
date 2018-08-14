@@ -327,6 +327,7 @@ data "template_file" "tenant_info_bucket_kms_key_policy" {
     vars = {
       shared_services_prod_account_id = "${module.tenant_gracesharedservices_prod.account_id}"
       shared_services_mgmt_account_id = "${module.tenant_gracesharedservices_mgmt.account_id}"
+      packer_builder_user_arn = "${aws_iam_user.packer_builder.arn}"
       tenant_account_lister_role_arn = "${aws_iam_role.tenant_account_lister_role.arn}"
   }
 }
