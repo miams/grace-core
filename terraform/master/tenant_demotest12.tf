@@ -21,61 +21,61 @@ data "aws_ssm_parameter" "demotest12_tenant_viewonly_iam_role_list" {
 }
 
 locals {
-  demotest12_tenant_admin_iam_role_list = ["${split(",", data.aws_ssm_parameter.demotest12_tenant_admin_iam_role_list.value)}"]
+  demotest12_tenant_admin_iam_role_list     = ["${split(",", data.aws_ssm_parameter.demotest12_tenant_admin_iam_role_list.value)}"]
   demotest12_tenant_poweruser_iam_role_list = ["${split(",", data.aws_ssm_parameter.demotest12_tenant_poweruser_iam_role_list.value)}"]
-  demotest12_tenant_viewonly_iam_role_list = ["${split(",", data.aws_ssm_parameter.demotest12_tenant_viewonly_iam_role_list.value)}"]
+  demotest12_tenant_viewonly_iam_role_list  = ["${split(",", data.aws_ssm_parameter.demotest12_tenant_viewonly_iam_role_list.value)}"]
 }
 
 module "tenant_demotest12_prod" {
   source = "../member_account"
 
-  name = "tenant_demotest12_prod"
-  email = "jasong.miller+demotest12prod@gsa.gov"
+  name                        = "tenant_demotest12_prod"
+  email                       = "jasong.miller+demotest12prod@gsa.gov"
   authlanding_prod_account_id = "${module.authlanding_prod.account_id}"
-  create_iam_roles = "true"
+  create_iam_roles            = "true"
 
-  tenant_admin_iam_role_list = ["${local.demotest12_tenant_admin_iam_role_list}"]
+  tenant_admin_iam_role_list     = ["${local.demotest12_tenant_admin_iam_role_list}"]
   tenant_poweruser_iam_role_list = ["${local.demotest12_tenant_poweruser_iam_role_list}"]
-  tenant_viewonly_iam_role_list = ["${local.demotest12_tenant_viewonly_iam_role_list}"]
+  tenant_viewonly_iam_role_list  = ["${local.demotest12_tenant_viewonly_iam_role_list}"]
 }
 
 module "tenant_demotest12_mgmt" {
   source = "../member_account"
 
-  name = "tenant_demotest12_mgmt"
-  email = "jasong.miller+demotest12mgmt@gsa.gov"
+  name                        = "tenant_demotest12_mgmt"
+  email                       = "jasong.miller+demotest12mgmt@gsa.gov"
   authlanding_prod_account_id = "${module.authlanding_prod.account_id}"
-  create_iam_roles = "true"
+  create_iam_roles            = "true"
 
-  tenant_admin_iam_role_list = ["${local.demotest12_tenant_admin_iam_role_list}"]
+  tenant_admin_iam_role_list     = ["${local.demotest12_tenant_admin_iam_role_list}"]
   tenant_poweruser_iam_role_list = ["${local.demotest12_tenant_poweruser_iam_role_list}"]
-  tenant_viewonly_iam_role_list = ["${local.demotest12_tenant_viewonly_iam_role_list}"]
+  tenant_viewonly_iam_role_list  = ["${local.demotest12_tenant_viewonly_iam_role_list}"]
 }
 
 module "tenant_demotest12_staging" {
   source = "../member_account"
 
-  name = "tenant_demotest12_staging"
-  email = "jasong.miller+demotest12staging@gsa.gov"
+  name                        = "tenant_demotest12_staging"
+  email                       = "jasong.miller+demotest12staging@gsa.gov"
   authlanding_prod_account_id = "${module.authlanding_prod.account_id}"
-  create_iam_roles = "true"
+  create_iam_roles            = "true"
 
-  tenant_admin_iam_role_list = ["${local.demotest12_tenant_admin_iam_role_list}"]
+  tenant_admin_iam_role_list     = ["${local.demotest12_tenant_admin_iam_role_list}"]
   tenant_poweruser_iam_role_list = ["${local.demotest12_tenant_poweruser_iam_role_list}"]
-  tenant_viewonly_iam_role_list = ["${local.demotest12_tenant_viewonly_iam_role_list}"]
+  tenant_viewonly_iam_role_list  = ["${local.demotest12_tenant_viewonly_iam_role_list}"]
 }
 
 module "tenant_demotest12_dev" {
   source = "../member_account"
 
-  name = "tenant_demotest12_dev"
-  email = "jasong.miller+demotest12dev@gsa.gov"
+  name                        = "tenant_demotest12_dev"
+  email                       = "jasong.miller+demotest12dev@gsa.gov"
   authlanding_prod_account_id = "${module.authlanding_prod.account_id}"
-  create_iam_roles = "true"
+  create_iam_roles            = "true"
 
-  tenant_admin_iam_role_list = ["${local.demotest12_tenant_admin_iam_role_list}"]
+  tenant_admin_iam_role_list     = ["${local.demotest12_tenant_admin_iam_role_list}"]
   tenant_poweruser_iam_role_list = ["${local.demotest12_tenant_poweruser_iam_role_list}"]
-  tenant_viewonly_iam_role_list = ["${local.demotest12_tenant_viewonly_iam_role_list}"]
+  tenant_viewonly_iam_role_list  = ["${local.demotest12_tenant_viewonly_iam_role_list}"]
 }
 
 module "demotest12_budget" {
@@ -87,7 +87,7 @@ module "demotest12_budget" {
     {
       protocol = "email"
       endpoint = "jasong.miller+budget@gsa.gov"
-    }
+    },
   ]
 
   account_ids = [
@@ -101,8 +101,8 @@ module "demotest12_budget" {
 # IAM role permission section - have to give sts-assume-role permission to users to allow them to switch to the roles.
 
 resource "aws_iam_policy" "sts_assume_admin_role_user_policy_demotest12_prod" {
-  provider = "aws.authlanding"
-  name = "demotest12_prod_admin_assume_role_user_policy"
+  provider    = "aws.authlanding"
+  name        = "demotest12_prod_admin_assume_role_user_policy"
   description = "Allows this user to assume the admin role in this demotest12_prod account"
 
   policy = <<EOF
@@ -120,15 +120,15 @@ EOF
 }
 
 resource "aws_iam_user_policy_attachment" "sts_assume_admin_role_user_policy_demotest12_prod_attachment" {
-  provider = "aws.authlanding"
-  count = "${length(local.demotest12_tenant_admin_iam_role_list)}"
-  user = "${local.demotest12_tenant_admin_iam_role_list[count.index]}"
+  provider   = "aws.authlanding"
+  count      = "${length(local.demotest12_tenant_admin_iam_role_list)}"
+  user       = "${local.demotest12_tenant_admin_iam_role_list[count.index]}"
   policy_arn = "${aws_iam_policy.sts_assume_admin_role_user_policy_demotest12_prod.arn}"
 }
 
 resource "aws_iam_policy" "sts_assume_poweruser_role_user_policy_demotest12_prod" {
-  provider = "aws.authlanding"
-  name = "demotest12_demotest12_prod_poweruser_assume_role_user_policy"
+  provider    = "aws.authlanding"
+  name        = "demotest12_demotest12_prod_poweruser_assume_role_user_policy"
   description = "Allows this user to assume the poweruser role in this demotest12_prodaccount"
 
   policy = <<EOF
@@ -146,15 +146,15 @@ EOF
 }
 
 resource "aws_iam_user_policy_attachment" "sts_assume_poweruser_role_user_policy_demotest12_prod_attachment" {
-  provider = "aws.authlanding"
-  count = "${length(local.demotest12_tenant_poweruser_iam_role_list)}"
-  user = "${local.demotest12_tenant_poweruser_iam_role_list[count.index]}"
+  provider   = "aws.authlanding"
+  count      = "${length(local.demotest12_tenant_poweruser_iam_role_list)}"
+  user       = "${local.demotest12_tenant_poweruser_iam_role_list[count.index]}"
   policy_arn = "${aws_iam_policy.sts_assume_poweruser_role_user_policy_demotest12_prod.arn}"
 }
 
 resource "aws_iam_policy" "sts_assume_viewonly_role_user_policy_demotest12_prod" {
-  provider = "aws.authlanding"
-  name = "demotest12_demotest12_prod_viewonly_assume_role_user_policy"
+  provider    = "aws.authlanding"
+  name        = "demotest12_demotest12_prod_viewonly_assume_role_user_policy"
   description = "Allows this user to assume the viewonly role in this demotest12_prodaccount"
 
   policy = <<EOF
@@ -172,15 +172,15 @@ EOF
 }
 
 resource "aws_iam_user_policy_attachment" "sts_assume_viewonly_role_user_policy_demotest12_prod_attachment" {
-  provider = "aws.authlanding"
-  count = "${length(local.demotest12_tenant_viewonly_iam_role_list)}"
-  user = "${local.demotest12_tenant_viewonly_iam_role_list[count.index]}"
+  provider   = "aws.authlanding"
+  count      = "${length(local.demotest12_tenant_viewonly_iam_role_list)}"
+  user       = "${local.demotest12_tenant_viewonly_iam_role_list[count.index]}"
   policy_arn = "${aws_iam_policy.sts_assume_viewonly_role_user_policy_demotest12_prod.arn}"
 }
 
 resource "aws_iam_policy" "sts_assume_admin_role_user_policy_demotest12_mgmt" {
-  provider = "aws.authlanding"
-  name = "demotest12_mgmt_admin_assume_role_user_policy"
+  provider    = "aws.authlanding"
+  name        = "demotest12_mgmt_admin_assume_role_user_policy"
   description = "Allows this user to assume the admin role in this demotest12_mgmt account"
 
   policy = <<EOF
@@ -198,15 +198,15 @@ EOF
 }
 
 resource "aws_iam_user_policy_attachment" "sts_assume_admin_role_user_policy_demotest12_mgmt_attachment" {
-  provider = "aws.authlanding"
-  count = "${length(local.demotest12_tenant_admin_iam_role_list)}"
-  user = "${local.demotest12_tenant_admin_iam_role_list[count.index]}"
+  provider   = "aws.authlanding"
+  count      = "${length(local.demotest12_tenant_admin_iam_role_list)}"
+  user       = "${local.demotest12_tenant_admin_iam_role_list[count.index]}"
   policy_arn = "${aws_iam_policy.sts_assume_admin_role_user_policy_demotest12_mgmt.arn}"
 }
 
 resource "aws_iam_policy" "sts_assume_poweruser_role_user_policy_demotest12_mgmt" {
-  provider = "aws.authlanding"
-  name = "demotest12_demotest12_mgmt_poweruser_assume_role_user_policy"
+  provider    = "aws.authlanding"
+  name        = "demotest12_demotest12_mgmt_poweruser_assume_role_user_policy"
   description = "Allows this user to assume the poweruser role in this demotest12_mgmtaccount"
 
   policy = <<EOF
@@ -224,15 +224,15 @@ EOF
 }
 
 resource "aws_iam_user_policy_attachment" "sts_assume_poweruser_role_user_policy_demotest12_mgmt_attachment" {
-  provider = "aws.authlanding"
-  count = "${length(local.demotest12_tenant_poweruser_iam_role_list)}"
-  user = "${local.demotest12_tenant_poweruser_iam_role_list[count.index]}"
+  provider   = "aws.authlanding"
+  count      = "${length(local.demotest12_tenant_poweruser_iam_role_list)}"
+  user       = "${local.demotest12_tenant_poweruser_iam_role_list[count.index]}"
   policy_arn = "${aws_iam_policy.sts_assume_poweruser_role_user_policy_demotest12_mgmt.arn}"
 }
 
 resource "aws_iam_policy" "sts_assume_viewonly_role_user_policy_demotest12_mgmt" {
-  provider = "aws.authlanding"
-  name = "demotest12_demotest12_mgmt_viewonly_assume_role_user_policy"
+  provider    = "aws.authlanding"
+  name        = "demotest12_demotest12_mgmt_viewonly_assume_role_user_policy"
   description = "Allows this user to assume the viewonly role in this demotest12_mgmtaccount"
 
   policy = <<EOF
@@ -250,15 +250,15 @@ EOF
 }
 
 resource "aws_iam_user_policy_attachment" "sts_assume_viewonly_role_user_policy_demotest12_mgmt_attachment" {
-  provider = "aws.authlanding"
-  count = "${length(local.demotest12_tenant_viewonly_iam_role_list)}"
-  user = "${local.demotest12_tenant_viewonly_iam_role_list[count.index]}"
+  provider   = "aws.authlanding"
+  count      = "${length(local.demotest12_tenant_viewonly_iam_role_list)}"
+  user       = "${local.demotest12_tenant_viewonly_iam_role_list[count.index]}"
   policy_arn = "${aws_iam_policy.sts_assume_viewonly_role_user_policy_demotest12_mgmt.arn}"
 }
 
 resource "aws_iam_policy" "sts_assume_admin_role_user_policy_demotest12_staging" {
-  provider = "aws.authlanding"
-  name = "demotest12_staging_admin_assume_role_user_policy"
+  provider    = "aws.authlanding"
+  name        = "demotest12_staging_admin_assume_role_user_policy"
   description = "Allows this user to assume the admin role in this demotest12_staging account"
 
   policy = <<EOF
@@ -276,15 +276,15 @@ EOF
 }
 
 resource "aws_iam_user_policy_attachment" "sts_assume_admin_role_user_policy_demotest12_staging_attachment" {
-  provider = "aws.authlanding"
-  count = "${length(local.demotest12_tenant_admin_iam_role_list)}"
-  user = "${local.demotest12_tenant_admin_iam_role_list[count.index]}"
+  provider   = "aws.authlanding"
+  count      = "${length(local.demotest12_tenant_admin_iam_role_list)}"
+  user       = "${local.demotest12_tenant_admin_iam_role_list[count.index]}"
   policy_arn = "${aws_iam_policy.sts_assume_admin_role_user_policy_demotest12_staging.arn}"
 }
 
 resource "aws_iam_policy" "sts_assume_poweruser_role_user_policy_demotest12_staging" {
-  provider = "aws.authlanding"
-  name = "demotest12_demotest12_staging_poweruser_assume_role_user_policy"
+  provider    = "aws.authlanding"
+  name        = "demotest12_demotest12_staging_poweruser_assume_role_user_policy"
   description = "Allows this user to assume the poweruser role in this demotest12_stagingaccount"
 
   policy = <<EOF
@@ -302,15 +302,15 @@ EOF
 }
 
 resource "aws_iam_user_policy_attachment" "sts_assume_poweruser_role_user_policy_demotest12_staging_attachment" {
-  provider = "aws.authlanding"
-  count = "${length(local.demotest12_tenant_poweruser_iam_role_list)}"
-  user = "${local.demotest12_tenant_poweruser_iam_role_list[count.index]}"
+  provider   = "aws.authlanding"
+  count      = "${length(local.demotest12_tenant_poweruser_iam_role_list)}"
+  user       = "${local.demotest12_tenant_poweruser_iam_role_list[count.index]}"
   policy_arn = "${aws_iam_policy.sts_assume_poweruser_role_user_policy_demotest12_staging.arn}"
 }
 
 resource "aws_iam_policy" "sts_assume_viewonly_role_user_policy_demotest12_staging" {
-  provider = "aws.authlanding"
-  name = "demotest12_demotest12_staging_viewonly_assume_role_user_policy"
+  provider    = "aws.authlanding"
+  name        = "demotest12_demotest12_staging_viewonly_assume_role_user_policy"
   description = "Allows this user to assume the viewonly role in this demotest12_stagingaccount"
 
   policy = <<EOF
@@ -328,15 +328,15 @@ EOF
 }
 
 resource "aws_iam_user_policy_attachment" "sts_assume_viewonly_role_user_policy_demotest12_staging_attachment" {
-  provider = "aws.authlanding"
-  count = "${length(local.demotest12_tenant_viewonly_iam_role_list)}"
-  user = "${local.demotest12_tenant_viewonly_iam_role_list[count.index]}"
+  provider   = "aws.authlanding"
+  count      = "${length(local.demotest12_tenant_viewonly_iam_role_list)}"
+  user       = "${local.demotest12_tenant_viewonly_iam_role_list[count.index]}"
   policy_arn = "${aws_iam_policy.sts_assume_viewonly_role_user_policy_demotest12_staging.arn}"
 }
 
 resource "aws_iam_policy" "sts_assume_admin_role_user_policy_demotest12_dev" {
-  provider = "aws.authlanding"
-  name = "demotest12_dev_admin_assume_role_user_policy"
+  provider    = "aws.authlanding"
+  name        = "demotest12_dev_admin_assume_role_user_policy"
   description = "Allows this user to assume the admin role in this demotest12_dev account"
 
   policy = <<EOF
@@ -354,15 +354,15 @@ EOF
 }
 
 resource "aws_iam_user_policy_attachment" "sts_assume_admin_role_user_policy_demotest12_dev_attachment" {
-  provider = "aws.authlanding"
-  count = "${length(local.demotest12_tenant_admin_iam_role_list)}"
-  user = "${local.demotest12_tenant_admin_iam_role_list[count.index]}"
+  provider   = "aws.authlanding"
+  count      = "${length(local.demotest12_tenant_admin_iam_role_list)}"
+  user       = "${local.demotest12_tenant_admin_iam_role_list[count.index]}"
   policy_arn = "${aws_iam_policy.sts_assume_admin_role_user_policy_demotest12_dev.arn}"
 }
 
 resource "aws_iam_policy" "sts_assume_poweruser_role_user_policy_demotest12_dev" {
-  provider = "aws.authlanding"
-  name = "demotest12_demotest12_dev_poweruser_assume_role_user_policy"
+  provider    = "aws.authlanding"
+  name        = "demotest12_demotest12_dev_poweruser_assume_role_user_policy"
   description = "Allows this user to assume the poweruser role in this demotest12_devaccount"
 
   policy = <<EOF
@@ -380,15 +380,15 @@ EOF
 }
 
 resource "aws_iam_user_policy_attachment" "sts_assume_poweruser_role_user_policy_demotest12_dev_attachment" {
-  provider = "aws.authlanding"
-  count = "${length(local.demotest12_tenant_poweruser_iam_role_list)}"
-  user = "${local.demotest12_tenant_poweruser_iam_role_list[count.index]}"
+  provider   = "aws.authlanding"
+  count      = "${length(local.demotest12_tenant_poweruser_iam_role_list)}"
+  user       = "${local.demotest12_tenant_poweruser_iam_role_list[count.index]}"
   policy_arn = "${aws_iam_policy.sts_assume_poweruser_role_user_policy_demotest12_dev.arn}"
 }
 
 resource "aws_iam_policy" "sts_assume_viewonly_role_user_policy_demotest12_dev" {
-  provider = "aws.authlanding"
-  name = "demotest12_demotest12_dev_viewonly_assume_role_user_policy"
+  provider    = "aws.authlanding"
+  name        = "demotest12_demotest12_dev_viewonly_assume_role_user_policy"
   description = "Allows this user to assume the viewonly role in this demotest12_devaccount"
 
   policy = <<EOF
@@ -406,9 +406,28 @@ EOF
 }
 
 resource "aws_iam_user_policy_attachment" "sts_assume_viewonly_role_user_policy_demotest12_dev_attachment" {
-  provider = "aws.authlanding"
-  count = "${length(local.demotest12_tenant_viewonly_iam_role_list)}"
-  user = "${local.demotest12_tenant_viewonly_iam_role_list[count.index]}"
+  provider   = "aws.authlanding"
+  count      = "${length(local.demotest12_tenant_viewonly_iam_role_list)}"
+  user       = "${local.demotest12_tenant_viewonly_iam_role_list[count.index]}"
   policy_arn = "${aws_iam_policy.sts_assume_viewonly_role_user_policy_demotest12_dev.arn}"
 }
 
+resource "aws_organizations_policy_attachment" "tenant_demotest12_prod" {
+  policy_id = "${aws_organizations_policy.ise_approved.id}"
+  target_id = "${module.tenant_demotest12_prod.account_id}"
+}
+
+resource "aws_organizations_policy_attachment" "tenant_demotest12_mgmt" {
+  policy_id = "${aws_organizations_policy.ise_approved.id}"
+  target_id = "${module.tenant_demotest12_mgmt.account_id}"
+}
+
+resource "aws_organizations_policy_attachment" "tenant_demotest12_staging" {
+  policy_id = "${aws_organizations_policy.ise_approved.id}"
+  target_id = "${module.tenant_demotest12_staging.account_id}"
+}
+
+resource "aws_organizations_policy_attachment" "tenant_demotest12_dev" {
+  policy_id = "${aws_organizations_policy.ise_approved.id}"
+  target_id = "${module.tenant_demotest12_dev.account_id}"
+}
