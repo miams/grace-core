@@ -33,6 +33,7 @@ module "tenant_demotest16_prod" {
   email = "jasong.miller+demotest16prod@gsa.gov"
   authlanding_prod_account_id = "${module.authlanding_prod.account_id}"
   create_iam_roles = "true"
+  grace_monitoring_prod_account_id = "${module.tenant_grace_monitoring_prod.account_id}"
 
   tenant_admin_iam_role_list = ["${local.demotest16_tenant_admin_iam_role_list}"]
   tenant_poweruser_iam_role_list = ["${local.demotest16_tenant_poweruser_iam_role_list}"]
@@ -46,6 +47,7 @@ module "tenant_demotest16_mgmt" {
   email = "jasong.miller+demotest16mgmt@gsa.gov"
   authlanding_prod_account_id = "${module.authlanding_prod.account_id}"
   create_iam_roles = "true"
+  grace_monitoring_prod_account_id = "${module.tenant_grace_monitoring_prod.account_id}"
 
   tenant_admin_iam_role_list = ["${local.demotest16_tenant_admin_iam_role_list}"]
   tenant_poweruser_iam_role_list = ["${local.demotest16_tenant_poweruser_iam_role_list}"]
@@ -59,6 +61,7 @@ module "tenant_demotest16_staging" {
   email = "jasong.miller+demotest16staging@gsa.gov"
   authlanding_prod_account_id = "${module.authlanding_prod.account_id}"
   create_iam_roles = "true"
+  grace_monitoring_prod_account_id = "${module.tenant_grace_monitoring_prod.account_id}"
 
   tenant_admin_iam_role_list = ["${local.demotest16_tenant_admin_iam_role_list}"]
   tenant_poweruser_iam_role_list = ["${local.demotest16_tenant_poweruser_iam_role_list}"]
@@ -72,7 +75,8 @@ module "tenant_demotest16_dev" {
   email = "jasong.miller+demotest16dev@gsa.gov"
   authlanding_prod_account_id = "${module.authlanding_prod.account_id}"
   create_iam_roles = "true"
-
+  grace_monitoring_prod_account_id = "${module.tenant_grace_monitoring_prod.account_id}"
+  
   tenant_admin_iam_role_list = ["${local.demotest16_tenant_admin_iam_role_list}"]
   tenant_poweruser_iam_role_list = ["${local.demotest16_tenant_poweruser_iam_role_list}"]
   tenant_viewonly_iam_role_list = ["${local.demotest16_tenant_viewonly_iam_role_list}"]

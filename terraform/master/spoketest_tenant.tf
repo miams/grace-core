@@ -32,6 +32,7 @@ module "tenant_spoketest_prod" {
   email                       = "jasong.miller+spoketestprod@gsa.gov"
   authlanding_prod_account_id = "${module.authlanding_prod.account_id}"
   create_iam_roles            = "true"
+  grace_monitoring_prod_account_id = "${module.tenant_grace_monitoring_prod.account_id}"
 
   tenant_admin_iam_role_list     = ["${local.spoketest_tenant_admin_iam_role_list}"]
   tenant_poweruser_iam_role_list = ["${local.spoketest_tenant_poweruser_iam_role_list}"]
@@ -45,6 +46,7 @@ module "tenant_spoketest_mgmt" {
   email                       = "jasong.miller+spoketestmgmt@gsa.gov"
   authlanding_prod_account_id = "${module.authlanding_prod.account_id}"
   create_iam_roles            = "true"
+  grace_monitoring_prod_account_id = "${module.tenant_grace_monitoring_prod.account_id}"
 
   tenant_admin_iam_role_list     = ["${local.spoketest_tenant_admin_iam_role_list}"]
   tenant_poweruser_iam_role_list = ["${local.spoketest_tenant_poweruser_iam_role_list}"]
@@ -59,6 +61,7 @@ module "tenant_spoketest_mgmt" {
 #   email                       = "jasong.miller+spoketeststaging@gsa.gov"
 #   authlanding_prod_account_id = "${module.authlanding_prod.account_id}"
 #   create_iam_roles            = "true"
+#   grace_monitoring_prod_account_id = "${module.tenant_grace_monitoring_prod.account_id}"
 
 #   tenant_admin_iam_role_list     = ["${local.spoketest_tenant_admin_iam_role_list}"]
 #   tenant_poweruser_iam_role_list = ["${local.spoketest_tenant_poweruser_iam_role_list}"]
@@ -72,6 +75,7 @@ module "tenant_spoketest_dev" {
   email                       = "jasong.miller+spoketestdev@gsa.gov"
   authlanding_prod_account_id = "${module.authlanding_prod.account_id}"
   create_iam_roles            = "true"
+  grace_monitoring_prod_account_id = "${module.tenant_grace_monitoring_prod.account_id}"
 
   tenant_admin_iam_role_list     = ["${local.spoketest_tenant_admin_iam_role_list}"]
   tenant_poweruser_iam_role_list = ["${local.spoketest_tenant_poweruser_iam_role_list}"]

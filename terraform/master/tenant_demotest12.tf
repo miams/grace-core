@@ -33,6 +33,7 @@ module "tenant_demotest12_prod" {
   email                       = "jasong.miller+demotest12prod@gsa.gov"
   authlanding_prod_account_id = "${module.authlanding_prod.account_id}"
   create_iam_roles            = "true"
+  grace_monitoring_prod_account_id = "${module.tenant_grace_monitoring_prod.account_id}"
 
   tenant_admin_iam_role_list     = ["${local.demotest12_tenant_admin_iam_role_list}"]
   tenant_poweruser_iam_role_list = ["${local.demotest12_tenant_poweruser_iam_role_list}"]
@@ -46,6 +47,7 @@ module "tenant_demotest12_mgmt" {
   email                       = "jasong.miller+demotest12mgmt@gsa.gov"
   authlanding_prod_account_id = "${module.authlanding_prod.account_id}"
   create_iam_roles            = "true"
+  grace_monitoring_prod_account_id = "${module.tenant_grace_monitoring_prod.account_id}"
 
   tenant_admin_iam_role_list     = ["${local.demotest12_tenant_admin_iam_role_list}"]
   tenant_poweruser_iam_role_list = ["${local.demotest12_tenant_poweruser_iam_role_list}"]
@@ -59,6 +61,7 @@ module "tenant_demotest12_staging" {
   email                       = "jasong.miller+demotest12staging@gsa.gov"
   authlanding_prod_account_id = "${module.authlanding_prod.account_id}"
   create_iam_roles            = "true"
+  grace_monitoring_prod_account_id = "${module.tenant_grace_monitoring_prod.account_id}"
 
   tenant_admin_iam_role_list     = ["${local.demotest12_tenant_admin_iam_role_list}"]
   tenant_poweruser_iam_role_list = ["${local.demotest12_tenant_poweruser_iam_role_list}"]
@@ -72,7 +75,8 @@ module "tenant_demotest12_dev" {
   email                       = "jasong.miller+demotest12dev@gsa.gov"
   authlanding_prod_account_id = "${module.authlanding_prod.account_id}"
   create_iam_roles            = "true"
-
+  grace_monitoring_prod_account_id = "${module.tenant_grace_monitoring_prod.account_id}"
+  
   tenant_admin_iam_role_list     = ["${local.demotest12_tenant_admin_iam_role_list}"]
   tenant_poweruser_iam_role_list = ["${local.demotest12_tenant_poweruser_iam_role_list}"]
   tenant_viewonly_iam_role_list  = ["${local.demotest12_tenant_viewonly_iam_role_list}"]

@@ -16,6 +16,7 @@ module "authlanding_prod" {
   email                       = "devsecops-core+authlanding@gsa.gov"
   authlanding_prod_account_id = "${module.authlanding_prod.account_id}"
   create_iam_roles            = "false"
+  grace_monitoring_prod_account_id = "${module.tenant_grace_monitoring_prod.account_id}"
 }
 
 module "authlanding_budget" {

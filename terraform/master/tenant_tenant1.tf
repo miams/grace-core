@@ -32,6 +32,7 @@ module "tenant_1_prod" {
   email                       = "jasong.miller+tenant1prod@gsa.gov"
   authlanding_prod_account_id = "${module.authlanding_prod.account_id}"
   create_iam_roles            = "true"
+  grace_monitoring_prod_account_id = "${module.tenant_grace_monitoring_prod.account_id}"
 
   tenant_admin_iam_role_list     = ["${local.tenant_admin_iam_role_list}"]
   tenant_poweruser_iam_role_list = ["${local.tenant_poweruser_iam_role_list}"]
@@ -45,6 +46,7 @@ module "tenant_1_staging" {
   email                       = "jasong.miller+tenant1staging@gsa.gov"
   authlanding_prod_account_id = "${module.authlanding_prod.account_id}"
   create_iam_roles            = "true"
+  grace_monitoring_prod_account_id = "${module.tenant_grace_monitoring_prod.account_id}"
 
   tenant_admin_iam_role_list     = ["${local.tenant_admin_iam_role_list}"]
   tenant_poweruser_iam_role_list = ["${local.tenant_poweruser_iam_role_list}"]
@@ -58,6 +60,7 @@ module "tenant_1_dev" {
   email                       = "jasong.miller+tenant1dev@gsa.gov"
   authlanding_prod_account_id = "${module.authlanding_prod.account_id}"
   create_iam_roles            = "true"
+  grace_monitoring_prod_account_id = "${module.tenant_grace_monitoring_prod.account_id}"
 
   tenant_admin_iam_role_list     = ["${local.tenant_admin_iam_role_list}"]
   tenant_poweruser_iam_role_list = ["${local.tenant_poweruser_iam_role_list}"]
@@ -71,7 +74,8 @@ module "tenant_1_mgmt" {
   email                       = "jasong.miller+tenant1mgmt@gsa.gov"
   authlanding_prod_account_id = "${module.authlanding_prod.account_id}"
   create_iam_roles            = "true"
-
+  grace_monitoring_prod_account_id = "${module.tenant_grace_monitoring_prod.account_id}"
+  
   tenant_admin_iam_role_list     = ["${local.tenant_admin_iam_role_list}"]
   tenant_poweruser_iam_role_list = ["${local.tenant_poweruser_iam_role_list}"]
   tenant_viewonly_iam_role_list  = ["${local.tenant_viewonly_iam_role_list}"]

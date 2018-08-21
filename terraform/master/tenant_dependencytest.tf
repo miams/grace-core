@@ -32,6 +32,7 @@ module "tenant_dependencytest_prod" {
   email                       = "jasong.miller+dependencytestprod@gsa.gov"
   authlanding_prod_account_id = "${module.authlanding_prod.account_id}"
   create_iam_roles            = "true"
+  grace_monitoring_prod_account_id = "${module.tenant_grace_monitoring_prod.account_id}"
 
   tenant_admin_iam_role_list     = ["${local.dependencytest_tenant_admin_iam_role_list}"]
   tenant_poweruser_iam_role_list = ["${local.dependencytest_tenant_poweruser_iam_role_list}"]
@@ -47,6 +48,8 @@ module "tenant_dependencytest_mgmt" {
   email                       = "jasong.miller+dependencytestmgmt@gsa.gov"
   authlanding_prod_account_id = "${module.authlanding_prod.account_id}"
   create_iam_roles            = "true"
+  grace_monitoring_prod_account_id = "${module.tenant_grace_monitoring_prod.account_id}"
+
   tenant_admin_iam_role_list     = ["${local.dependencytest_tenant_admin_iam_role_list}"]
   tenant_poweruser_iam_role_list = ["${local.dependencytest_tenant_poweruser_iam_role_list}"]
   tenant_viewonly_iam_role_list  = ["${local.dependencytest_tenant_viewonly_iam_role_list}"]
@@ -61,6 +64,8 @@ module "tenant_dependencytest_staging" {
   email                       = "jasong.miller+dependencyteststaging@gsa.gov"
   authlanding_prod_account_id = "${module.authlanding_prod.account_id}"
   create_iam_roles            = "true"
+  grace_monitoring_prod_account_id = "${module.tenant_grace_monitoring_prod.account_id}"
+
   tenant_admin_iam_role_list     = ["${local.dependencytest_tenant_admin_iam_role_list}"]
   tenant_poweruser_iam_role_list = ["${local.dependencytest_tenant_poweruser_iam_role_list}"]
   tenant_viewonly_iam_role_list  = ["${local.dependencytest_tenant_viewonly_iam_role_list}"]
@@ -75,6 +80,8 @@ module "tenant_dependencytest_dev" {
   email                       = "jasong.miller+dependencytestdev@gsa.gov"
   authlanding_prod_account_id = "${module.authlanding_prod.account_id}"
   create_iam_roles            = "true"
+  grace_monitoring_prod_account_id = "${module.tenant_grace_monitoring_prod.account_id}"
+  
   tenant_admin_iam_role_list     = ["${local.dependencytest_tenant_admin_iam_role_list}"]
   tenant_poweruser_iam_role_list = ["${local.dependencytest_tenant_poweruser_iam_role_list}"]
   tenant_viewonly_iam_role_list  = ["${local.dependencytest_tenant_viewonly_iam_role_list}"]

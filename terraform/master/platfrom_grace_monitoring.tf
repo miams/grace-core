@@ -84,18 +84,6 @@ module "grace_monitoring_budget" {
   ]
 }
 
-provider "aws" {
-  alias = "gracemonitoring"
-
-  assume_role {
-    role_arn = "arn:aws:iam::${module.tenant_grace_monitoring_prod.account_id}:role/OrganizationAccountAccessRole"
-  }
-}
-
-
-
-
-
 # IAM role permission section - have to give sts-assume-role permission to users to allow them to switch to the roles.
 
 resource "aws_iam_policy" "sts_assume_admin_role_user_policy_grace_monitoring_prod" {
