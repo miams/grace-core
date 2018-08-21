@@ -26,7 +26,7 @@ locals {
 }
 
 module "tenant_sprint17_prod" {
-  source = "../member_account"
+  source = "github.com/gsa/grace-tf-module-member-account/terraform/modules/member_account"
 
   name                        = "tenant-sprint17-prod"
   email                       = "jasong.miller+tenantsprint17prod@gsa.gov"
@@ -40,7 +40,7 @@ module "tenant_sprint17_prod" {
 }
 
 module "tenant_sprint17_staging" {
-  source = "../member_account"
+  source = "github.com/gsa/grace-tf-module-member-account/terraform/modules/member_account"
 
   name                        = "tenant-sprint17-staging"
   email                       = "jasong.miller+tenantsprint17staging@gsa.gov"
@@ -54,7 +54,7 @@ module "tenant_sprint17_staging" {
 }
 
 module "tenant_sprint17_dev" {
-  source = "../member_account"
+  source = "github.com/gsa/grace-tf-module-member-account/terraform/modules/member_account"
 
   name                        = "tenant-sprint17-dev"
   email                       = "jasong.miller+tenantsprint17dev@gsa.gov"
@@ -68,7 +68,7 @@ module "tenant_sprint17_dev" {
 }
 
 module "tenant_sprint17_mgmt" {
-  source = "../member_account"
+  source = "github.com/gsa/grace-tf-module-member-account/terraform/modules/member_account"
 
   name                        = "tenant-sprint17-mgmt"
   email                       = "jasong.miller+tenantsprint17mgmt@gsa.gov"

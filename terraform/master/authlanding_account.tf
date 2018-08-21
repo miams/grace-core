@@ -10,7 +10,7 @@
 # TODO: Add KMS keys for SSM parameter stores
 
 module "authlanding_prod" {
-  source = "../member_account"
+  source = "github.com/gsa/grace-tf-module-member-account/terraform/modules/member_account"
 
   name                        = "authlanding-prod"
   email                       = "devsecops-core+authlanding@gsa.gov"

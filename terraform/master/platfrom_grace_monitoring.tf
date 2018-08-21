@@ -54,7 +54,7 @@ locals {
 }
 
 module "tenant_grace_monitoring_prod" {
-  source = "../member_account"
+  source = "github.com/gsa/grace-tf-module-member-account/terraform/modules/member_account"
 
   name = "tenant_grace_monitoring_prod"
   email = "manoj.chalise+devsecops@gsa.gov"

@@ -26,7 +26,7 @@ locals {
 }
 
 module "tenant_ociso-ise_prod" {
-  source = "../member_account"
+  source = "github.com/gsa/grace-tf-module-member-account/terraform/modules/member_account"
 
   name = "tenant_ociso-ise_prod"
   email = "manoj.chalise+ociso-ise@gsa.gov"
@@ -42,7 +42,7 @@ module "tenant_ociso-ise_prod" {
 }
 /*
 module "tenant_ociso-ise_mgmt" {
-  source = "../member_account"
+  source = "github.com/gsa/grace-tf-module-member-account/terraform/modules/member_account"
 
   name = "tenant_ociso-ise_mgmt"
   email = "manoj.chalise+ociso-ise@gsa.gov"

@@ -26,7 +26,7 @@ locals {
 }
 
 module "tenant_dependencytest_prod" {
-  source = "../member_account"
+  source = "github.com/gsa/grace-tf-module-member-account/terraform/modules/member_account"
 
   name                        = "tenant_dependencytest_prod"
   email                       = "jasong.miller+dependencytestprod@gsa.gov"
@@ -40,7 +40,7 @@ module "tenant_dependencytest_prod" {
 }
 
 module "tenant_dependencytest_mgmt" {
-  source = "../member_account"
+  source = "github.com/gsa/grace-tf-module-member-account/terraform/modules/member_account"
 
   # depends_on = ["module.tenant_dependencytest_prod"]
 
@@ -56,7 +56,7 @@ module "tenant_dependencytest_mgmt" {
 }
 
 module "tenant_dependencytest_staging" {
-  source = "../member_account"
+  source = "github.com/gsa/grace-tf-module-member-account/terraform/modules/member_account"
 
   # depends_on = ["module.tenant_dependencytest_mgmt"]
 
@@ -72,7 +72,7 @@ module "tenant_dependencytest_staging" {
 }
 
 module "tenant_dependencytest_dev" {
-  source = "../member_account"
+  source = "github.com/gsa/grace-tf-module-member-account/terraform/modules/member_account"
 
   # depends_on = ["module.tenant_dependencytest_staging"]
 

@@ -35,7 +35,7 @@ locals {
 }
 
 module "tenant_gracesharedservices_prod" {
-  source = "../member_account"
+  source = "github.com/gsa/grace-tf-module-member-account/terraform/modules/member_account"
 
   name = "tenant_gracesharedservices_prod"
   email = "jasong.miller+sharedservicesprod@gsa.gov"
@@ -51,7 +51,7 @@ module "tenant_gracesharedservices_prod" {
 }
 
 module "tenant_gracesharedservices_mgmt" {
-  source = "../member_account"
+  source = "github.com/gsa/grace-tf-module-member-account/terraform/modules/member_account"
 
   name = "tenant_gracesharedservices_mgmt"
   email = "jasong.miller+sharedservicesmgmt@gsa.gov"

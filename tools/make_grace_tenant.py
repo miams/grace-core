@@ -213,7 +213,7 @@ def main():  # pylint: disable=R0914,R0912,R0915
     f.write("\n")
     for i in range(total_number_of_tenant_environments):
         f.write("module \"tenant_" + tenant_environment_names[i] + "\" {\n")
-        f.write("  source = \"../member_account\"\n")
+        f.write("  source = \"github.com/gsa/grace-tf-module-member-account/terraform/modules/member_account\"\n")
         # Commenting this next portion out because of bug in terraform:
         # https://github.com/hashicorp/terraform/issues/10462
         # if i != 0:
@@ -224,6 +224,7 @@ def main():  # pylint: disable=R0914,R0912,R0915
         f.write("  email = \"" + tenant_email_owners[i] + "\"\n")
         f.write("  authlanding_prod_account_id = \"${module.authlanding_prod.account_id}\"\n")
         f.write("  create_iam_roles = \"" + create_iam_roles + "\"\n")
+        f.write("  grace_monitoring_prod_account_id = \"${module.tenant_grace_monitoring_prod.account_id}\"\n")
         f.write("\n")
         if create_iam_roles != "false":
             f.write("  tenant_admin_iam_role_list = [\"${local." + tenant_name
