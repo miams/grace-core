@@ -67,7 +67,7 @@ module "tenant_grace_monitoring_prod" {
 }
 
 module "grace_monitoring_budget" {
-  source = "../budget"
+  source = "github.com/gsa/grace-tf-module-budget/terraform/modules/budget"
 
   name = "grace-monitoring"
 

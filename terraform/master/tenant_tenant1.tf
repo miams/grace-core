@@ -78,7 +78,7 @@ module "tenant_1_mgmt" {
 }
 
 module "tenant_1_budget" {
-  source = "../budget"
+  source = "github.com/gsa/grace-tf-module-budget/terraform/modules/budget"
 
   name = "tenant1"
 

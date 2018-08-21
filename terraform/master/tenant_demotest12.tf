@@ -79,7 +79,7 @@ module "tenant_demotest12_dev" {
 }
 
 module "demotest12_budget" {
-  source = "../budget"
+  source = "github.com/gsa/grace-tf-module-budget/terraform/modules/budget"
 
   name = "demotest12"
 

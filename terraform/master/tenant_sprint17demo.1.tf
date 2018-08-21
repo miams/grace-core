@@ -78,7 +78,7 @@ module "tenant_sprint17_mgmt" {
 }
 
 module "tenant_sprint17_budget" {
-  source = "../budget"
+  source = "github.com/gsa/grace-tf-module-budget/terraform/modules/budget"
 
   name = "tenantsprint17"
 

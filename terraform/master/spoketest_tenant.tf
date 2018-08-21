@@ -79,7 +79,7 @@ module "tenant_spoketest_dev" {
 }
 
 module "spoketest_budget" {
-  source = "../budget"
+  source = "github.com/gsa/grace-tf-module-budget/terraform/modules/budget"
 
   name = "spoketest"
 

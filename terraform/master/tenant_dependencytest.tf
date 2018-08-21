@@ -81,7 +81,7 @@ module "tenant_dependencytest_dev" {
 }
 
 module "dependencytest_budget" {
-  source = "../budget"
+  source = "github.com/gsa/grace-tf-module-budget/terraform/modules/budget"
 
   name = "dependencytest"
 
