@@ -19,7 +19,7 @@ module "authlanding_prod" {
 }
 
 module "authlanding_budget" {
-  source = "../budget"
+  source = "github.com/gsa/grace-tf-module-budget/terraform/modules/budget"
 
   name = "authlanding"
 

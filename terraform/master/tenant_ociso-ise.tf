@@ -54,7 +54,7 @@ module "tenant_ociso-ise_mgmt" {
 }*/
 
 module "ociso-ise_budget" {
-  source = "../budget"
+  source = "github.com/gsa/grace-tf-module-budget/terraform/modules/budget"
 
   name = "ociso-ise"
 

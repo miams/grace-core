@@ -19,7 +19,7 @@ resource "aws_organizations_policy_attachment" "tenants" {
 }
 
 module "master_budget" {
-  source = "../budget"
+  source = "github.com/gsa/grace-tf-module-budget/terraform/modules/budget"
 
   name = "master"
 }

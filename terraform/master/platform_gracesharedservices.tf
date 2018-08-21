@@ -65,7 +65,7 @@ module "tenant_gracesharedservices_mgmt" {
 }
 
 module "gracesharedservices_budget" {
-  source = "../budget"
+  source = "github.com/gsa/grace-tf-module-budget/terraform/modules/budget"
 
   name = "gracesharedservices"
 
