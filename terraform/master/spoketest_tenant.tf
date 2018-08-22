@@ -26,12 +26,13 @@ locals {
 }
 
 module "tenant_spoketest_prod" {
-  source = "../member_account"
+  source = "github.com/gsa/grace-tf-module-member-account/terraform/modules/member_account"
 
   name                        = "tenant_spoketest_prod"
   email                       = "jasong.miller+spoketestprod@gsa.gov"
   authlanding_prod_account_id = "${module.authlanding_prod.account_id}"
   create_iam_roles            = "true"
+  grace_monitoring_prod_account_id = "${module.tenant_grace_monitoring_prod.account_id}"
 
   tenant_admin_iam_role_list     = ["${local.spoketest_tenant_admin_iam_role_list}"]
   tenant_poweruser_iam_role_list = ["${local.spoketest_tenant_poweruser_iam_role_list}"]
@@ -39,12 +40,13 @@ module "tenant_spoketest_prod" {
 }
 
 module "tenant_spoketest_mgmt" {
-  source = "../member_account"
+  source = "github.com/gsa/grace-tf-module-member-account/terraform/modules/member_account"
 
   name                        = "tenant_spoketest_mgmt"
   email                       = "jasong.miller+spoketestmgmt@gsa.gov"
   authlanding_prod_account_id = "${module.authlanding_prod.account_id}"
   create_iam_roles            = "true"
+  grace_monitoring_prod_account_id = "${module.tenant_grace_monitoring_prod.account_id}"
 
   tenant_admin_iam_role_list     = ["${local.spoketest_tenant_admin_iam_role_list}"]
   tenant_poweruser_iam_role_list = ["${local.spoketest_tenant_poweruser_iam_role_list}"]
@@ -53,12 +55,13 @@ module "tenant_spoketest_mgmt" {
 
 # JGM - 06/21/18: Removing this because we're at AWS Organizations limit
 # module "tenant_spoketest_staging" {
-#   source = "../member_account"
+#   source = "github.com/gsa/grace-tf-module-member-account/terraform/modules/member_account"
 
 #   name                        = "tenant_spoketest_staging"
 #   email                       = "jasong.miller+spoketeststaging@gsa.gov"
 #   authlanding_prod_account_id = "${module.authlanding_prod.account_id}"
 #   create_iam_roles            = "true"
+#   grace_monitoring_prod_account_id = "${module.tenant_grace_monitoring_prod.account_id}"
 
 #   tenant_admin_iam_role_list     = ["${local.spoketest_tenant_admin_iam_role_list}"]
 #   tenant_poweruser_iam_role_list = ["${local.spoketest_tenant_poweruser_iam_role_list}"]
@@ -66,12 +69,13 @@ module "tenant_spoketest_mgmt" {
 # }
 
 module "tenant_spoketest_dev" {
-  source = "../member_account"
+  source = "github.com/gsa/grace-tf-module-member-account/terraform/modules/member_account"
 
   name                        = "tenant_spoketest_dev"
   email                       = "jasong.miller+spoketestdev@gsa.gov"
   authlanding_prod_account_id = "${module.authlanding_prod.account_id}"
   create_iam_roles            = "true"
+  grace_monitoring_prod_account_id = "${module.tenant_grace_monitoring_prod.account_id}"
 
   tenant_admin_iam_role_list     = ["${local.spoketest_tenant_admin_iam_role_list}"]
   tenant_poweruser_iam_role_list = ["${local.spoketest_tenant_poweruser_iam_role_list}"]

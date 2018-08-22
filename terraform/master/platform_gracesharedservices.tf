@@ -35,7 +35,7 @@ locals {
 }
 
 module "tenant_gracesharedservices_prod" {
-  source = "../member_account"
+  source = "github.com/gsa/grace-tf-module-member-account/terraform/modules/member_account"
 
   name = "tenant_gracesharedservices_prod"
   email = "jasong.miller+sharedservicesprod@gsa.gov"
@@ -47,10 +47,11 @@ module "tenant_gracesharedservices_prod" {
   tenant_viewonly_iam_role_list = ["${local.gracesharedservices_tenant_viewonly_iam_role_list}"]
   enable_member_guardduty = "true"
   guardduty_master_detector_id = "${aws_guardduty_detector.aws_guardduty_master.id}"
+  grace_monitoring_prod_account_id = "${module.tenant_grace_monitoring_prod.account_id}"
 }
 
 module "tenant_gracesharedservices_mgmt" {
-  source = "../member_account"
+  source = "github.com/gsa/grace-tf-module-member-account/terraform/modules/member_account"
 
   name = "tenant_gracesharedservices_mgmt"
   email = "jasong.miller+sharedservicesmgmt@gsa.gov"
@@ -62,6 +63,7 @@ module "tenant_gracesharedservices_mgmt" {
   tenant_viewonly_iam_role_list = ["${local.gracesharedservices_tenant_viewonly_iam_role_list}"]
   enable_member_guardduty = "true"
   guardduty_master_detector_id = "${aws_guardduty_detector.aws_guardduty_master.id}"
+  grace_monitoring_prod_account_id = "${module.tenant_grace_monitoring_prod.account_id}"
 }
 
 module "gracesharedservices_budget" {

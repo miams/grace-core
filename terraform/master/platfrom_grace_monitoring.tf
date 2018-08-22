@@ -54,7 +54,7 @@ locals {
 }
 
 module "tenant_grace_monitoring_prod" {
-  source = "../member_account"
+  source = "github.com/gsa/grace-tf-module-member-account/terraform/modules/member_account"
 
   name = "tenant_grace_monitoring_prod"
   email = "manoj.chalise+devsecops@gsa.gov"
@@ -83,18 +83,6 @@ module "grace_monitoring_budget" {
   #  "${module.tenant_grace_monitoring_mgmt.account_id}",
   ]
 }
-
-provider "aws" {
-  alias = "gracemonitoring"
-
-  assume_role {
-    role_arn = "arn:aws:iam::${module.tenant_grace_monitoring_prod.account_id}:role/OrganizationAccountAccessRole"
-  }
-}
-
-
-
-
 
 # IAM role permission section - have to give sts-assume-role permission to users to allow them to switch to the roles.
 

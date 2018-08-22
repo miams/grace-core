@@ -27,12 +27,13 @@ locals {
 }
 
 module "tenant_demotest17_prod" {
-  source = "../member_account"
+  source = "github.com/gsa/grace-tf-module-member-account/terraform/modules/member_account"
 
   name = "tenant_demotest17_prod"
   email = "jasong.miller+demotest17prod@gsa.gov"
   authlanding_prod_account_id = "${module.authlanding_prod.account_id}"
   create_iam_roles = "true"
+  grace_monitoring_prod_account_id = "${module.tenant_grace_monitoring_prod.account_id}"
 
   tenant_admin_iam_role_list = ["${local.demotest17_tenant_admin_iam_role_list}"]
   tenant_poweruser_iam_role_list = ["${local.demotest17_tenant_poweruser_iam_role_list}"]
@@ -40,12 +41,13 @@ module "tenant_demotest17_prod" {
 }
 
 module "tenant_demotest17_mgmt" {
-  source = "../member_account"
+  source = "github.com/gsa/grace-tf-module-member-account/terraform/modules/member_account"
 
   name = "tenant_demotest17_mgmt"
   email = "jasong.miller+demotest17mgmt@gsa.gov"
   authlanding_prod_account_id = "${module.authlanding_prod.account_id}"
   create_iam_roles = "true"
+  grace_monitoring_prod_account_id = "${module.tenant_grace_monitoring_prod.account_id}"
 
   tenant_admin_iam_role_list = ["${local.demotest17_tenant_admin_iam_role_list}"]
   tenant_poweruser_iam_role_list = ["${local.demotest17_tenant_poweruser_iam_role_list}"]
@@ -53,12 +55,13 @@ module "tenant_demotest17_mgmt" {
 }
 
 module "tenant_demotest17_staging" {
-  source = "../member_account"
+  source = "github.com/gsa/grace-tf-module-member-account/terraform/modules/member_account"
 
   name = "tenant_demotest17_staging"
   email = "jasong.miller+demotest17staging@gsa.gov"
   authlanding_prod_account_id = "${module.authlanding_prod.account_id}"
   create_iam_roles = "true"
+  grace_monitoring_prod_account_id = "${module.tenant_grace_monitoring_prod.account_id}"
 
   tenant_admin_iam_role_list = ["${local.demotest17_tenant_admin_iam_role_list}"]
   tenant_poweruser_iam_role_list = ["${local.demotest17_tenant_poweruser_iam_role_list}"]
@@ -66,13 +69,14 @@ module "tenant_demotest17_staging" {
 }
 
 module "tenant_demotest17_dev" {
-  source = "../member_account"
+  source = "github.com/gsa/grace-tf-module-member-account/terraform/modules/member_account"
 
   name = "tenant_demotest17_dev"
   email = "jasong.miller+demotest17dev@gsa.gov"
   authlanding_prod_account_id = "${module.authlanding_prod.account_id}"
   create_iam_roles = "true"
-
+  grace_monitoring_prod_account_id = "${module.tenant_grace_monitoring_prod.account_id}"
+  
   tenant_admin_iam_role_list = ["${local.demotest17_tenant_admin_iam_role_list}"]
   tenant_poweruser_iam_role_list = ["${local.demotest17_tenant_poweruser_iam_role_list}"]
   tenant_viewonly_iam_role_list = ["${local.demotest17_tenant_viewonly_iam_role_list}"]

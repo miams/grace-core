@@ -26,12 +26,13 @@ locals {
 }
 
 module "tenant_dependencytest_prod" {
-  source = "../member_account"
+  source = "github.com/gsa/grace-tf-module-member-account/terraform/modules/member_account"
 
   name                        = "tenant_dependencytest_prod"
   email                       = "jasong.miller+dependencytestprod@gsa.gov"
   authlanding_prod_account_id = "${module.authlanding_prod.account_id}"
   create_iam_roles            = "true"
+  grace_monitoring_prod_account_id = "${module.tenant_grace_monitoring_prod.account_id}"
 
   tenant_admin_iam_role_list     = ["${local.dependencytest_tenant_admin_iam_role_list}"]
   tenant_poweruser_iam_role_list = ["${local.dependencytest_tenant_poweruser_iam_role_list}"]
@@ -39,7 +40,7 @@ module "tenant_dependencytest_prod" {
 }
 
 module "tenant_dependencytest_mgmt" {
-  source = "../member_account"
+  source = "github.com/gsa/grace-tf-module-member-account/terraform/modules/member_account"
 
   # depends_on = ["module.tenant_dependencytest_prod"]
 
@@ -47,13 +48,15 @@ module "tenant_dependencytest_mgmt" {
   email                       = "jasong.miller+dependencytestmgmt@gsa.gov"
   authlanding_prod_account_id = "${module.authlanding_prod.account_id}"
   create_iam_roles            = "true"
+  grace_monitoring_prod_account_id = "${module.tenant_grace_monitoring_prod.account_id}"
+
   tenant_admin_iam_role_list     = ["${local.dependencytest_tenant_admin_iam_role_list}"]
   tenant_poweruser_iam_role_list = ["${local.dependencytest_tenant_poweruser_iam_role_list}"]
   tenant_viewonly_iam_role_list  = ["${local.dependencytest_tenant_viewonly_iam_role_list}"]
 }
 
 module "tenant_dependencytest_staging" {
-  source = "../member_account"
+  source = "github.com/gsa/grace-tf-module-member-account/terraform/modules/member_account"
 
   # depends_on = ["module.tenant_dependencytest_mgmt"]
 
@@ -61,13 +64,15 @@ module "tenant_dependencytest_staging" {
   email                       = "jasong.miller+dependencyteststaging@gsa.gov"
   authlanding_prod_account_id = "${module.authlanding_prod.account_id}"
   create_iam_roles            = "true"
+  grace_monitoring_prod_account_id = "${module.tenant_grace_monitoring_prod.account_id}"
+
   tenant_admin_iam_role_list     = ["${local.dependencytest_tenant_admin_iam_role_list}"]
   tenant_poweruser_iam_role_list = ["${local.dependencytest_tenant_poweruser_iam_role_list}"]
   tenant_viewonly_iam_role_list  = ["${local.dependencytest_tenant_viewonly_iam_role_list}"]
 }
 
 module "tenant_dependencytest_dev" {
-  source = "../member_account"
+  source = "github.com/gsa/grace-tf-module-member-account/terraform/modules/member_account"
 
   # depends_on = ["module.tenant_dependencytest_staging"]
 
@@ -75,6 +80,8 @@ module "tenant_dependencytest_dev" {
   email                       = "jasong.miller+dependencytestdev@gsa.gov"
   authlanding_prod_account_id = "${module.authlanding_prod.account_id}"
   create_iam_roles            = "true"
+  grace_monitoring_prod_account_id = "${module.tenant_grace_monitoring_prod.account_id}"
+  
   tenant_admin_iam_role_list     = ["${local.dependencytest_tenant_admin_iam_role_list}"]
   tenant_poweruser_iam_role_list = ["${local.dependencytest_tenant_poweruser_iam_role_list}"]
   tenant_viewonly_iam_role_list  = ["${local.dependencytest_tenant_viewonly_iam_role_list}"]

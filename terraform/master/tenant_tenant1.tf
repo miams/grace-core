@@ -26,12 +26,13 @@ locals {
 }
 
 module "tenant_1_prod" {
-  source = "../member_account"
+  source = "github.com/gsa/grace-tf-module-member-account/terraform/modules/member_account"
 
   name                        = "tenant-1-prod"
   email                       = "jasong.miller+tenant1prod@gsa.gov"
   authlanding_prod_account_id = "${module.authlanding_prod.account_id}"
   create_iam_roles            = "true"
+  grace_monitoring_prod_account_id = "${module.tenant_grace_monitoring_prod.account_id}"
 
   tenant_admin_iam_role_list     = ["${local.tenant_admin_iam_role_list}"]
   tenant_poweruser_iam_role_list = ["${local.tenant_poweruser_iam_role_list}"]
@@ -39,12 +40,13 @@ module "tenant_1_prod" {
 }
 
 module "tenant_1_staging" {
-  source = "../member_account"
+  source = "github.com/gsa/grace-tf-module-member-account/terraform/modules/member_account"
 
   name                        = "tenant-1-staging"
   email                       = "jasong.miller+tenant1staging@gsa.gov"
   authlanding_prod_account_id = "${module.authlanding_prod.account_id}"
   create_iam_roles            = "true"
+  grace_monitoring_prod_account_id = "${module.tenant_grace_monitoring_prod.account_id}"
 
   tenant_admin_iam_role_list     = ["${local.tenant_admin_iam_role_list}"]
   tenant_poweruser_iam_role_list = ["${local.tenant_poweruser_iam_role_list}"]
@@ -52,12 +54,13 @@ module "tenant_1_staging" {
 }
 
 module "tenant_1_dev" {
-  source = "../member_account"
+  source = "github.com/gsa/grace-tf-module-member-account/terraform/modules/member_account"
 
   name                        = "tenant-1-dev"
   email                       = "jasong.miller+tenant1dev@gsa.gov"
   authlanding_prod_account_id = "${module.authlanding_prod.account_id}"
   create_iam_roles            = "true"
+  grace_monitoring_prod_account_id = "${module.tenant_grace_monitoring_prod.account_id}"
 
   tenant_admin_iam_role_list     = ["${local.tenant_admin_iam_role_list}"]
   tenant_poweruser_iam_role_list = ["${local.tenant_poweruser_iam_role_list}"]
@@ -65,13 +68,14 @@ module "tenant_1_dev" {
 }
 
 module "tenant_1_mgmt" {
-  source = "../member_account"
+  source = "github.com/gsa/grace-tf-module-member-account/terraform/modules/member_account"
 
   name                        = "tenant-1-mgmt"
   email                       = "jasong.miller+tenant1mgmt@gsa.gov"
   authlanding_prod_account_id = "${module.authlanding_prod.account_id}"
   create_iam_roles            = "true"
-
+  grace_monitoring_prod_account_id = "${module.tenant_grace_monitoring_prod.account_id}"
+  
   tenant_admin_iam_role_list     = ["${local.tenant_admin_iam_role_list}"]
   tenant_poweruser_iam_role_list = ["${local.tenant_poweruser_iam_role_list}"]
   tenant_viewonly_iam_role_list  = ["${local.tenant_viewonly_iam_role_list}"]

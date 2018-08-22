@@ -26,12 +26,13 @@ locals {
 }
 
 module "tenant_sprint17_prod" {
-  source = "../member_account"
+  source = "github.com/gsa/grace-tf-module-member-account/terraform/modules/member_account"
 
   name                        = "tenant-sprint17-prod"
   email                       = "jasong.miller+tenantsprint17prod@gsa.gov"
   authlanding_prod_account_id = "${module.authlanding_prod.account_id}"
   create_iam_roles            = "true"
+  grace_monitoring_prod_account_id = "${module.tenant_grace_monitoring_prod.account_id}"
 
   tenant_admin_iam_role_list     = ["${local.tenant_sprint17_admin_iam_role_list}"]
   tenant_poweruser_iam_role_list = ["${local.tenant_sprint17_poweruser_iam_role_list}"]
@@ -39,12 +40,13 @@ module "tenant_sprint17_prod" {
 }
 
 module "tenant_sprint17_staging" {
-  source = "../member_account"
+  source = "github.com/gsa/grace-tf-module-member-account/terraform/modules/member_account"
 
   name                        = "tenant-sprint17-staging"
   email                       = "jasong.miller+tenantsprint17staging@gsa.gov"
   authlanding_prod_account_id = "${module.authlanding_prod.account_id}"
   create_iam_roles            = "true"
+  grace_monitoring_prod_account_id = "${module.tenant_grace_monitoring_prod.account_id}"
 
   tenant_admin_iam_role_list     = ["${local.tenant_sprint17_admin_iam_role_list}"]
   tenant_poweruser_iam_role_list = ["${local.tenant_sprint17_poweruser_iam_role_list}"]
@@ -52,12 +54,13 @@ module "tenant_sprint17_staging" {
 }
 
 module "tenant_sprint17_dev" {
-  source = "../member_account"
+  source = "github.com/gsa/grace-tf-module-member-account/terraform/modules/member_account"
 
   name                        = "tenant-sprint17-dev"
   email                       = "jasong.miller+tenantsprint17dev@gsa.gov"
   authlanding_prod_account_id = "${module.authlanding_prod.account_id}"
   create_iam_roles            = "true"
+  grace_monitoring_prod_account_id = "${module.tenant_grace_monitoring_prod.account_id}"
 
   tenant_admin_iam_role_list     = ["${local.tenant_sprint17_admin_iam_role_list}"]
   tenant_poweruser_iam_role_list = ["${local.tenant_sprint17_poweruser_iam_role_list}"]
@@ -65,13 +68,14 @@ module "tenant_sprint17_dev" {
 }
 
 module "tenant_sprint17_mgmt" {
-  source = "../member_account"
+  source = "github.com/gsa/grace-tf-module-member-account/terraform/modules/member_account"
 
   name                        = "tenant-sprint17-mgmt"
   email                       = "jasong.miller+tenantsprint17mgmt@gsa.gov"
   authlanding_prod_account_id = "${module.authlanding_prod.account_id}"
   create_iam_roles            = "true"
-
+  grace_monitoring_prod_account_id = "${module.tenant_grace_monitoring_prod.account_id}"
+  
   tenant_admin_iam_role_list     = ["${local.tenant_sprint17_admin_iam_role_list}"]
   tenant_poweruser_iam_role_list = ["${local.tenant_sprint17_poweruser_iam_role_list}"]
   tenant_viewonly_iam_role_list  = ["${local.tenant_sprint17_viewonly_iam_role_list}"]
