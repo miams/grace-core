@@ -25,6 +25,8 @@ locals {
     "${module.tenant_demotest17_mgmt.root_arn}",
     "${module.tenant_demotest17_staging.root_arn}",
     "${module.tenant_demotest17_dev.root_arn}",
+    "${module.tenant_gracesharedservices_prod.root_arn}",
+    "${module.tenant_gracesharedservices_mgmt.root_arn}",
   ]
 }
 
