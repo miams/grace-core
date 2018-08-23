@@ -505,7 +505,7 @@ resource "aws_cloudformation_stack" "SharedServices_Prod_Transit_Spoke_Stack" {
     BucketPrefix = "vpnconfigs/"
   }
 
-  template_body = "${file("${path.module}/transit-vpc-second-account.template")}"
+  template_body = "${file("${path.module}/files/transit-vpc-second-account.template")}"
 }
 
 # End Shared Services Prod Connectivity to On-Prem
