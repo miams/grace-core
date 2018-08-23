@@ -496,7 +496,7 @@ resource "aws_security_group" "SharedServices_Prod_Allow_All_TCP" {
 }
 
 resource "aws_cloudformation_stack" "SharedServices_Prod_Transit_Spoke_Stack" {
-  name         = "SharedServices_Prod_Transit_Spoke_Stack"
+  name         = "SharedServices-Prod-Transit-Spoke-Stack"
   on_failure   = "ROLLBACK"
   capabilities = ["CAPABILITY_IAM"]
 
