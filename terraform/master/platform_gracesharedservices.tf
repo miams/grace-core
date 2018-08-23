@@ -437,6 +437,7 @@ resource "aws_lambda_permission" "allow_cloudwatch_to_call_lambda_tenant_account
 # Shared Services Prod Connectivity to On-Prem
 
 resource "aws_vpc" "SharedServices_Prod_VPC" {
+  provider = "aws.sharedservices_prod"
   cidr_block = "10.172.245.0/24"
 
   tags {
@@ -445,6 +446,7 @@ resource "aws_vpc" "SharedServices_Prod_VPC" {
 }
 
 resource "aws_subnet" "SharedServices_prod_priv_subnet" {
+  provider = "aws.sharedservices_prod"
   vpc_id                  = "${aws_vpc.SharedServices_Prod_VPC.id}"
   cidr_block              = "10.172.245.128/25"
   map_public_ip_on_launch = "false"
@@ -455,6 +457,7 @@ resource "aws_subnet" "SharedServices_prod_priv_subnet" {
 }
 
 resource "aws_route_table" "SharedServices_prod_priv_route" {
+  provider = "aws.sharedservices_prod"
   vpc_id           = "${aws_vpc.SharedServices_Prod_VPC.id}"
   propagating_vgws = ["${aws_vpn_gateway.SharedServices_Transit_Spoke_VGW.id}"]
 
@@ -464,11 +467,13 @@ resource "aws_route_table" "SharedServices_prod_priv_route" {
 }
 
 resource "aws_route_table_association" "SharedServices_Prod_route_assoc" {
+  provider = "aws.sharedservices_prod"
   subnet_id      = "${aws_subnet.SharedServices_prod_priv_subnet.id}"
   route_table_id = "${aws_route_table.SharedServices_prod_priv_route.id}"
 }
 
 resource "aws_vpn_gateway" "SharedServices_Transit_Spoke_VGW" {
+  provider = "aws.sharedservices_prod"
   vpc_id          = "${aws_vpc.SharedServices_Prod_VPC.id}"
   amazon_side_asn = "64515"
 
@@ -479,6 +484,7 @@ resource "aws_vpn_gateway" "SharedServices_Transit_Spoke_VGW" {
 }
 
 resource "aws_security_group" "SharedServices_Prod_Allow_All_TCP" {
+  provider = "aws.sharedservices_prod"
   vpc_id      = "${aws_vpc.SharedServices_Prod_VPC.id}"
   name        = "SharedServices_Prod_Allow_All_TCP"
   description = "Allow all inbound traffic"
@@ -496,6 +502,7 @@ resource "aws_security_group" "SharedServices_Prod_Allow_All_TCP" {
 }
 
 resource "aws_cloudformation_stack" "SharedServices_Prod_Transit_Spoke_Stack" {
+  provider = "aws.sharedservices_prod"
   name         = "SharedServices-Prod-Transit-Spoke-Stack"
   on_failure   = "ROLLBACK"
   capabilities = ["CAPABILITY_IAM"]
