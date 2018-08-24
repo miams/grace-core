@@ -516,3 +516,23 @@ resource "aws_cloudformation_stack" "SharedServices_Prod_Transit_Spoke_Stack" {
 }
 
 # End Shared Services Prod Connectivity to On-Prem
+
+# Shared Services Bridge DNS
+
+resource "aws_s3_bucket" "sharedservices_bridge_dns_config_bucket" {
+    provider = "aws.sharedservices_prod"
+    bucket = "grace-sharedservices-bridge-dns-config"
+    acl    = "private"
+
+    versioning {
+      enabled = true
+  }
+
+  server_side_encryption_configuration {
+    rule {
+      apply_server_side_encryption_by_default {
+        sse_algorithm     = "AES256"
+      }
+    }
+  }
+}
