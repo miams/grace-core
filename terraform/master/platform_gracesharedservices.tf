@@ -536,3 +536,30 @@ resource "aws_s3_bucket" "sharedservices_bridge_dns_config_bucket" {
     }
   }
 }
+
+data "aws_ami" "rhel7-base" {
+  provider = "aws.sharedservices_prod"
+  most_recent = true
+
+  filter {
+      name   = "name"
+      values = ["rhel7-base-*"]
+  }
+
+    filter {
+        name   = "virtualization-type"
+        values = ["hvm"]
+    }
+
+    owners = ["self"]
+}
+
+resource "aws_instance" "sharedservices_bridge_dns" {
+  provider = "aws.sharedservices_prod"
+  ami           = "${data.aws_ami.rhel7-base.id}"
+  instance_type = "t2.micro"
+}
+
+output "image_id" {
+    value = "${data.aws_ami.rhel7-base.id}"
+}
