@@ -558,6 +558,9 @@ resource "aws_instance" "sharedservices_bridge_dns" {
   provider = "aws.sharedservices_prod"
   ami           = "${data.aws_ami.rhel7-base.id}"
   instance_type = "t2.micro"
+  subnet_id = "${aws_subnet.SharedServices_prod_priv_subnet.id}"
+  vpc_security_group_ids = ["${aws_security_group.SharedServices_Prod_Allow_All_TCP.id}"]
+  # TODO: Still needs a key pair
 }
 
 output "image_id" {
