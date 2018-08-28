@@ -11,8 +11,8 @@
             "Resource": "arn:aws:s3:::grace-tenant-info/*",
             "Principal": {
                 "AWS": [
-                    "arn:aws:iam::${shared_services_prod_account_id}:root",
-                    "arn:aws:iam::${shared_services_mgmt_account_id}:root"
+                    "arn:aws:iam::${sharedservices_prod_account_id}:root",
+                    "arn:aws:iam::${sharedservices_mgmt_account_id}:root"
                 ]
             }
         }

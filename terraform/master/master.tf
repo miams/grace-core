@@ -47,8 +47,8 @@ resource "aws_s3_bucket" "tenant_info_bucket" {
 data "template_file" "tenant_info_bucket_policy" {
     template = "${file("${path.module}/files/tenant-info-bucket-policy.json")}"
     vars = {
-      shared_services_prod_account_id = "${module.tenant_gracesharedservices_prod.account_id}"
-      shared_services_mgmt_account_id = "${module.tenant_gracesharedservices_mgmt.account_id}"
+      sharedservices_prod_account_id = "${module.tenant_gracesharedservices_prod.account_id}"
+      sharedservices_mgmt_account_id = "${module.tenant_gracesharedservices_mgmt.account_id}"
     }
 }
 
