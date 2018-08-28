@@ -434,7 +434,6 @@ resource "aws_s3_bucket" "sharedservices_bridge_dns_config_bucket" {
 }
 
 data "template_file" "sharedservices_config_bucket_policy" {
-  provider = "aws.sharedservices_prod"
   template = "${file("${path.module}/files/sharedservices-config-bucket-policy.json")}"
   vars = {
     shared_services_prod_account_id = "${module.tenant_gracesharedservices_prod.account_id}"
