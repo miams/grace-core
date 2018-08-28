@@ -329,111 +329,6 @@ resource "aws_iam_user_policy_attachment" "sts_assume_viewonly_role_user_policy_
   policy_arn = "${aws_iam_policy.sts_assume_viewonly_role_user_policy_gracesharedservices_mgmt.arn}"
 }
 
-# This tenant also has a lambda function that will query the tenant accounts in a sub OU to get the AWS accounts IDs.
-# 08/08/18 by Jason Miller - jasong.miller@gsa.gov
-
-resource "aws_s3_bucket" "tenant_info_bucket" {
-  bucket = "grace-tenant-info"
-  acl    = "private"
-  policy = "${data.template_file.tenant_info_bucket_policy.rendered}"
-  server_side_encryption_configuration {
-    rule {
-      apply_server_side_encryption_by_default {
-        sse_algorithm     = "AES256"
-      }
-    }
-  }
-
-  tags {
-    Purpose = "Stores information about the tenant subaccount IDs for other grace-core elements to use."
-  }
-}
-
-data "template_file" "tenant_info_bucket_policy" {
-    template = "${file("${path.module}/files/tenant-info-bucket-policy.json")}"
-    vars = {
-      shared_services_prod_account_id = "${module.tenant_gracesharedservices_prod.account_id}"
-      shared_services_mgmt_account_id = "${module.tenant_gracesharedservices_mgmt.account_id}"
-    }
-}
-
-resource "aws_iam_role" "tenant_account_lister_role" {
-  name = "tenant-account-lister-role"
-
-  assume_role_policy = <<EOF
-{
-  "Version": "2012-10-17",
-  "Statement": [
-    {
-      "Action": "sts:AssumeRole",
-      "Principal": {
-        "Service": "lambda.amazonaws.com"
-      },
-      "Effect": "Allow",
-      "Sid": ""
-    }
-  ]
-}
-EOF
-}
-
-# TODO: Tighten up this policy
-resource "aws_iam_role_policy" "tenant_account_lister_role_policy" {
-  name = "tenant_account_lister_role_policy"
-  role = "${aws_iam_role.tenant_account_lister_role.id}"
-
-  policy = <<EOF
-{
-  "Version": "2012-10-17",
-  "Statement": [
-    {
-      "Action": [
-        "*"
-      ],
-      "Effect": "Allow",
-      "Resource": "*"
-    }
-  ]
-}
-EOF
-}
-
-data "archive_file" "lambda_tenant_account_lister_file" {
-  type        = "zip"
-  source_file = "${path.module}/files/tenant-account-lister.py"
-  output_path = "${path.module}/files/tenant-account-lister.py.zip"
-}
-
-resource "aws_lambda_function" "lambda_tenant_account_lister_function" {
-  filename      = "${path.module}/files/tenant-account-lister.py.zip"
-  function_name = "tenant-account-lister"
-  role          = "${aws_iam_role.tenant_account_lister_role.arn}"
-  handler       = "tenant-account-lister.lambda_handler"
-  runtime       = "python3.6"
-}
-
-resource "aws_cloudwatch_event_rule" "tenant_account_lister_event" {
-  name                = "tenant-account-lister-run-hourly"
-  description         = "Runs tenant account lister at the top of every hour"
-  schedule_expression = "cron(1 * * * ? *)"
-}
-
-resource "aws_cloudwatch_event_target" "lambda_ebs_backup_function_event" {
-  rule      = "${aws_cloudwatch_event_rule.tenant_account_lister_event.name}"
-  target_id = "lambda_tenant_account_lister_function"
-  arn       = "${aws_lambda_function.lambda_tenant_account_lister_function.arn}"
-}
-
-resource "aws_lambda_permission" "allow_cloudwatch_to_call_lambda_tenant_account_lister_function" {
-  statement_id  = "AllowExecutionFromCloudWatch"
-  action        = "lambda:InvokeFunction"
-  function_name = "${aws_lambda_function.lambda_tenant_account_lister_function.function_name}"
-  principal     = "events.amazonaws.com"
-  source_arn    = "${aws_cloudwatch_event_rule.tenant_account_lister_event.arn}"
-}
-
-# End tenant_account_lister lambda function resources
-
 # Shared Services Prod Connectivity to On-Prem
 
 resource "aws_vpc" "SharedServices_Prod_VPC" {
@@ -521,8 +416,9 @@ resource "aws_cloudformation_stack" "SharedServices_Prod_Transit_Spoke_Stack" {
 
 resource "aws_s3_bucket" "sharedservices_bridge_dns_config_bucket" {
     provider = "aws.sharedservices_prod"
-    bucket = "grace-sharedservices-bridge-dns-config"
+    bucket = "grace-sharedservices-config"
     acl    = "private"
+    policy = "${data.template_file.sharedservices_config_bucket_policy.rendered}"
 
     versioning {
       enabled = true
@@ -536,6 +432,16 @@ resource "aws_s3_bucket" "sharedservices_bridge_dns_config_bucket" {
     }
   }
 }
+
+data "template_file" "sharedservices_config_bucket_policy" {
+  provider = "aws.sharedservices_prod"
+  template = "${file("${path.module}/files/sharedservices-config-bucket-policy.json")}"
+  vars = {
+    shared_services_prod_account_id = "${module.tenant_gracesharedservices_prod.account_id}"
+    shared_services_mgmt_account_id = "${module.tenant_gracesharedservices_mgmt.account_id}"
+  }
+}
+
 
 data "aws_ami" "rhel7-base" {
   provider = "aws.sharedservices_prod"
@@ -563,6 +469,30 @@ resource "aws_instance" "sharedservices_bridge_dns" {
   # TODO: Still needs a key pair
 }
 
-output "image_id" {
-    value = "${data.aws_ami.rhel7-base.id}"
+resource "aws_iam_instance_profile" "sharedservices_bridge_dns_instance_profile" {
+  provider = "aws.sharedservices_prod"
+  name = "sharedservices-bridge-dns-instance-profile"
+  role = "${aws_iam_role.sharedservices_bridge_dns_ec2_role.name}"
+}
+
+resource "aws_iam_role" "sharedservices_bridge_dns_ec2_role" {
+  provider = "aws.sharedservices_prod"
+  name = "sharedservices-bridge-dns-ec2-role"
+  path = "/"
+
+  assume_role_policy = <<EOF
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Action": "sts:AssumeRole",
+            "Principal": {
+               "Service": "ec2.amazonaws.com"
+            },
+            "Effect": "Allow",
+            "Sid": ""
+        }
+    ]
+}
+EOF
 }

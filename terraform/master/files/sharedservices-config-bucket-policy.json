@@ -1,0 +1,21 @@
+{
+    "Id": "Policy1533845369120",
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Sid": "Stmt1533845360625",
+            "Action": [
+                "s3:*"
+            ],
+            "Effect": "Allow",
+            "Resource": "arn:aws:s3:::grace-sharedservices-config/*",
+            "Principal": {
+                "AWS": [
+                    "arn:aws:iam::${shared_services_prod_account_id}:root",
+                    "arn:aws:iam::${shared_services_mgmt_account_id}:root",
+                    "${aws_iam_role.sharedservices_bridge_dns_ec2_role.arn}"
+                ]
+            }
+        }
+    ]
+}
