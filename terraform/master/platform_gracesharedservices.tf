@@ -436,8 +436,9 @@ resource "aws_s3_bucket" "sharedservices_bridge_dns_config_bucket" {
 data "template_file" "sharedservices_config_bucket_policy" {
   template = "${file("${path.module}/files/sharedservices-config-bucket-policy.json")}"
   vars = {
-    shared_services_prod_account_id = "${module.tenant_gracesharedservices_prod.account_id}"
-    shared_services_mgmt_account_id = "${module.tenant_gracesharedservices_mgmt.account_id}"
+    sharedservices_prod_account_id = "${module.tenant_gracesharedservices_prod.account_id}"
+    sharedservices_mgmt_account_id = "${module.tenant_gracesharedservices_mgmt.account_id}"
+    sharedservices_bridge_dns_instance_profile = "${aws_iam_role.sharedservices_bridge_dns_ec2_role.arn}"
   }
 }
 
