@@ -13,9 +13,17 @@ def lambda_handler(event, context):
     organizations_response = MASTER_PAYER_ORG.list_accounts_for_parent(
         ParentId='ou-bgtv-tu73r6dm',
     )
+    results = organizations_response['Accounts']
+
+    while (organizations_response.get("NextToken", None) is not None):
+        organizations_response = MASTER_PAYER_ORG.list_accounts_for_parent(
+            NextToken=organizations_response.get("NextToken"),
+            ParentId='ou-bgtv-tu73r6dm',
+        )
+        results = results + organizations_response['Accounts']
 
     tenant_accounts = ""
-    for account_id in organizations_response['Accounts']:
+    for account_id in results:
         tenant_accounts += account_id['Id'] + ","
 
     tenant_accounts = tenant_accounts[:-1]
