@@ -17,6 +17,7 @@ def lambda_handler(event, context):
 
     while (organizations_response.get("NextToken", None) is not None):
         organizations_response = MASTER_PAYER_ORG.list_accounts_for_parent(
+            NextToken=organizations_response.get("NextToken"),
             ParentId='ou-bgtv-tu73r6dm',
         )
         results = results + organizations_response['Accounts']
