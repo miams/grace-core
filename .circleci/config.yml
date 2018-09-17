@@ -57,6 +57,9 @@ jobs:
           name: Install AWS CLI
           command: pip3 install --upgrade awscli
       - run:
+          name: Remove zip archive of lambda function
+          command: rm terraform/master/files/tenant-account-lister.py.zip
+      - run:
           name: Deploy the full environment
           command: cd terraform/master && terraform apply -input=false -var-file=backend.tfvars -parallelism=1 -auto-approve
 
